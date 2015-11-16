@@ -41,7 +41,6 @@ package org.ares.vernalbreeze
 			mVelocity.plusScaledVector(tempAcc, duration);
 			//速度受阻尼影响逐渐减小 v*=d
 			mVelocity.multEquals(Math.pow(mDamping, duration));
-			trace(mVelocity);
 		}
 		
 		//--粒子位置属性
