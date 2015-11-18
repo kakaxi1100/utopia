@@ -6,7 +6,7 @@ package org.ares.vernalbreeze
 	 * @author JuLi
 	 * 
 	 */	
-	public class VBPayLoad
+	public class VBPayload
 	{
 		//粒子对应的规则
 		private var mRule:VBFireworkRule;
@@ -16,7 +16,7 @@ package org.ares.vernalbreeze
 		private var mParticles:Array;
 		//粒子工厂
 		private var mParticlesFactory:VBFireworkFactory;
-		public function VBPayLoad(prule:VBFireworkRule, pparticleCount:int, pparticlesFactory:VBFireworkFactory)
+		public function VBPayload(prule:VBFireworkRule, pparticleCount:int, pparticlesFactory:VBFireworkFactory)
 		{
 			mRule = prule;
 			mParticleCount = pparticleCount;
@@ -24,11 +24,11 @@ package org.ares.vernalbreeze
 			mParticles = [];
 		}
 		
-		public function update():void
+		public function update(duration:Number):void
 		{
 			for(var i:int = 0; i<mParticles.length; i++)
 			{
-				mParticles[i].update();
+				mParticles[i].update(duration);
 			}
 		}
 		

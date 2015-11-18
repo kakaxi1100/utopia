@@ -18,6 +18,11 @@ package org.ares.vernalbreeze
 			init();
 		}
 		
+		/**
+		 *将规则赋值给粒子 
+		 * @param firework
+		 * 
+		 */		
 		public function wrap(firework:VBFirework):void
 		{
 			firework.age = Math.random()*(maxAge - minAge) + minAge;

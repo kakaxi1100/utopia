@@ -43,6 +43,16 @@ package org.ares.vernalbreeze
 			mVelocity.multEquals(Math.pow(mDamping, duration));
 		}
 		
+		protected function init():void
+		{
+			mPosition = new VBVector();
+			mVelocity = new VBVector();
+			mAcceleration = new VBVector();
+			mForceAccum = new VBVector();
+			mDamping = 1;
+			mInverseMass = 1;
+		}
+		
 		//--粒子位置属性
 		public function get position():VBVector
 		{

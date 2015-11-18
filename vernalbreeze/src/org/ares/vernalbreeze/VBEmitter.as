@@ -18,20 +18,28 @@ package org.ares.vernalbreeze
 			mPayloads = new Array();
 		}
 	
+		/**
+		 *发射粒子 
+		 * 
+		 */		
 		public function emission():void
 		{
 			for(var i:int = 0; i<mPayloads.length; i++)
 			{
-				var temp:VBPayLoad = mPayloads[i];
+				var temp:VBPayload = mPayloads[i];
 				temp.createParticle(mPosition.x, mPosition.y);
 			}
 		}
 		
-		public function update():void
+		/**
+		 *更新 
+		 * 
+		 */		
+		public function update(duration:Number):void
 		{
 			for(var i:int = 0; i<mPayloads.length; i++)
 			{
-				mPayloads[i].update();
+				mPayloads[i].update(duration);
 			}
 		}
 		/**
@@ -39,7 +47,7 @@ package org.ares.vernalbreeze
 		 * @param pl
 		 * 
 		 */		
-		public function addPayLoads(pl:VBPayLoad):void
+		public function addPayloads(pl:VBPayload):void
 		{
 			mPayloads.push(pl);
 		}

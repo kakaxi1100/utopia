@@ -15,11 +15,20 @@ package org.ares.vernalbreeze
 		public function VBFirework()
 		{
 			super();
+			init();
 		}
 		
-		public function update():void
+		public function update(duration:Number):Boolean
 		{
-			
+			integrate(duration);
+			mAge -= duration;
+			return mAge <= 0;
+		}
+		
+		override protected function init():void
+		{
+			super.init();
+			mAge = 0;
 		}
 		
 		public function get age():Number
