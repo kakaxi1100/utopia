@@ -16,7 +16,12 @@ package org.ares.vernalbreeze
 		{
 			super();
 		}
-
+		
+		public function update():void
+		{
+			
+		}
+		
 		public function get age():Number
 		{
 			return mAge;

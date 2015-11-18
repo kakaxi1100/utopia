@@ -24,11 +24,20 @@ package org.ares.vernalbreeze
 			mParticles = [];
 		}
 		
-		public function createParticle():void
+		public function update():void
 		{
-			for(var i:int = 0; i < particleCount; i++)
+			for(var i:int = 0; i<mParticles.length; i++)
+			{
+				mParticles[i].update();
+			}
+		}
+		
+		public function createParticle(px:Number, py:Number):void
+		{
+			for(var i:int = 0; i < mParticleCount; i++)
 			{
 				var temp:VBFirework = mParticlesFactory.create();
+				temp.position.setTo(px, py); 
 				mRule.wrap(temp);
 				mParticles.push(temp);
 			}
@@ -44,7 +53,7 @@ package org.ares.vernalbreeze
 			mRule = value;
 		}
 
-		public function get particleCount():int
+		/*public function get particleCount():int
 		{
 			return mParticleCount;
 		}
@@ -52,8 +61,6 @@ package org.ares.vernalbreeze
 		public function set particleCount(value:int):void
 		{
 			mParticleCount = value;
-		}
-
-
+		}*/
 	}
 }

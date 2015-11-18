@@ -18,6 +18,22 @@ package org.ares.vernalbreeze
 			mPayloads = new Array();
 		}
 	
+		public function emission():void
+		{
+			for(var i:int = 0; i<mPayloads.length; i++)
+			{
+				var temp:VBPayLoad = mPayloads[i];
+				temp.createParticle(mPosition.x, mPosition.y);
+			}
+		}
+		
+		public function update():void
+		{
+			for(var i:int = 0; i<mPayloads.length; i++)
+			{
+				mPayloads[i].update();
+			}
+		}
 		/**
 		 *添加承载器 
 		 * @param pl

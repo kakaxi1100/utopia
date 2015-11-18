@@ -21,8 +21,10 @@ package org.ares.vernalbreeze
 		public function wrap(firework:VBFirework):void
 		{
 			firework.age = Math.random()*(maxAge - minAge) + minAge;
-			var v:Number = Math.random()*(maxAge - minAge) + minAge;
-			firework.velocity
+			var vx:Number = Math.random()*(maxVelocity.x - minVelocity.x) + minVelocity.x;
+			var vy:Number = Math.random()*(maxVelocity.y - minVelocity.y) + minVelocity.y;
+			firework.velocity.setTo(vx, vy);
+			firework.damping = mDamping;
 		}
 		
 		/**
