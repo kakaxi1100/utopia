@@ -123,6 +123,7 @@ package org.ares.vernalbreeze
 		}
 		/**
 		 *标准化矢量 
+		 * 不改变原始值，产生一个新值 
 		 * @return 
 		 * 
 		 */		
@@ -131,6 +132,19 @@ package org.ares.vernalbreeze
 			var m:Number = magnitude();
 			if (m == 0) return null;
 			return mult(1 / m);
+		}
+		
+		/**
+		 *标准化矢量 
+		 * 改变原始值
+		 * @return 
+		 * 
+		 */		
+		public function normalizeEquals():void 
+		{
+			var m:Number = magnitude();
+			if (m == 0) return ;
+			multEquals(1 / m);
 		}
 		
 		public function setTo(px:Number, py:Number):void

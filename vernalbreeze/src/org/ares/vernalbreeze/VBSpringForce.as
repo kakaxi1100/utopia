@@ -21,9 +21,12 @@ package org.ares.vernalbreeze
 			
 			var magnitude:Number = force.magnitude();
 			magnitude = Math.abs(magnitude - mRestLength);
-			magnitude *= springConstant;
+			magnitude *= mSpringConstant;
 			
-			force.normalize();
+			force.normalizeEquals();
+			force.multEquals(-1*magnitude);
+			
+			p.addForce(force);
 		}
 	}
 }
