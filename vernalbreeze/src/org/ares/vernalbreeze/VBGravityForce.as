@@ -1,9 +1,9 @@
 package org.ares.vernalbreeze
 {
-	public class GravityForce implements IVBForce
+	public class VBGravityForce implements IVBForce
 	{
 		private var mGravity:VBVector;
-		public function GravityForce(g:VBVector)
+		public function VBGravityForce(g:VBVector)
 		{
 			mGravity = g;
 		}
