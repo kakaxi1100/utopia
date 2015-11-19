@@ -139,6 +139,11 @@ package org.ares.vernalbreeze
 			y = py;
 		}
 		
+		public function clear():void
+		{
+			x = y = 0;
+		}
+		
 		public function clone():VBVector
 		{
 			return new VBVector(this.x, this.y);

@@ -41,9 +41,22 @@ package org.ares.vernalbreeze
 			mVelocity.plusScaledVector(tempAcc, duration);
 			//速度受阻尼影响逐渐减小 v*=d
 			mVelocity.multEquals(Math.pow(mDamping, duration));
+			//清除力
+			//因为力要在粒子运行之前先运算
+			mForceAccum.clear();
 		}
 		
-		protected function init():void
+		/**
+		 *为物体添加力 
+		 * @param v
+		 * 
+		 */		
+		public function addForce(v:VBVector):void
+		{
+			mForceAccum.plusEquals(v);
+		}
+		
+		public function init():void
 		{
 			mPosition = new VBVector();
 			mVelocity = new VBVector();

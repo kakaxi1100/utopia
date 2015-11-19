@@ -25,7 +25,7 @@ package org.ares.vernalbreeze
 			return mAge <= 0;
 		}
 		
-		override protected function init():void
+		override public function init():void
 		{
 			super.init();
 			mAge = 0;
