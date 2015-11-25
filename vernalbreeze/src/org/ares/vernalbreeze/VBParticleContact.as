@@ -14,6 +14,9 @@ package org.ares.vernalbreeze
 		//恢复系数
 		private var mRestiution:Number;
 		//记录速度方向就是这个粒子朝另一个粒子运动的方向
+		//接点法线方向
+		//比如假如斜线碰到地面，
+		//那么物体反弹后的方向是这个速度方向的法线方向
 		private var mContactNormal:VBVector;
 		public function VBParticleContact()
 		{
@@ -38,6 +41,10 @@ package org.ares.vernalbreeze
 			return relativeVelocity.scalarMult(mContactNormal);
 		}
 		
+		/**
+		 *计算碰撞后物体的世界速度 
+		 * 
+		 */		
 		public function resolveVelocity():void
 		{
 			//找到碰撞前的分离速度（是相对于另一个粒子的）
@@ -76,15 +83,3 @@ package org.ares.vernalbreeze
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
