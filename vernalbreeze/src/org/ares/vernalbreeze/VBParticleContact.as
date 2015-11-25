@@ -18,9 +18,21 @@ package org.ares.vernalbreeze
 		//比如假如斜线碰到地面，
 		//那么物体反弹后的方向是这个速度方向的法线方向
 		private var mContactNormal:VBVector;
+		//渗透距离
+		private var mPenetration:Number;
 		public function VBParticleContact()
 		{
 			mParticle = new Vector.<VBParticle>(2);
+		}
+		
+		/**
+		 *解决碰撞问题 
+		 * 
+		 */		
+		public function resolve():void
+		{
+			resolveVelocity();
+			resolveInterpenetration();
 		}
 		
 		/**
@@ -80,6 +92,14 @@ package org.ares.vernalbreeze
 			{
 				mParticle[1].velocity = mParticle[1].velocity.plus(implusePerIMass.multEquals(mParticle[1].inverseMass));
 			}
+		}
+		/**
+		 *解决渗透问题 
+		 * 
+		 */		
+		public function resolveInterpenetration():void
+		{
+			
 		}
 	}
 }
