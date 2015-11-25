@@ -58,6 +58,7 @@ package org.ares.vernalbreeze
 			y -= v.y;
 			return this;
 		}
+		
 		/**
 		 *数乘 
 		 * 不改变原始值，产生一个新值 

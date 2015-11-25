@@ -15,10 +15,10 @@ package
 		private var startTime:Number = 0;
 		private var lastTime:Number = 0;
 		
-		private var mass:Number = 200;
-		private var speed:Number = 50;
-		private var acc:Number = 200;
-		private var damping:Number = 0.99;
+		private var mass:Number = 0.5;
+		private var speed:Number = 80;
+		private var acc:Number = 20;
+		private var damping:Number = 1;
 		public function Ballistics()
 		{
 			super();
