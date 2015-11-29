@@ -19,6 +19,7 @@ package org.ares.vernalbreeze
 		//那么物体反弹后的方向是这个速度方向的法线方向
 		private var mContactNormal:VBVector;
 		//渗透距离
+		//渗透距离小于0 代表两物体没有碰撞，渗透距离=0表示两物体才刚刚接触，渗透距离>0表示两物体渗透
 		private var mPenetration:Number;
 		public function VBParticleContact()
 		{
@@ -95,11 +96,34 @@ package org.ares.vernalbreeze
 		}
 		/**
 		 *解决渗透问题 
-		 * 
+		 * 两个物体渗透之后，需要反弹的距离是由它们的质量决定的
+		 * pa = mb/(ma + mb)*dn
+		 * pb = -ma/(ma + mb)*dn
 		 */		
 		public function resolveInterpenetration():void
 		{
-			
+			//物体没有接触
+			if(mPenetration <= 0) return;
+			//计算出物体的总质量
+			var totalInverseMass:Number = mParticle[0].inverseMass;
+			if(mParticle[1] != null)
+			{
+				totalInverseMass += mParticle[1].inverseMass;
+			}
+			//假如物体都是无限质量的
+			if(totalInverseMass <= 0)
+			{
+				return;
+			}
+			//-p(ma*mb)/(ma + mb)
+			var movePerIMass:VBVector = mContactNormal.mult(-mPenetration/totalInverseMass);
+			//改变粒子的位置
+			mParticle[0].position.plusEquals(movePerIMass.multEquals(mParticle[0].inverseMass));
+			if(mParticle[1] != null)
+			{
+				//为什么不是负的，需要考察?????
+				mParticle[1].position.plusEquals(movePerIMass.multEquals(mParticle[1].inverseMass));
+			}
 		}
 	}
 }
