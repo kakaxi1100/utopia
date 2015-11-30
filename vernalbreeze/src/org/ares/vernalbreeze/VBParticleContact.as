@@ -30,9 +30,9 @@ package org.ares.vernalbreeze
 		 *解决碰撞问题 
 		 * 
 		 */		
-		public function resolve():void
+		public function resolve(duration:Number):void
 		{
-			resolveVelocity();
+			resolveVelocity(duration);
 			resolveInterpenetration();
 		}
 		
@@ -58,7 +58,7 @@ package org.ares.vernalbreeze
 		 *计算碰撞后物体的世界速度 
 		 * 
 		 */		
-		public function resolveVelocity():void
+		public function resolveVelocity(duration:Number):void
 		{
 			//找到碰撞前的分离速度（是相对于另一个粒子的）
 			var separatingVelocity:Number = caculateSeparatingVelocity();
@@ -72,6 +72,25 @@ package org.ares.vernalbreeze
 			}
 			//计算碰撞后的分离速度
 			var newSeparatingVelocity:Number = -separatingVelocity * mRestiution;
+			//把由加速度产生的速度从这个分离速度中除去
+			//剩下的才应该是冲量产生的速度
+			//1.计算加速度所产生的分离速度
+			var accCausedVelocity:VBVector = mParticle[0].acceleration;
+			if(mParticle[1] != null)
+			{
+				accCausedVelocity.minusEquals(mParticle[1].acceleration);
+			}
+			var accCausedSepVelocity:Number = accCausedVelocity.scalarMult(mContactNormal)*duration;
+			if(accCausedSepVelocity < 0)
+			{
+				//2.除去加速度产生的速度，就是冲量产生的速度
+				newSeparatingVelocity += accCausedSepVelocity*mRestiution;
+				//3.如果冲量产生的速度没有加速度产生的速度大，那么
+				if(newSeparatingVelocity < 0)
+				{
+					newSeparatingVelocity = 0;
+				}
+			}
 			//计算出速度的总的变化量
 			var deltaVelocity:Number = newSeparatingVelocity - separatingVelocity;
 			//计算出总的质量，用 逆质量代替
@@ -100,7 +119,7 @@ package org.ares.vernalbreeze
 		 * pa = mb/(ma + mb)*dn
 		 * pb = -ma/(ma + mb)*dn
 		 */		
-		public function resolveInterpenetration():void
+		public function resolveInterpenetration(duration:Number):void
 		{
 			//物体没有接触
 			if(mPenetration <= 0) return;
