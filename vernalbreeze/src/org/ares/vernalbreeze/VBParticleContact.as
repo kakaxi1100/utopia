@@ -12,11 +12,8 @@ package org.ares.vernalbreeze
 		//碰撞的两个粒子
 		private var mParticle:Vector.<VBParticle>;
 		//恢复系数
-		private var mRestiution:Number;
-		//记录速度方向就是这个粒子朝另一个粒子运动的方向
+		private var mRestitution:Number;
 		//接点法线方向
-		//比如假如斜线碰到地面，
-		//那么物体反弹后的方向是这个速度方向的法线方向
 		private var mContactNormal:VBVector;
 		//渗透距离
 		//渗透距离小于0 代表两物体没有碰撞，渗透距离=0表示两物体才刚刚接触，渗透距离>0表示两物体渗透
@@ -33,7 +30,7 @@ package org.ares.vernalbreeze
 		public function resolve(duration:Number):void
 		{
 			resolveVelocity(duration);
-			resolveInterpenetration();
+			resolveInterpenetration(duration);
 		}
 		
 		/**
@@ -71,7 +68,7 @@ package org.ares.vernalbreeze
 				return;
 			}
 			//计算碰撞后的分离速度
-			var newSeparatingVelocity:Number = -separatingVelocity * mRestiution;
+			var newSeparatingVelocity:Number = -separatingVelocity * mRestitution;
 			//把由加速度产生的速度从这个分离速度中除去
 			//剩下的才应该是冲量产生的速度
 			//1.计算加速度所产生的分离速度
@@ -84,8 +81,8 @@ package org.ares.vernalbreeze
 			if(accCausedSepVelocity < 0)
 			{
 				//2.除去加速度产生的速度，就是冲量产生的速度
-				newSeparatingVelocity += accCausedSepVelocity*mRestiution;
-				//3.如果冲量产生的速度没有加速度产生的速度大，那么
+				newSeparatingVelocity += accCausedSepVelocity*mRestitution;
+				//3.如果冲量产生的速度没有加速度产生的速度大，那么粒子就会往加速度那个方向走，这是不正确的，此时应该将分离速度设置为0
 				if(newSeparatingVelocity < 0)
 				{
 					newSeparatingVelocity = 0;
@@ -110,7 +107,7 @@ package org.ares.vernalbreeze
 			//计算另一个粒子的速度
 			if(mParticle[1] != null)
 			{
-				mParticle[1].velocity = mParticle[1].velocity.plus(implusePerIMass.multEquals(mParticle[1].inverseMass));
+				mParticle[1].velocity = mParticle[1].velocity.plus(implusePerIMass.multEquals(-mParticle[1].inverseMass));
 			}
 		}
 		/**
@@ -144,5 +141,47 @@ package org.ares.vernalbreeze
 				mParticle[1].position.plusEquals(movePerIMass.multEquals(mParticle[1].inverseMass));
 			}
 		}
+
+		public function get particle():Vector.<VBParticle>
+		{
+			return mParticle;
+		}
+
+		public function set particle(value:Vector.<VBParticle>):void
+		{
+			mParticle = value;
+		}
+
+		public function get contactNormal():VBVector
+		{
+			return mContactNormal;
+		}
+
+		public function set contactNormal(value:VBVector):void
+		{
+			mContactNormal = value;
+		}
+
+		public function get penetration():Number
+		{
+			return mPenetration;
+		}
+
+		public function set penetration(value:Number):void
+		{
+			mPenetration = value;
+		}
+
+		public function get restitution():Number
+		{
+			return mRestitution;
+		}
+
+		public function set restitution(value:Number):void
+		{
+			mRestitution = value;
+		}
+
+
 	}
 }

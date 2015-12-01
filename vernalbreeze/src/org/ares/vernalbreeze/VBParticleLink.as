@@ -3,14 +3,19 @@ package org.ares.vernalbreeze
 	public class VBParticleLink
 	{
 		public var particle:Vector.<VBParticle>;
-		protected var currentLength:Number;
 		public function VBParticleLink()
 		{
 		}
 		
-		public function fillContact(contact:VBParticleContact, limit:uint):void
+		protected function currentLength():Number
 		{
-			
+			var relativePos:VBVector = particle[0].position.minus(particle[1].position);
+			return relativePos.magnitude();
+		}
+		
+		public function fillContact(contact:VBParticleContact, limit:uint):uint
+		{
+			return 0;
 		}
 	}
 }
