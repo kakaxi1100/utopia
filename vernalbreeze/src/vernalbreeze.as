@@ -5,7 +5,7 @@ package
 	import flash.events.MouseEvent;
 	import flash.utils.Dictionary;
 	
-	[SWF(frameRate="60", backgroundColor="0",height="600", width="800")]
+	[SWF(frameRate="30", backgroundColor="0",height="600", width="800")]
 	public class vernalbreeze extends Sprite
 	{
 		private var ballistics:Ballistics = new Ballistics();
