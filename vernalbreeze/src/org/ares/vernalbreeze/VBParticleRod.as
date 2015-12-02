@@ -27,6 +27,7 @@ package org.ares.vernalbreeze
 			//1,处于伸长状态
 			if(currentLen > length)
 			{
+				//当处于拉力状态的时候，法向和渗透是一致的
 				contact.contactNormal = normal;
 				contact.penetration = currentLen - length;
 			}

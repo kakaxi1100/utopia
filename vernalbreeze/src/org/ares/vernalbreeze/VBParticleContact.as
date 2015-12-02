@@ -37,7 +37,7 @@ package org.ares.vernalbreeze
 		 */		
 		public function caculateSeparatingVelocity():Number
 		{
-			var relativeVelocity:VBVector = mParticle[0].velocity;//这个是
+			var relativeVelocity:VBVector = mParticle[0].velocity.clone();//不能改变元速度
 			if(mParticle[1] != null)
 			{
 				// 因为两个粒子的速度是相对而不是相向的，所以用减法
@@ -70,7 +70,7 @@ package org.ares.vernalbreeze
 			//把由加速度产生的速度从这个分离速度中除去
 			//剩下的才应该是冲量产生的速度
 			//1.计算加速度所产生的分离速度
-			var accCausedVelocity:VBVector = mParticle[0].acceleration;
+			var accCausedVelocity:VBVector = mParticle[0].acceleration.clone();
 			if(mParticle[1] != null)
 			{
 				accCausedVelocity.minusEquals(mParticle[1].acceleration);
@@ -101,11 +101,11 @@ package org.ares.vernalbreeze
 			//计算冲量的方向
 			var implusePerIMass:VBVector = mContactNormal.mult(impluse);
 			//计算粒子的世界速度
-			mParticle[0].velocity = mParticle[0].velocity.plus(implusePerIMass.multEquals(mParticle[0].inverseMass));
+			mParticle[0].velocity.plusEquals(implusePerIMass.multEquals(mParticle[0].inverseMass));
 			//计算另一个粒子的速度
 			if(mParticle[1] != null)
 			{
-				mParticle[1].velocity = mParticle[1].velocity.plus(implusePerIMass.multEquals(-mParticle[1].inverseMass));
+				mParticle[1].velocity.plusEquals(implusePerIMass.multEquals(-mParticle[1].inverseMass));
 			}
 		}
 		/**
@@ -130,13 +130,13 @@ package org.ares.vernalbreeze
 				return;
 			}
 			//-p(ma*mb)/(ma + mb)
-			var movePerIMass:VBVector = mContactNormal.mult(-mPenetration/totalInverseMass);
+			var movePerIMass:VBVector = mContactNormal.mult(mPenetration/totalInverseMass);
 			//改变粒子的位置
 			mParticle[0].position.plusEquals(movePerIMass.multEquals(mParticle[0].inverseMass));
 			if(mParticle[1] != null)
 			{
-				//为什么不是负的，需要考察?????
-				mParticle[1].position.plusEquals(movePerIMass.multEquals(mParticle[1].inverseMass));
+				//应该是负的
+				mParticle[1].position.plusEquals(movePerIMass.multEquals(-1*mParticle[1].inverseMass));
 			}
 		}
 

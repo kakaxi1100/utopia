@@ -59,19 +59,20 @@ package
 			switch(event.keyCode)
 			{
 				case Keyboard.LEFT:
-					p1.velocity.minusEquals(new VBVector(100,0));
+//					p0.velocity.minusEquals(new VBVector(80,0));
 					break;
 				case Keyboard.RIGHT:
-					p1.velocity.plusEquals(new VBVector(100,0));
+//					p1.velocity.plusEquals(new VBVector(80,0));
+					p1.acceleration.plusEquals(new VBVector(100,0));
 					break;
 				case Keyboard.UP:
-					p1.velocity.minusEquals(new VBVector(0,10));
+//					p1.velocity.minusEquals(new VBVector(0,80));
 					break;
 				case Keyboard.DOWN:
-					p1.velocity.plusEquals(new VBVector(0,1));
+//					p1.velocity.plusEquals(new VBVector(0,80));
 					break;
 				case Keyboard.SPACE:
-					p1.velocity.plusEquals(new VBVector(100,100));
+//					p1.velocity.plusEquals(new VBVector(80,80));
 					break;
 			}
 		}
@@ -87,7 +88,6 @@ package
 			{
 				contact0.resolve(duration);
 			}
-			
 			s0.x = p0.position.x;
 			s0.y = p0.position.y;
 			s1.x = p1.position.x;
