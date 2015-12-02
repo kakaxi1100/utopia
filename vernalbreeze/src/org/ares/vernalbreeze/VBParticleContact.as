@@ -1,9 +1,7 @@
 package org.ares.vernalbreeze
 {
 	/**
-	 *两个粒子之间碰撞 
-	 * 这里只讨论两个粒子相对对撞
-	 * 并且在一条线上
+	 *两个粒子之间碰撞处理 
 	 * @author JuLi
 	 * 
 	 */	
