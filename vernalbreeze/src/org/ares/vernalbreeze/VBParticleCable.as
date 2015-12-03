@@ -16,7 +16,7 @@ package org.ares.vernalbreeze
 			//得到当前的长度
 			var length:Number = currentLength();
 			//看看是否超过最大长度，如果没有超过最大长度则不会产生任何作用力
-			if(length < maxLength)
+			if(length <= maxLength)
 			{
 				return 0;
 			}

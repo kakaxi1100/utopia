@@ -41,7 +41,8 @@ package org.ares.vernalbreeze
 			mVelocity.plusScaledVector(tempAcc, duration);
 			//速度受阻尼影响逐渐减小 v*=d
 			mVelocity.multEquals(Math.pow(mDamping, duration));
-			//清除力
+			//清除力, 因为力有可能只作用一个瞬间
+			//所以力要怎么施加在物体上，需要每帧都进行计算
 			//因为力要在粒子运行之前先运算
 			mForceAccum.clear();
 		}

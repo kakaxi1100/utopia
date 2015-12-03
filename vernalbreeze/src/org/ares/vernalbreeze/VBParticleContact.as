@@ -34,6 +34,11 @@ package org.ares.vernalbreeze
 		/**
 		 *计算分离速度 
 		 * 注意此速度是相对速度，相对于另外一个粒子的速度
+		 * 动量的计算公式，两个物体碰撞后他们满足
+		 * ma*Δva = mb*Δvb
+		 * Δva+Δvb = Δv
+		 * Δva = Δv*mb/(ma+mb)
+		 * Δvb = Δv*ma/(ma+mb)
 		 */		
 		public function caculateSeparatingVelocity():Number
 		{
@@ -88,7 +93,7 @@ package org.ares.vernalbreeze
 			}
 			//计算出速度的总的变化量
 			var deltaVelocity:Number = newSeparatingVelocity - separatingVelocity;
-			//计算出总的质量，用 逆质量代替
+			//计算出总的质量，用 逆质量代替 (ma + mb)/(ma*mb)
 			var totalInverseMass:Number = mParticle[0].inverseMass;
 			if(mParticle[1] != null)//如果没有另一个物体的话，就是碰到了质量无限大的物体上，比如地面，墙面等
 			{
@@ -96,16 +101,16 @@ package org.ares.vernalbreeze
 			}
 			//假如物体都是无限质量的，则无不会产生冲量
 			if(totalInverseMass <= 0) return;
-			//计算出物体的冲量
+			//计算出物体的冲量 Δv*ma*mb/(ma+mb)
 			var impluse:Number = deltaVelocity / totalInverseMass;
 			//计算冲量的方向
 			var implusePerIMass:VBVector = mContactNormal.mult(impluse);
 			//计算粒子的世界速度
-			mParticle[0].velocity.plusEquals(implusePerIMass.multEquals(mParticle[0].inverseMass));
-			//计算另一个粒子的速度
+			mParticle[0].velocity.plusEquals(implusePerIMass.mult(mParticle[0].inverseMass));
+			//计算另一个粒子的速度 冲量方向与第一个粒子相反
 			if(mParticle[1] != null)
 			{
-				mParticle[1].velocity.plusEquals(implusePerIMass.multEquals(-mParticle[1].inverseMass));
+				mParticle[1].velocity.plusEquals(implusePerIMass.mult(-mParticle[1].inverseMass));
 			}
 		}
 		/**
@@ -122,21 +127,21 @@ package org.ares.vernalbreeze
 			var totalInverseMass:Number = mParticle[0].inverseMass;
 			if(mParticle[1] != null)
 			{
-				totalInverseMass += mParticle[1].inverseMass;
+				totalInverseMass += mParticle[1].inverseMass;//(ma+mb)/(ma*mb)
 			}
 			//假如物体都是无限质量的
 			if(totalInverseMass <= 0)
 			{
 				return;
 			}
-			//-p(ma*mb)/(ma + mb)
+			//p(ma*mb)/(ma + mb)
 			var movePerIMass:VBVector = mContactNormal.mult(mPenetration/totalInverseMass);
-			//改变粒子的位置
-			mParticle[0].position.plusEquals(movePerIMass.multEquals(mParticle[0].inverseMass));
+			//改变粒子的位置,粒子1跟法向相同
+			mParticle[0].position.plusEquals(movePerIMass.mult(mParticle[0].inverseMass));
 			if(mParticle[1] != null)
 			{
-				//应该是负的
-				mParticle[1].position.plusEquals(movePerIMass.multEquals(-1*mParticle[1].inverseMass));
+				//粒子2跟法向相反
+				mParticle[1].position.minusEquals(movePerIMass.mult(mParticle[1].inverseMass));
 			}
 		}
 

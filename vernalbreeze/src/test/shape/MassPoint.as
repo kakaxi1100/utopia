@@ -7,6 +7,7 @@ package test.shape
 		public function MassPoint()
 		{
 			super();
+			var color:uint = Math.random()*0xffffff;
 			this.graphics.clear();
 			this.graphics.beginFill(0xffffff);
 			this.graphics.drawCircle(0,0,10);
