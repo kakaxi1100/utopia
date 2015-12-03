@@ -6,6 +6,7 @@ package
 	import flash.ui.Keyboard;
 	import flash.utils.getTimer;
 	
+	import org.ares.vernalbreeze.VBAnchoredSpringForce;
 	import org.ares.vernalbreeze.VBParticle;
 	import org.ares.vernalbreeze.VBParticleCable;
 	import org.ares.vernalbreeze.VBParticleContact;
@@ -14,7 +15,7 @@ package
 	
 	import test.shape.MassPoint;
 
-	[SWF(frameRate="60", backgroundColor="0",height="600",width="800")]
+	[SWF(frameRate="60", backgroundColor="0",height="300",width="300")]
 	public class CableTest extends Sprite
 	{
 		private var startTime:Number = 0;
@@ -48,11 +49,11 @@ package
 			
 			//将一端固定
 			p0.mass = Number.MAX_VALUE;
-//			p1.damping = 0.5;
+//			p1.damping = 0.9;
 			
-			p0.position.setTo(200,200);
-			p1.position.setTo(200,240);
-			p2.position.setTo(240,240);
+			p0.position.setTo(100,100);
+			p1.position.setTo(100,140);
+			p2.position.setTo(100,180);
 			//根据物体的质量来绘图
 			s0.scaleX = s0.scaleY = 1//p0.mass;
 			s1.scaleX = s1.scaleY = p1.mass;
@@ -83,11 +84,15 @@ package
 			switch(event.keyCode)
 			{
 				case Keyboard.LEFT:
+					p2.velocity.plusEquals(new VBVector(-80, 0));
 					break;
 				case Keyboard.RIGHT:
+					p2.velocity.plusEquals(new VBVector(80, 0));
 					break;
 				case Keyboard.UP:
-					p1.addForce(new VBVector(0,-5000));
+					p1.addForce(new VBVector(0,-500));
+//					p1.velocity.plusEquals(new VBVector(0,100));
+//					p1.acceleration.plusEquals(new VBVector(0,-100));
 					break;
 				case Keyboard.DOWN:
 //					p1.position.plusEquals(new VBVector(0,10));
@@ -110,8 +115,8 @@ package
 			lastTime = getTimer()/1000;
 			var duration:Number = lastTime - startTime;
 			startTime = lastTime;
-			p1.addForce(new VBVector(0, 30));
-			p2.addForce(new VBVector(0, 30));
+//			p1.addForce(new VBVector(0, 500));
+//			p2.addForce(new VBVector(0, 500));
 			p0.integrate(duration);
 			p1.integrate(duration);
 			p2.integrate(duration);
