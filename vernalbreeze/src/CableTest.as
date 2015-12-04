@@ -33,7 +33,7 @@ package
 		private var contact1:VBParticleContact = new VBParticleContact();
 		
 		private var cable0:VBParticleCable = new VBParticleCable();
-		private var rod0:VBParticleRod = new VBParticleRod();
+		private var rod0:VBParticleCable = new VBParticleCable();
 		
 		public function CableTest()
 		{
@@ -72,7 +72,8 @@ package
 			
 			rod0.particle[0] = p1;
 			rod0.particle[1] = p2;
-			rod0.length = 40;
+			rod0.maxLength = 40;
+			rod0.restitution = 1;
 			rod0.fillContact(contact1, 1);
 			
 			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUpHd);
@@ -90,7 +91,7 @@ package
 					p2.velocity.plusEquals(new VBVector(80, 0));
 					break;
 				case Keyboard.UP:
-					p1.addForce(new VBVector(0,-500));
+					p1.addForce(new VBVector(0,-5000));
 //					p1.velocity.plusEquals(new VBVector(0,100));
 //					p1.acceleration.plusEquals(new VBVector(0,-100));
 					break;
@@ -115,8 +116,8 @@ package
 			lastTime = getTimer()/1000;
 			var duration:Number = lastTime - startTime;
 			startTime = lastTime;
-//			p1.addForce(new VBVector(0, 500));
-//			p2.addForce(new VBVector(0, 500));
+			p1.addForce(new VBVector(0, 50));
+			p2.addForce(new VBVector(50, 0));
 			p0.integrate(duration);
 			p1.integrate(duration);
 			p2.integrate(duration);
