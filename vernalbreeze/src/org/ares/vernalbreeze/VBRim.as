@@ -5,7 +5,7 @@ package org.ares.vernalbreeze
 	 * @author JuLi
 	 * 
 	 */	
-	public class VBRim extends VBBPrimitive
+	public class VBRim extends VBPrimitive
 	{
 		public var radius:Number;
 		private var mAxis:VBVector;

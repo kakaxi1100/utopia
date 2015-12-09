@@ -7,12 +7,12 @@ package org.ares.vernalbreeze
 	 * @author JuLi
 	 * 
 	 */	
-	public class VBBPrimitive
+	public class VBPrimitive
 	{
 		public var rigidBody:VBRigidBody;
 		public var offset:Matrix;
 		private var mAxis:VBVector;
-		public function VBBPrimitive()
+		public function VBPrimitive()
 		{
 		}
 		

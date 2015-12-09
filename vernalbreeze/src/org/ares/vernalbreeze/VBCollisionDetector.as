@@ -5,9 +5,9 @@ package org.ares.vernalbreeze
 	 * @author JuLi
 	 * 
 	 */	
-	public class VBBCollisionDetector
+	public class VBCollisionDetector
 	{
-		public function VBBCollisionDetector()
+		public function VBCollisionDetector()
 		{
 		}
 		
@@ -17,7 +17,7 @@ package org.ares.vernalbreeze
 			
 		}*/
 		
-		public function rimAndRim(c1:VBRim, c2:VBRim, data:VBBCollisionData):uint
+		public function rimAndRim(c1:VBRim, c2:VBRim, data:VBCollisionData):uint
 		{
 			if(data.contactLeft <= 0)
 			{
