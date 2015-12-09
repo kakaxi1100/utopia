@@ -29,7 +29,7 @@ package
 			s0.x = r0.position.x;
 			s0.y = r0.position.y;
 			s0.rotation = r0.degree;
-			addChild(s0);
+			//addChild(s0);
 			
 			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUpHd);
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
