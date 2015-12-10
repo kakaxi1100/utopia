@@ -16,6 +16,15 @@ package
 		public function Test()
 		{
 			super();
+			stage.addEventListener(Event.MOUSE_LEAVE, onMouseLevelHd);
+			stage.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+			stage.addEventListener(MouseEvent.ROLL_OUT, onRollOut);
+			stage.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
+			stage.addEventListener(MouseEvent.ROLL_OVER, onRollOver);
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+			
+			/*
 			sr.x = 100;
 			sr.y = 100;
 			cr.x = 200;
@@ -42,6 +51,48 @@ package
 			
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, onClick);
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			*/
+		}
+		
+		protected function onMouseUp(event:MouseEvent):void
+		{
+			// TODO Auto-generated method stub
+			trace("onmouup");
+		}
+		
+		protected function onMouseMove(event:MouseEvent):void
+		{
+			// TODO Auto-generated method stub
+			//trace(stage.mouseX, stage.mouseY);
+		}
+		
+		protected function onRollOver(event:MouseEvent):void
+		{
+			// TODO Auto-generated method stub
+			trace("roll over!!");
+		}
+		
+		protected function onMouseOver(event:MouseEvent):void
+		{
+			// TODO Auto-generated method stub
+			trace("mouse over!!");
+		}
+		
+		protected function onRollOut(event:MouseEvent):void
+		{
+			// TODO Auto-generated method stub
+			trace("roll out!!");
+		}
+		
+		protected function onMouseOut(event:MouseEvent):void
+		{
+			// TODO Auto-generated method stub
+			trace("mouse out!!");
+		}
+		
+		protected function onMouseLevelHd(event:Event):void
+		{
+			trace("leave leave!!");
 		}
 		
 		private var angle:Number = 0;
