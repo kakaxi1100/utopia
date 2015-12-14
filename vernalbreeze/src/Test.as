@@ -55,8 +55,8 @@ package
 			vx[1].x = Math.sin(sp.rotation + 90)*100;
 			vx[1].y = Math.cos(sp.rotation + 90)*100;
 			
-			vx[2].x = Math.sin(sp.rotation)*120;
-			vx[2].y = Math.cos(sp.rotation)*120;
+			vx[2].x = Math.sin(sp.rotation)*111;
+			vx[2].y = Math.cos(sp.rotation)*111;
 			
 			vx[3].x = Math.sin(sp.rotation)*50;
 			vx[3].y = Math.cos(sp.rotation)*50;
