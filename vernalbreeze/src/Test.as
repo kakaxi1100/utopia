@@ -12,14 +12,71 @@ package
 	import org.ares.vernalbreeze.VBVector;
 	
 	import test.collision.VBAABB;
+	import test.collision.VBRim;
 	
-	[SWF(frameRate="30", backgroundColor="0",height="400",width="550")]
+	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
-		private var ab:VBAABB = new VBAABB();
+		private var ab:VBRim = new VBRim();
 		private var sp:Sprite = new Sprite();
 		private var abs:Sprite = new Sprite();
 		private var vx:Vector.<VBVector> = new Vector.<VBVector>();
+		private var radian:Number = Math.PI/180;
+		
+		public function Test()
+		{
+			addChild(sp);
+			addChild(abs);
+			sp.x = 200;
+			sp.y = 150;
+			sp.graphics.lineStyle(1,0xffffff);
+			sp.graphics.drawRect(0,0,50,100);
+			vx.push(new VBVector(0,0), new VBVector(0,100), new VBVector(50,100), new VBVector(50,0));
+			changeToWorld();
+			
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		private function changeToWorld():void
+		{
+			for(var i:int = 0; i < vx.length; i++)
+			{
+				vx[i].x += sp.x;
+				vx[i].y += sp.y;
+			}
+		}
+		
+		private function calculateVX():void
+		{
+			vx[0].y = Math.sin(sp.rotation*radian)*0 + Math.cos(sp.rotation*radian)*0;
+			vx[0].x = Math.cos(sp.rotation*radian)*0 - Math.sin(sp.rotation*radian)*0;
+			
+			vx[1].y = Math.sin(sp.rotation*radian)*0 + Math.cos(sp.rotation*radian)*100;
+			vx[1].x = Math.cos(sp.rotation*radian)*0 - Math.sin(sp.rotation*radian)*100;
+			
+			vx[2].y = Math.sin(sp.rotation*radian)*50 + Math.cos(sp.rotation*radian)*100;
+			vx[2].x = Math.cos(sp.rotation*radian)*50 - Math.sin(sp.rotation*radian)*100;
+			
+			vx[3].y = Math.sin(sp.rotation*radian)*50 + Math.cos(sp.rotation*radian)*0;
+			vx[3].x = Math.cos(sp.rotation*radian)*50 - Math.sin(sp.rotation*radian)*0;
+			
+			changeToWorld();
+		}
+		
+		protected function onEnterFrame(event:Event):void
+		{
+			sp.rotation += 1;
+			calculateVX();
+			ab.update(vx);
+			abs.graphics.clear();
+			abs.graphics.lineStyle(1, 0xff0000);
+			abs.graphics.drawCircle(ab.c.x, ab.c.y, ab.r);
+		}
+		/*private var ab:VBAABB = new VBAABB();
+		private var sp:Sprite = new Sprite();
+		private var abs:Sprite = new Sprite();
+		private var vx:Vector.<VBVector> = new Vector.<VBVector>();
+		private var degrees:Number = Math.PI/180;
 		public function Test()
 		{
 			addChild(sp);
@@ -47,31 +104,35 @@ package
 			}
 		}
 		
+		// |cosθ, -sinθ| |x|
+		// |sinθ, cosθ |*|y|
+		 	
 		private function calculateVX():void
 		{
-			vx[0].x = Math.sin(sp.rotation)*0;
-			vx[0].y = Math.cos(sp.rotation)*0;
+			vx[0].y = Math.sin(sp.rotation*degrees)*0 + Math.cos(sp.rotation*degrees)*0;
+			vx[0].x = Math.cos(sp.rotation*degrees)*0 - Math.sin(sp.rotation*degrees)*0;
 			
-			vx[1].x = Math.sin(sp.rotation + 90)*100;
-			vx[1].y = Math.cos(sp.rotation + 90)*100;
+			vx[1].y = Math.sin(sp.rotation*degrees)*0 + Math.cos(sp.rotation*degrees)*100;
+			vx[1].x = Math.cos(sp.rotation*degrees)*0 - Math.sin(sp.rotation*degrees)*100;
 			
-			vx[2].x = Math.sin(sp.rotation)*111;
-			vx[2].y = Math.cos(sp.rotation)*111;
+			vx[2].y = Math.sin(sp.rotation*degrees)*50 + Math.cos(sp.rotation*degrees)*100;
+			vx[2].x = Math.cos(sp.rotation*degrees)*50 - Math.sin(sp.rotation*degrees)*100;
 			
-			vx[3].x = Math.sin(sp.rotation)*50;
-			vx[3].y = Math.cos(sp.rotation)*50;
+			vx[3].y = Math.sin(sp.rotation*degrees)*50 + Math.cos(sp.rotation*degrees)*0;
+			vx[3].x = Math.cos(sp.rotation*degrees)*50 - Math.sin(sp.rotation*degrees)*0;
+
 			changeToWorld();
 		}
-		
+
 		protected function onEnterFrame(event:Event):void
 		{
-			sp.rotation = 180;
+			sp.rotation += 1;
 			calculateVX();
 			ab.updateAABB(vx);
 			abs.graphics.clear();
-			abs.graphics.lineStyle(2, 0xff0000);
+			abs.graphics.lineStyle(1, 0xff0000);
 			abs.graphics.drawRect(ab.shape.x, ab.shape.y, ab.shape.width, ab.shape.height);
-		}		
+		}	*/	
 		
 		/*[Embed(source="test/assets/popular.png")]
 		private var Image:Class;

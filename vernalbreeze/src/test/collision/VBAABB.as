@@ -6,6 +6,9 @@ package test.collision
 	/**
 	 *要计算每个顶点到X,Y轴的投影
 	 * 这样可以算出包围盒的最大最小值 
+	 * 矩阵旋转变换
+	 *|cosθ, -sinθ| |x|
+	 *|sinθ, cosθ |*|y|	 
 	 * @author JuLi
 	 * 
 	 */
