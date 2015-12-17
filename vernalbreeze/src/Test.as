@@ -69,7 +69,7 @@ package
 			calculateVX();
 			ab.update(vx);
 			abs.graphics.clear();
-			abs.graphics.lineStyle(1, 0xff0000);
+			abs.graphics.lineStyle(2, 0xffff00);
 			abs.graphics.drawCircle(ab.c.x, ab.c.y, ab.r);
 		}
 		/*private var ab:VBAABB = new VBAABB();
