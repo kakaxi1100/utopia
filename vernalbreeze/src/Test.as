@@ -17,7 +17,39 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
-		private var ab:VBRim = new VBRim();
+		
+		private var a:VBVector = new VBVector();
+		private var b:VBVector = new VBVector();
+		private var c:VBVector = new VBVector();
+		public function Test()
+		{
+			a.x = 1;
+			b.y = 1;
+			b.x = -1;
+			
+			var db:Number = a.minus(c).magnitude();
+			var da:Number = b.minus(c).magnitude();
+			var dc:Number = a.minus(b).magnitude();
+			
+			//COSc
+			var cosc:Number = (da*da+db*db-dc*dc)/(2*da*db);
+			var nc:Number = Math.acos(cosc);
+			var degreec:Number = nc*180/Math.PI;
+			
+			//COSb
+			var cosb:Number = (da*da+dc*dc-db*db)/(2*da*dc);
+			var nb:Number = Math.acos(cosb);
+			var degreeb:Number = nb*180/Math.PI;
+			
+			//COSa
+			var cosa:Number = (db*db+dc*dc-da*da)/(2*db*dc);
+			var na:Number = Math.acos(cosa);
+			var degreea:Number = na*180/Math.PI;
+			
+			trace(degreec, degreeb, degreea);
+		}
+		
+		/*private var ab:VBRim = new VBRim();
 		private var sp:Sprite = new Sprite();
 		private var abs:Sprite = new Sprite();
 		private var vx:Vector.<VBVector> = new Vector.<VBVector>();
@@ -71,7 +103,7 @@ package
 			abs.graphics.clear();
 			abs.graphics.lineStyle(2, 0xffff00);
 			abs.graphics.drawCircle(ab.c.x, ab.c.y, ab.r);
-		}
+		}*/
 		/*private var ab:VBAABB = new VBAABB();
 		private var sp:Sprite = new Sprite();
 		private var abs:Sprite = new Sprite();
