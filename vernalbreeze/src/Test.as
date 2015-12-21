@@ -17,8 +17,32 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
-		
+		/**
+		 * 计算点是否在三角形内部
+		 * 点  A,B,C 构成一个三角形
+		 * 可以计算 MA*MC,MC*MB,MB*MA
+		 * 看着三个叉积是否为正
+		 * 如果 
+		 * MA*MC >0， 说明 C在A的逆时针方向
+		 * MC*MB >0， 说明 B在C的逆时针方向
+		 * MB*MA >0， 说明 A在B的逆时针方向
+		 * 如果三个都为正，或者都为负，则M在三角形区域内
+		 * 如果有一个为0，另两个都是正或负，则M在三角形的边上
+		 * 如果有一个为0，另外一正一负，则M在三角形的延长线上
+		 * 如果有两个为0，则在三角形的顶点上
+		 * 不可能出现三个0的情况
+		*/
 		private var a:VBVector = new VBVector();
+		private var b:VBVector = new VBVector();
+		private var c:VBVector = new VBVector();
+		private var m:VBVector = new VBVector();
+		
+		public function Test()
+		{
+			
+		}
+		
+		/*private var a:VBVector = new VBVector();
 		private var b:VBVector = new VBVector();
 		private var c:VBVector = new VBVector();
 		public function Test()
@@ -47,7 +71,7 @@ package
 			var degreea:Number = na*180/Math.PI;
 			
 			trace(degreec, degreeb, degreea);
-		}
+		}*/
 		
 		/*private var ab:VBRim = new VBRim();
 		private var sp:Sprite = new Sprite();
