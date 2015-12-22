@@ -2,6 +2,7 @@ package
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.GraphicsPathCommand;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -17,30 +18,262 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
-		/**
-		 * 计算点是否在三角形内部
-		 * 点  A,B,C 构成一个三角形
-		 * 可以计算 MA*MC,MC*MB,MB*MA
-		 * 看着三个叉积是否为正
-		 * 如果 
-		 * MA*MC >0， 说明 C在A的逆时针方向
-		 * MC*MB >0， 说明 B在C的逆时针方向
-		 * MB*MA >0， 说明 A在B的逆时针方向
-		 * 如果三个都为正，或者都为负，则M在三角形区域内
-		 * 如果有一个为0，另两个都是正或负，则M在三角形的边上
-		 * 如果有一个为0，另外一正一负，则M在三角形的延长线上
-		 * 如果有两个为0，则在三角形的顶点上
-		 * 不可能出现三个0的情况
-		*/
-		private var a:VBVector = new VBVector();
-		private var b:VBVector = new VBVector();
-		private var c:VBVector = new VBVector();
-		private var m:VBVector = new VBVector();
-		
+		private var cur:VBVector;
+		private var convexVexs:Vector.<VBVector> = new Vector.<VBVector>();
+		private var orgVexs:Vector.<VBVector> = new Vector.<VBVector>();
 		public function Test()
 		{
+			var v1:VBVector = new VBVector(100,100);
+			var v2:VBVector = new VBVector(50,60);
+			var v3:VBVector = new VBVector(20,150);
+			var v4:VBVector = new VBVector(100,30);
+			var v5:VBVector = new VBVector(70,90);
+			var v6:VBVector = new VBVector(80,80);
 			
+			orgVexs.push(v1,v2,v3,v4,v5,v6);
+			//如果凸体少于三个点，则无法计算
+			if(orgVexs.length < 3) return;
+			cur = orgVexs[0];
+			stepOne();
+			stepTow();
 		}
+
+		private function cmp(v1:VBVector, v2:VBVector):Boolean
+		{
+
+			var v1c:VBVector = v1.minus(cur);
+			var v2c:VBVector = v2.minus(cur);
+			
+			var v1v2:Number = v1c.vectorMult(v2);
+			//角的转向
+			if(v1v2 > 0)
+			{
+				return true;
+			}else if(v1v2 == 0)
+			{
+				var v1len:Number = v1c.distance(cur);
+				var v2len:Number = v2c.distance(cur);
+				return v1len > v2len;
+			}
+
+			return false;
+		}
+
+		//排序极角
+		private function stepOne():void
+		{
+			//先找Y值最小，X值最小的点
+			
+			for(var i:int = 0; i < orgVexs.length; i++)
+			{
+				if(orgVexs[i].y < cur.y)
+				{
+					cur = orgVexs[i];//找最低点
+				}else if(orgVexs[i].y == cur.y)
+				{
+					if(orgVexs[i].x < cur.x)
+					{
+						cur = orgVexs[i];//找最左点
+					}
+				}
+			}
+			orgVexs.sort(cmp);
+//			//极角排序
+//			for(i = 0; i < orgVexs.length; i++)
+//			{
+//				if(orgVexs[i] == cur)
+//				{
+//					continue;
+//				}
+//				var temp:VBVector = orgVexs[i].minus(cur);
+//				var angle:Number = Math.atan2(temp.y, temp.x);
+//			}
+		}
+		
+		//计算凸点
+		private function stepTow():void
+		{
+			
+			//将头三个点先加入凸体
+			for(var i:int = 0; i < 3; i++)
+			{
+				convexVexs.push(orgVexs[i]);
+			}
+			var index:int;
+			while( i < orgVexs.length)
+			{
+				index = convexVexs.length - 1;
+				//当前点
+				var cur:VBVector = orgVexs[i];
+				//上一个点
+				var pre:VBVector = convexVexs[index];
+				//上上一点
+				var prepre:VBVector = orgVexs[index - 1];
+				//计算角的转向
+				var ppp:VBVector = prepre.minus(pre);
+				var cp:VBVector = cur.minus(pre);
+				
+				var PC:Number = ppp.vectorMult(cp);
+				//角的转向
+				if(PC < 0)
+				{
+					convexVexs.pop();
+				}
+				convexVexs.push(cur);
+				
+				i++;
+			}
+			
+			if(i == orgVexs.length)
+			{
+				index = convexVexs.length - 1;
+				//当前点
+				var cur:VBVector = orgVexs[0];
+				//上一个点
+				var pre:VBVector = convexVexs[index];
+				//上上一点
+				var prepre:VBVector = orgVexs[index - 1];
+				//计算角的转向
+				var ppp:VBVector = prepre.minus(pre);
+				var cp:VBVector = cur.minus(pre);
+				
+				var PC:Number = ppp.vectorMult(cp);
+				//角的转向
+				if(PC < 0)
+				{
+					convexVexs.pop();
+				}
+			}
+			
+			trace("aa");
+		}
+		
+/*//	计算点是否在三角形内部
+//		 点  A,B,C 构成一个三角形
+//		 可以计算 MA*MC,MC*MB,MB*MA
+//		 看着三个叉积的符号关系
+//		 如果 
+//		 MA*MC >0， 说明 C在A的逆时针方向
+//		 MC*MB >0， 说明 B在C的逆时针方向
+//		 MB*MA >0， 说明 A在B的逆时针方向
+//		 MA*MC <0， 说明 C在A的顺时针方向
+//		 MC*MB <0， 说明 B在C的顺时针方向
+//		 MB*MA <0， 说明 A在B的顺时针方向
+//		 如果三个都为正，或者都为负，则M在三角形区域内
+//		 如果有一个为0，另两个都是正或负，则M在三角形的边上
+//		 如果有一个为0，另外一正一负，则M在三角形的延长线上
+//		 如果有两个为0，则在三角形的顶点上
+//		 不可能出现三个0的情况
+		private var A:VBVector = new VBVector();
+		private var B:VBVector = new VBVector();
+		private var C:VBVector = new VBVector();
+		private var M:VBVector = new VBVector();
+		
+		private var sp:Sprite = new Sprite();
+		private var commands:Vector.<int>;
+		private var datas:Vector.<Number>;
+		private var crossAC:Number;
+		private var crossCB:Number;
+		private var crossBA:Number;
+		public function Test()
+		{
+			addChild(sp);
+			
+			A.x = 0+100; A.y = -100+100;
+			B.x = 100+100; B.y = 100+100;
+			C.x = -100+100; C.y = 100+100;
+			
+			var MA:VBVector = A.minus(M);
+			var MB:VBVector = B.minus(M);
+			var MC:VBVector = C.minus(M);
+			
+			crossAC = MA.vectorMult(MC);
+			crossCB = MC.vectorMult(MB);
+			crossBA = MB.vectorMult(MA);
+			
+			commands = new Vector.<int>(4,true);
+			commands[0] = GraphicsPathCommand.MOVE_TO;
+			commands[1] = GraphicsPathCommand.LINE_TO;
+			commands[2] = GraphicsPathCommand.LINE_TO;
+			commands[3] = GraphicsPathCommand.LINE_TO;
+			
+			datas = new Vector.<Number>(8,true);
+			datas[0] = A.x;
+			datas[1] = A.y;
+			datas[2] = C.x;
+			datas[3] = C.y;
+			datas[4] = B.x;
+			datas[5] = B.y;
+			datas[6] = A.x;
+			datas[7] = A.y;
+			
+			this.graphics.lineStyle(1, 0xff0000);
+			this.graphics.drawPath(commands,datas);
+
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			M.x = 500;
+			M.y = 500;
+			sp.graphics.beginFill(0xffff00);
+			sp.graphics.drawCircle(M.x, M.y, 3);
+			sp.graphics.endFill();
+		}
+		
+		private var count:int = 200;
+		protected function onEnterFrame(event:Event):void
+		{
+			M.x = stage.mouseX;
+			M.y = stage.mouseY;
+			sp.graphics.clear();
+			sp.graphics.beginFill(0xffff00);
+			sp.graphics.drawCircle(M.x, M.y, 3);
+			sp.graphics.endFill();
+			if(count < 0)
+			{
+//				M.x = Math.random()*50+50;
+//				M.y = Math.random()*100+50;
+				count = 100
+				A.x = Math.random()*stage.width + 100;
+				A.y = Math.random()*stage.height;
+				B.x = Math.random()*stage.width + 50;
+				B.y = Math.random()*stage.height + 50;
+				C.x = Math.random()*stage.width;
+				C.y = Math.random()*stage.height + 100;
+				
+				commands = new Vector.<int>(4,true);
+				commands[0] = GraphicsPathCommand.MOVE_TO;
+				commands[1] = GraphicsPathCommand.LINE_TO;
+				commands[2] = GraphicsPathCommand.LINE_TO;
+				commands[3] = GraphicsPathCommand.LINE_TO;
+				
+				datas = new Vector.<Number>(8,true);
+				datas[0] = A.x;
+				datas[1] = A.y;
+				datas[2] = C.x;
+				datas[3] = C.y;
+				datas[4] = B.x;
+				datas[5] = B.y;
+				datas[6] = A.x;
+				datas[7] = A.y;
+			}
+				
+			var MA:VBVector = A.minus(M);
+			var MB:VBVector = B.minus(M);
+			var MC:VBVector = C.minus(M);
+			
+			crossAC = MA.vectorMult(MC);
+			crossCB = MC.vectorMult(MB);
+			crossBA = MB.vectorMult(MA);
+			this.graphics.clear();
+			if((crossAC >0 && crossCB >0 && crossBA >0) || (crossAC <0 && crossCB <0 && crossBA <0))
+			{
+				this.graphics.lineStyle(1, 0xff0000);
+				this.graphics.drawPath(commands,datas);
+			}else{
+				this.graphics.lineStyle(1, 0x00ff00);
+				this.graphics.drawPath(commands,datas);
+			}
+			count--;
+		}*/
 		
 		/*private var a:VBVector = new VBVector();
 		private var b:VBVector = new VBVector();

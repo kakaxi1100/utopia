@@ -122,6 +122,17 @@ package org.ares.vernalbreeze
 		{
 			return Math.sqrt(x * x + y * y);
 		}
+		
+		/**
+		 *计算两点之间的距离 
+		 * @param v
+		 * @return 
+		 * 
+		 */		
+		public function distance(v:VBVector):Number
+		{
+			return this.minus(v).magnitude();
+		}
 		/**
 		 *标准化矢量 
 		 * 不改变原始值，产生一个新值 
