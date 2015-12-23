@@ -41,8 +41,10 @@ package
 		private var cur:VBVector;
 		private var convexVexs:Vector.<VBVector> = new Vector.<VBVector>();
 		private var orgVexs:Vector.<VBVector> = new Vector.<VBVector>();
+		private var sp:Sprite = new Sprite();
 		public function Test()
 		{
+			addChild(sp);
 			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
 			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 		}
@@ -51,6 +53,31 @@ package
 		{
 			switch(event.keyCode)
 			{
+				case Keyboard.LEFT://逐步计算头部
+					if(orgVexs.length < 3) return;
+					cur = orgVexs[0];
+					stepOne();
+					//将头三个点先加入凸体
+					for(k = 0; k < 3; k++)
+					{
+						convexVexs.push(orgVexs[k]);
+					}
+					DrawUtil.drawLine(this.graphics, convexVexs[0], convexVexs[1]);
+					this.graphics.lineTo(convexVexs[2].x, convexVexs[2].y);
+					break;
+				case Keyboard.RIGHT://开始逐步
+					stepTest();
+					sp.graphics.clear();
+					for(var i:int = 0; i < convexVexs.length; i++)
+					{
+						var next:int = i+1;
+						if(next >= convexVexs.length)
+						{
+							next = 0;
+						}
+						DrawUtil.drawLine(sp.graphics, convexVexs[i],convexVexs[next]);
+					}
+					break;
 				case Keyboard.UP://绘制点
 					//如果少于三个点，则无法计算
 					if(orgVexs.length < 3) return;
@@ -71,7 +98,45 @@ package
 					convexVexs.length = 0;
 					orgVexs.length = 0;
 					this.graphics.clear();
+					sp.graphics.clear();
 					break;
+			}
+		}
+		private var k:int;
+		private function stepTest():void
+		{
+			var index:int;
+			if( k <= orgVexs.length)
+			{
+				index = convexVexs.length - 1;
+				//当前点
+				var cur:VBVector
+				if(k == orgVexs.length)//计算最后一个点需要包含第一个点
+				{
+					cur = orgVexs[0];
+				}else
+				{
+					cur = orgVexs[k];
+				}
+				//上一个点
+				var pre:VBVector = convexVexs[index];
+				//上上一点
+				var prepre:VBVector = convexVexs[index - 1];
+				//计算角的转向
+				var ppp:VBVector = prepre.minus(pre);
+				var cp:VBVector = cur.minus(prepre);
+				
+				var PC:Number = ppp.vectorMult(cp);
+				//角的转向
+				if(PC > 0)
+				{
+					convexVexs.pop();
+				}
+				if(k != orgVexs.length)
+				{
+					convexVexs.push(cur);
+				}
+				k++;
 			}
 		}
 		
@@ -90,10 +155,10 @@ package
 			
 			var v1v2:Number = v1c.vectorMult(v2c);
 			//假如v1c是cur点
-			if(v1c == cur)
+			if(v1c.magnitude() == 0)
 			{
 				return -1;
-			}else if(v2c == cur)//假如v2c是cur点
+			}else if(v2c.magnitude() == 0)//假如v2c是cur点
 			{
 				return 1;
 			}
@@ -166,7 +231,7 @@ package
 				
 				var PC:Number = ppp.vectorMult(cp);
 				//角的转向
-				if(PC < 0)
+				if(PC > 0)
 				{
 					convexVexs.pop();
 				}
