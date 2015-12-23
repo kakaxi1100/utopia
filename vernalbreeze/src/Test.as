@@ -5,24 +5,188 @@ package
 	import flash.display.GraphicsPathCommand;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import flash.geom.Transform;
+	import flash.ui.Keyboard;
 	
 	import org.ares.vernalbreeze.VBVector;
 	
 	import test.collision.VBAABB;
 	import test.collision.VBRim;
+	import test.shape.DrawUtil;
 	
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
+		//判断角度左拐还是右拐
+		/*private var a:VBVector = new VBVector();
+		private var b:VBVector = new VBVector();
+		private var c:VBVector = new VBVector();
+		public function Test()
+		{
+			a.x = 100; a.y = 100;
+			b.x = 100; b.y = -100;
+			c.x = 200; c.y = 200;
+			
+			var AC:VBVector = a.minus(c);
+			var BC:VBVector = b.minus(c);
+			
+			var AB:Number = AC.vectorMult(BC);
+			trace(AB);
+		}*/
+//-----------------------------------------------------------------------------		
 		private var cur:VBVector;
 		private var convexVexs:Vector.<VBVector> = new Vector.<VBVector>();
 		private var orgVexs:Vector.<VBVector> = new Vector.<VBVector>();
 		public function Test()
 		{
+			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
+			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+		}
+		
+		protected function onKeyUp(event:KeyboardEvent):void
+		{
+			switch(event.keyCode)
+			{
+				case Keyboard.UP://绘制点
+					//如果少于三个点，则无法计算
+					if(orgVexs.length < 3) return;
+					cur = orgVexs[0];
+					stepOne();
+					stepTow();
+					for(var i:int = 0; i < convexVexs.length; i++)
+					{
+						var next:int = i+1;
+						if(next >= convexVexs.length)
+						{
+							next = 0;
+						}
+						DrawUtil.drawLine(this.graphics, convexVexs[i],convexVexs[next]);
+					}
+					break;
+				case Keyboard.DOWN://清除点
+					convexVexs.length = 0;
+					orgVexs.length = 0;
+					this.graphics.clear();
+					break;
+			}
+		}
+		
+		protected function onMouseClick(event:MouseEvent):void
+		{
+			var temp:VBVector = new VBVector(stage.mouseX, stage.mouseY);
+			orgVexs.push(temp);
+			DrawUtil.drawRim(this.graphics,temp); 
+		}
+		
+		private function cmp(v1:VBVector, v2:VBVector):Number
+		{
+			
+			var v1c:VBVector = v1.minus(cur);
+			var v2c:VBVector = v2.minus(cur);
+			
+			var v1v2:Number = v1c.vectorMult(v2c);
+			//假如v1c是cur点
+			if(v1c == cur)
+			{
+				return -1;
+			}else if(v2c == cur)//假如v2c是cur点
+			{
+				return 1;
+			}
+			//角的转向
+			if(v1v2 < 0)
+			{
+				return 1;
+			}else if(v1v2 == 0)
+			{
+				var v1len:Number = v1c.distance(cur);
+				var v2len:Number = v2c.distance(cur);
+				if(v1len > v2len)
+				{
+					return 1;
+				}
+			}
+			
+			return -1;
+		}
+		
+		//排序极角
+		private function stepOne():void
+		{
+			//先找Y值最小，X值最小的点
+			for(var i:int = 0; i < orgVexs.length; i++)
+			{
+				if(orgVexs[i].y < cur.y)
+				{
+					cur = orgVexs[i];//找最低点
+				}else if(orgVexs[i].y == cur.y)
+				{
+					if(orgVexs[i].x < cur.x)
+					{
+						cur = orgVexs[i];//找最左点
+					}
+				}
+			}
+			orgVexs.sort(cmp);
+		}
+		
+		//计算凸点
+		private function stepTow():void
+		{
+			
+			//将头三个点先加入凸体
+			for(var i:int = 0; i < 3; i++)
+			{
+				convexVexs.push(orgVexs[i]);
+			}
+			var index:int;
+			while( i <= orgVexs.length)
+			{
+				index = convexVexs.length - 1;
+				//当前点
+				var cur:VBVector
+				if(i == orgVexs.length)//计算最后一个点需要包含第一个点
+				{
+					cur = orgVexs[0];
+				}else
+				{
+					cur = orgVexs[i];
+				}
+				//上一个点
+				var pre:VBVector = convexVexs[index];
+				//上上一点
+				var prepre:VBVector = convexVexs[index - 1];
+				//计算角的转向
+				var ppp:VBVector = prepre.minus(pre);
+				var cp:VBVector = cur.minus(prepre);
+				
+				var PC:Number = ppp.vectorMult(cp);
+				//角的转向
+				if(PC < 0)
+				{
+					convexVexs.pop();
+				}
+				if(i != orgVexs.length)
+				{
+					convexVexs.push(cur);
+				}
+				i++;
+			}
+		}
+		
+//-----------------------------------------------------------------------------		
+		//计算凸体 Graham算法 （这个版本有问题，看上面的算法）
+		/*private var cur:VBVector;
+		private var convexVexs:Vector.<VBVector> = new Vector.<VBVector>();
+		private var orgVexs:Vector.<VBVector> = new Vector.<VBVector>();
+		public function Test()
+		{
+			this.graphics.lineStyle(1,0xff0000);
+			
 			var v1:VBVector = new VBVector(100,100);
 			var v2:VBVector = new VBVector(50,60);
 			var v3:VBVector = new VBVector(20,150);
@@ -30,23 +194,53 @@ package
 			var v5:VBVector = new VBVector(70,90);
 			var v6:VBVector = new VBVector(80,80);
 			
+			drawDot(v1);
+			drawDot(v2);
+			drawDot(v3);
+			drawDot(v4);
+			drawDot(v5);
+			drawDot(v6);
+			
 			orgVexs.push(v1,v2,v3,v4,v5,v6);
-			//如果凸体少于三个点，则无法计算
+			//如果少于三个点，则无法计算
 			if(orgVexs.length < 3) return;
 			cur = orgVexs[0];
 			stepOne();
 			stepTow();
+			
+			for(var i:int = 0; i < convexVexs.length; i++)
+			{
+				var next:int = i+1;
+				if(next >= convexVexs.length)
+				{
+					next = 0;
+				}
+				drawLine(convexVexs[i],convexVexs[next]);
+			}
 		}
 
+		private function drawDot(v:VBVector):void
+		{
+			this.graphics.lineStyle(1,0xff0000);
+			this.graphics.drawCircle(v.x,v.y,5);
+		}
+		
+		private function drawLine(v1:VBVector, v2:VBVector):void
+		{
+			this.graphics.lineStyle(1,0x00ff00);
+			this.graphics.moveTo(v1.x, v1.y);
+			this.graphics.lineTo(v2.x, v2.y);
+		}
+		
 		private function cmp(v1:VBVector, v2:VBVector):Boolean
 		{
 
 			var v1c:VBVector = v1.minus(cur);
 			var v2c:VBVector = v2.minus(cur);
 			
-			var v1v2:Number = v1c.vectorMult(v2);
+			var v1v2:Number = v1c.vectorMult(v2c);
 			//角的转向
-			if(v1v2 > 0)
+			if(v1v2 < 0)
 			{
 				return true;
 			}else if(v1v2 == 0)
@@ -100,15 +294,22 @@ package
 				convexVexs.push(orgVexs[i]);
 			}
 			var index:int;
-			while( i < orgVexs.length)
+			while( i <= orgVexs.length)
 			{
 				index = convexVexs.length - 1;
 				//当前点
-				var cur:VBVector = orgVexs[i];
+				var cur:VBVector
+				if(i == orgVexs.length)//计算最后一个点需要包含第一个点
+				{
+					cur = orgVexs[0];
+				}else
+				{
+					cur = orgVexs[i];
+				}
 				//上一个点
 				var pre:VBVector = convexVexs[index];
 				//上上一点
-				var prepre:VBVector = orgVexs[index - 1];
+				var prepre:VBVector = convexVexs[index - 1];
 				//计算角的转向
 				var ppp:VBVector = prepre.minus(pre);
 				var cp:VBVector = cur.minus(pre);
@@ -119,35 +320,35 @@ package
 				{
 					convexVexs.pop();
 				}
-				convexVexs.push(cur);
-				
+				if(i != orgVexs.length)
+				{
+					convexVexs.push(cur);
+				}
 				i++;
 			}
 			
-			if(i == orgVexs.length)
-			{
-				index = convexVexs.length - 1;
-				//当前点
-				var cur:VBVector = orgVexs[0];
-				//上一个点
-				var pre:VBVector = convexVexs[index];
-				//上上一点
-				var prepre:VBVector = orgVexs[index - 1];
-				//计算角的转向
-				var ppp:VBVector = prepre.minus(pre);
-				var cp:VBVector = cur.minus(pre);
-				
-				var PC:Number = ppp.vectorMult(cp);
-				//角的转向
-				if(PC < 0)
-				{
-					convexVexs.pop();
-				}
-			}
-			
-			trace("aa");
-		}
-		
+//			if(i == orgVexs.length)
+//			{
+//				index = convexVexs.length - 1;
+//				//当前点
+//				var cur:VBVector = orgVexs[0];
+//				//上一个点
+//				var pre:VBVector = convexVexs[index];
+//				//上上一点
+//				var prepre:VBVector = orgVexs[index - 1];
+//				//计算角的转向
+//				var ppp:VBVector = prepre.minus(pre);
+//				var cp:VBVector = cur.minus(pre);
+//				
+//				var PC:Number = ppp.vectorMult(cp);
+//				//角的转向
+//				if(PC < 0)
+//				{
+//					convexVexs.pop();
+//				}
+//			}
+		}*/
+//-------------------------------------------------------------------------------------------		
 /*//	计算点是否在三角形内部
 //		 点  A,B,C 构成一个三角形
 //		 可以计算 MA*MC,MC*MB,MB*MA
@@ -274,7 +475,8 @@ package
 			}
 			count--;
 		}*/
-		
+//-------------------------------------------------------------------------------------------		
+		//计算三角形夹角，用余弦定理
 		/*private var a:VBVector = new VBVector();
 		private var b:VBVector = new VBVector();
 		private var c:VBVector = new VBVector();
@@ -305,7 +507,8 @@ package
 			
 			trace(degreec, degreeb, degreea);
 		}*/
-		
+//-------------------------------------------------------------------------------------------		
+		//计算包围圆
 		/*private var ab:VBRim = new VBRim();
 		private var sp:Sprite = new Sprite();
 		private var abs:Sprite = new Sprite();
@@ -361,6 +564,8 @@ package
 			abs.graphics.lineStyle(2, 0xffff00);
 			abs.graphics.drawCircle(ab.c.x, ab.c.y, ab.r);
 		}*/
+//-------------------------------------------------------------------------------------------		
+		//计算AABB
 		/*private var ab:VBAABB = new VBAABB();
 		private var sp:Sprite = new Sprite();
 		private var abs:Sprite = new Sprite();
@@ -422,7 +627,8 @@ package
 			abs.graphics.lineStyle(1, 0xff0000);
 			abs.graphics.drawRect(ab.shape.x, ab.shape.y, ab.shape.width, ab.shape.height);
 		}	*/	
-		
+//-------------------------------------------------------------------------------------------		
+		//带图形的旋转测试
 		/*[Embed(source="test/assets/popular.png")]
 		private var Image:Class;
 		private var t:Bitmap;
@@ -468,6 +674,8 @@ package
 			sr.graphics.lineStyle(2, 0xff0000);
 			sr.graphics.drawRect(rect.x, rect.y, rect.width, rect.height);
 		}*/
+//-------------------------------------------------------------------------------------------		
+		//旋转测试
 		/*
 		private var sr:Sprite = new Sprite;
 		private var cr:Sprite = new Sprite;
@@ -476,13 +684,6 @@ package
 		public function Test()
 		{
 			super();
-			stage.addEventListener(Event.MOUSE_LEAVE, onMouseLevelHd);
-			stage.addEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
-			stage.addEventListener(MouseEvent.ROLL_OUT, onRollOut);
-			stage.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
-			stage.addEventListener(MouseEvent.ROLL_OVER, onRollOver);
-			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			
 			sr.x = 100;
 			sr.y = 100;
@@ -513,45 +714,10 @@ package
 			
 		}
 		
-		protected function onMouseUp(event:MouseEvent):void
-		{
-			// TODO Auto-generated method stub
-			trace("onmouup");
-		}
-		
 		protected function onMouseMove(event:MouseEvent):void
 		{
 			// TODO Auto-generated method stub
 			trace(stage.mouseX, stage.mouseY);
-		}
-		
-		protected function onRollOver(event:MouseEvent):void
-		{
-			// TODO Auto-generated method stub
-			trace("roll over!!");
-		}
-		
-		protected function onMouseOver(event:MouseEvent):void
-		{
-			// TODO Auto-generated method stub
-			trace("mouse over!!");
-		}
-		
-		protected function onRollOut(event:MouseEvent):void
-		{
-			// TODO Auto-generated method stub
-			trace("roll out!!");
-		}
-		
-		protected function onMouseOut(event:MouseEvent):void
-		{
-			// TODO Auto-generated method stub
-			trace("mouse out!!");
-		}
-		
-		protected function onMouseLevelHd(event:Event):void
-		{
-			trace("leave leave!!");
 		}
 		
 		private var angle:Number = 0;
@@ -569,5 +735,6 @@ package
 			sr.y = cr.y;
 			sr.rotation = cr.rotation;
 		}*/
+//-------------------------------------------------------------------------------------------
 	}
 }
