@@ -10,15 +10,15 @@ package test.shape
 		{
 		}
 		
-		public static function drawRim(g:Graphics, v:VBVector, r:Number = 5):void
+		public static function drawRim(g:Graphics, v:VBVector, r:Number = 5, thickness:Number = 1, color:uint = 0xff0000):void
 		{
-			g.lineStyle(1,0xff0000);
+			g.lineStyle(thickness,color);
 			g.drawCircle(v.x,v.y,r);
 		}
 		
-		public static function drawLine(g:Graphics, v1:VBVector, v2:VBVector):void
+		public static function drawLine(g:Graphics, v1:VBVector, v2:VBVector, thickness:Number = 1, color:uint = 0x00ff00):void
 		{
-			g.lineStyle(1,0x00ff00);
+			g.lineStyle(thickness,color);
 			g.moveTo(v1.x, v1.y);
 			g.lineTo(v2.x, v2.y);
 		}

@@ -10,7 +10,7 @@ package org.ares.vernalbreeze
 		 * 计算公式是余弦定理
 		 * Cosc = （da*da+db*db-dc*dc）/2dadb
 		 */		
-		public function caculateAngle(a:VBVector, b:VBVector, c:VBVector):void
+		public static function caculateAngle(a:VBVector, b:VBVector, c:VBVector):void
 		{
 			var db:Number = a.minus(c).magnitude();
 			var da:Number = b.minus(c).magnitude();
@@ -52,7 +52,7 @@ package org.ares.vernalbreeze
 		 * 如果有两个为0，则在三角形的顶点上
 		 * 不可能出现三个0的情况
 		 */
-		public function dotInTriangle(a:VBVector, b:VBVector, c:VBVector, p:VBVector):Boolean
+		public static function dotInTriangle(a:VBVector, b:VBVector, c:VBVector, p:VBVector):Boolean
 		{
 			var PA:VBVector = a.minus(p);
 			var PB:VBVector = b.minus(p);
@@ -69,5 +69,121 @@ package org.ares.vernalbreeze
 			
 			return false;
 		}
+//------------------计算凸体------------------------------------------------------------------	
+		private static var cur:VBVector;
+		public static function convexVolume(originVexs:Vector.<VBVector>, convexVexs:Vector.<VBVector>):void
+		{
+			//如果少于三个点，则无法计算
+			if(originVexs.length < 3) return;
+			cur = originVexs[0];
+			stepOne(originVexs);
+			stepTow(originVexs,convexVexs);
+		}
+		
+		/**
+		 *计算凸体 
+		 * @param originVexs
+		 * @param convexVexs
+		 * 
+		 */		
+		private static function stepTow(originVexs:Vector.<VBVector>, convexVexs:Vector.<VBVector>):void
+		{
+			//将头三个点先加入凸体
+			for(var i:int = 0; i < 3; i++)
+			{
+				convexVexs.push(originVexs[i]);
+			}
+			var index:int;
+			while( i <= originVexs.length)
+			{
+				index = convexVexs.length - 1;
+				if(i == originVexs.length)//计算最后一个点需要包含第一个点
+				{
+					cur = originVexs[0];
+				}else
+				{
+					cur = originVexs[i];
+				}
+				//上一个点
+				var pre:VBVector = convexVexs[index];
+				//上上一点
+				var prepre:VBVector = convexVexs[index - 1];
+				//计算角的转向
+				var ppp:VBVector = prepre.minus(pre);
+				var cp:VBVector = cur.minus(prepre);
+				
+				var PC:Number = ppp.vectorMult(cp);
+				//P在C的逆时针方向
+				if(PC > 0)
+				{
+					convexVexs.pop();//假如pop出去了，还要计算当前点与之前点的夹角，所以这里 i不能加
+				}
+				else//P在C的顺时针方向
+				{
+					if(i != originVexs.length)
+					{
+						convexVexs.push(cur);
+					}
+					i++;
+				}
+			}
+		}
+		
+		/**
+		 *找到最小点
+		 * 根据极角排序 
+		 * @param originVexs
+		 * 
+		 */		
+		private static function stepOne(originVexs:Vector.<VBVector>):void
+		{
+			//先找Y值最小，X值最小的点
+			for(var i:int = 0; i < originVexs.length; i++)
+			{
+				if(originVexs[i].y < cur.y)
+				{
+					cur = originVexs[i];//找最低点
+				}else if(originVexs[i].y == cur.y)
+				{
+					if(originVexs[i].x < cur.x)
+					{
+						cur = originVexs[i];//找最左点
+					}
+				}
+			}
+			originVexs.sort(compare);
+		}
+		/**
+		 *比较函数
+		 * 其实就是比较极角，按照从大到小或者从小到
+		 * 大的顺序排，让其对最小点呈扇形展开 
+		 * @param v1
+		 * @param v2
+		 * @return 
+		 * 
+		 */		
+		private static function compare(v1:VBVector, v2:VBVector):Number
+		{
+			
+			var v1c:VBVector = v1.minus(cur);
+			var v2c:VBVector = v2.minus(cur);
+			
+			var v1v2:Number = v1c.vectorMult(v2c);
+			//角的转向
+			if(v1v2 < 0)//假如v1在v2的顺时针方向，v1就排在后面
+			{
+				return 1;
+			}else if(v1v2 == 0)//假如亮点共线
+			{
+				var v1len:Number = v1.distance(cur);
+				var v2len:Number = v2.distance(cur);
+				if(v1len > v2len)//较远的那个排在后面
+				{
+					return 1;
+				}
+			}
+			return -1;
+		}
+//--------------------------------------------------------------------------------------------
 	}
 }

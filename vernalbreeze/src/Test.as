@@ -12,6 +12,7 @@ package
 	import flash.geom.Transform;
 	import flash.ui.Keyboard;
 	
+	import org.ares.vernalbreeze.VBMathUtil;
 	import org.ares.vernalbreeze.VBVector;
 	
 	import test.collision.VBAABB;
@@ -21,6 +22,11 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
+		public function Test()
+		{
+			
+		}
+//-----------------------------------------------------------------------------		
 		//判断角度左拐还是右拐
 		/*private var a:VBVector = new VBVector();
 		private var b:VBVector = new VBVector();
@@ -38,210 +44,226 @@ package
 			trace(AB);
 		}*/
 //-----------------------------------------------------------------------------		
-		private var cur:VBVector;
-		private var convexVexs:Vector.<VBVector> = new Vector.<VBVector>();
-		private var orgVexs:Vector.<VBVector> = new Vector.<VBVector>();
-		private var sp:Sprite = new Sprite();
-		public function Test()
-		{
-			addChild(sp);
-			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
-			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
-		}
-		
-		protected function onKeyUp(event:KeyboardEvent):void
-		{
-			switch(event.keyCode)
-			{
-				case Keyboard.LEFT://逐步计算头部
-					if(orgVexs.length < 3) return;
-					cur = orgVexs[0];
-					stepOne();
-					//将头三个点先加入凸体
-					for(k = 0; k < 3; k++)
-					{
-						convexVexs.push(orgVexs[k]);
-					}
-					DrawUtil.drawLine(this.graphics, convexVexs[0], convexVexs[1]);
-					this.graphics.lineTo(convexVexs[2].x, convexVexs[2].y);
-					break;
-				case Keyboard.RIGHT://开始逐步
-					stepTest();
-					sp.graphics.clear();
-					for(var i:int = 0; i < convexVexs.length; i++)
-					{
-						var next:int = i+1;
-						if(next >= convexVexs.length)
-						{
-							next = 0;
-						}
-						DrawUtil.drawLine(sp.graphics, convexVexs[i],convexVexs[next]);
-					}
-					break;
-				case Keyboard.UP://绘制点
-					//如果少于三个点，则无法计算
-					if(orgVexs.length < 3) return;
-					cur = orgVexs[0];
-					stepOne();
-					stepTow();
-					for(var i:int = 0; i < convexVexs.length; i++)
-					{
-						var next:int = i+1;
-						if(next >= convexVexs.length)
-						{
-							next = 0;
-						}
-						DrawUtil.drawLine(this.graphics, convexVexs[i],convexVexs[next]);
-					}
-					break;
-				case Keyboard.DOWN://清除点
-					convexVexs.length = 0;
-					orgVexs.length = 0;
-					this.graphics.clear();
-					sp.graphics.clear();
-					break;
-			}
-		}
-		private var k:int;
-		private function stepTest():void
-		{
-			var index:int;
-			if( k <= orgVexs.length)
-			{
-				index = convexVexs.length - 1;
-				//当前点
-				var cur:VBVector
-				if(k == orgVexs.length)//计算最后一个点需要包含第一个点
-				{
-					cur = orgVexs[0];
-				}else
-				{
-					cur = orgVexs[k];
-				}
-				//上一个点
-				var pre:VBVector = convexVexs[index];
-				//上上一点
-				var prepre:VBVector = convexVexs[index - 1];
-				//计算角的转向
-				var ppp:VBVector = prepre.minus(pre);
-				var cp:VBVector = cur.minus(prepre);
-				
-				var PC:Number = ppp.vectorMult(cp);
-				//角的转向
-				if(PC > 0)
-				{
-					convexVexs.pop();
-				}
-				if(k != orgVexs.length)
-				{
-					convexVexs.push(cur);
-				}
-				k++;
-			}
-		}
-		
-		protected function onMouseClick(event:MouseEvent):void
-		{
-			var temp:VBVector = new VBVector(stage.mouseX, stage.mouseY);
-			orgVexs.push(temp);
-			DrawUtil.drawRim(this.graphics,temp); 
-		}
-		
-		private function cmp(v1:VBVector, v2:VBVector):Number
-		{
-			
-			var v1c:VBVector = v1.minus(cur);
-			var v2c:VBVector = v2.minus(cur);
-			
-			var v1v2:Number = v1c.vectorMult(v2c);
-			//假如v1c是cur点
-			if(v1c.magnitude() == 0)
-			{
-				return -1;
-			}else if(v2c.magnitude() == 0)//假如v2c是cur点
-			{
-				return 1;
-			}
-			//角的转向
-			if(v1v2 < 0)
-			{
-				return 1;
-			}else if(v1v2 == 0)
-			{
-				var v1len:Number = v1c.distance(cur);
-				var v2len:Number = v2c.distance(cur);
-				if(v1len > v2len)
-				{
-					return 1;
-				}
-			}
-			
-			return -1;
-		}
-		
-		//排序极角
-		private function stepOne():void
-		{
-			//先找Y值最小，X值最小的点
-			for(var i:int = 0; i < orgVexs.length; i++)
-			{
-				if(orgVexs[i].y < cur.y)
-				{
-					cur = orgVexs[i];//找最低点
-				}else if(orgVexs[i].y == cur.y)
-				{
-					if(orgVexs[i].x < cur.x)
-					{
-						cur = orgVexs[i];//找最左点
-					}
-				}
-			}
-			orgVexs.sort(cmp);
-		}
-		
-		//计算凸点
-		private function stepTow():void
-		{
-			
-			//将头三个点先加入凸体
-			for(var i:int = 0; i < 3; i++)
-			{
-				convexVexs.push(orgVexs[i]);
-			}
-			var index:int;
-			while( i <= orgVexs.length)
-			{
-				index = convexVexs.length - 1;
-				//当前点
-				var cur:VBVector
-				if(i == orgVexs.length)//计算最后一个点需要包含第一个点
-				{
-					cur = orgVexs[0];
-				}else
-				{
-					cur = orgVexs[i];
-				}
-				//上一个点
-				var pre:VBVector = convexVexs[index];
-				//上上一点
-				var prepre:VBVector = convexVexs[index - 1];
-				//计算角的转向
-				var ppp:VBVector = prepre.minus(pre);
-				var cp:VBVector = cur.minus(prepre);
-				
-				var PC:Number = ppp.vectorMult(cp);
-				//角的转向
-				if(PC > 0)
-				{
-					convexVexs.pop();
-				}
-				if(i != orgVexs.length)
-				{
-					convexVexs.push(cur);
-				}
-				i++;
-			}
-		}
+		//计算凸体 Graham算法（完整版）
+//		private var cur:VBVector;
+//		private var convexVexs:Vector.<VBVector> = new Vector.<VBVector>();
+//		private var orgVexs:Vector.<VBVector> = new Vector.<VBVector>();
+//		private var sp:Sprite = new Sprite();
+//		public function Test()
+//		{
+//			addChild(sp);
+//			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
+//			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+//		}
+//		
+//		protected function onKeyUp(event:KeyboardEvent):void
+//		{
+//			switch(event.keyCode)
+//			{
+//				case Keyboard.SPACE:
+//					VBMathUtil.convexVolume(orgVexs,convexVexs);
+//					for(var i:int = 0; i < convexVexs.length; i++)
+//					{
+//						var next:int = i+1;
+//						if(next >= convexVexs.length)
+//						{
+//							next = 0;
+//						}
+//						DrawUtil.drawLine(this.graphics, convexVexs[i],convexVexs[next]);
+//					}
+//					break;
+//				case Keyboard.LEFT://逐步计算头部
+//					if(orgVexs.length < 3) return;
+//					cur = orgVexs[0];
+//					stepOne();
+//					//将头三个点先加入凸体
+//					for(k = 0; k < 3; k++)
+//					{
+//						convexVexs.push(orgVexs[k]);
+//					}
+//					DrawUtil.drawLine(this.graphics, convexVexs[0], convexVexs[1]);
+//					this.graphics.lineTo(convexVexs[2].x, convexVexs[2].y);
+//					break;
+//				case Keyboard.RIGHT://开始逐步
+//					stepTest();
+//					sp.graphics.clear();
+//					for(var i:int = 0; i < convexVexs.length; i++)
+//					{
+//						var next:int = i+1;
+//						if(next >= convexVexs.length)
+//						{
+//							next = 0;
+//						}
+//						DrawUtil.drawLine(sp.graphics, convexVexs[i],convexVexs[next]);
+//					}
+//					break;
+//				case Keyboard.UP://绘制点
+//					//如果少于三个点，则无法计算
+//					if(orgVexs.length < 3) return;
+//					cur = orgVexs[0];
+//					stepOne();
+//					stepTow();
+//					for(var i:int = 0; i < convexVexs.length; i++)
+//					{
+//						var next:int = i+1;
+//						if(next >= convexVexs.length)
+//						{
+//							next = 0;
+//						}
+//						DrawUtil.drawLine(this.graphics, convexVexs[i],convexVexs[next]);
+//					}
+//					break;
+//				case Keyboard.DOWN://清除点
+//					convexVexs.length = 0;
+//					orgVexs.length = 0;
+//					this.graphics.clear();
+//					sp.graphics.clear();
+//					break;
+//			}
+//		}
+//		private var k:int;
+//		private function stepTest():void
+//		{
+//			var index:int;
+//			if( k <= orgVexs.length)
+//			{
+//				index = convexVexs.length - 1;
+//				//当前点
+//				var cur:VBVector
+//				if(k == orgVexs.length)//计算最后一个点需要包含第一个点
+//				{
+//					cur = orgVexs[0];
+//				}else
+//				{
+//					cur = orgVexs[k];
+//				}
+//				//上一个点
+//				var pre:VBVector = convexVexs[index];
+//				//上上一点
+//				var prepre:VBVector = convexVexs[index - 1];
+//				//计算角的转向
+//				var ppp:VBVector = prepre.minus(pre);
+//				var cp:VBVector = cur.minus(prepre);
+//				
+//				var PC:Number = ppp.vectorMult(cp);
+//				//角的转向
+//				if(PC > 0)
+//				{
+//					convexVexs.pop();
+//				}else{//P在C的顺时针方向
+//					
+//					if(k != orgVexs.length)
+//					{
+//						convexVexs.push(cur);
+//					}
+//					k++;
+//				}
+//			}
+//		}
+//		
+//		protected function onMouseClick(event:MouseEvent):void
+//		{
+//			var temp:VBVector = new VBVector(stage.mouseX, stage.mouseY);
+//			orgVexs.push(temp);
+//			DrawUtil.drawRim(this.graphics,temp); 
+//		}
+//		
+//		private function cmp(v1:VBVector, v2:VBVector):Number
+//		{
+//			
+//			var v1c:VBVector = v1.minus(cur);
+//			var v2c:VBVector = v2.minus(cur);
+//			
+//			var v1v2:Number = v1c.vectorMult(v2c);
+////			//假如v1c是cur点
+////			if(v1c.magnitude() == 0)
+////			{
+////				return -1;
+////			}else if(v2c.magnitude() == 0)//假如v2c是cur点
+////			{
+////				return 1;
+////			}
+//			//角的转向
+//			if(v1v2 < 0)
+//			{
+//				return 1;
+//			}else if(v1v2 == 0)
+//			{
+//				var v1len:Number = v1.distance(cur);
+//				var v2len:Number = v2.distance(cur);
+//				if(v1len > v2len)
+//				{
+//					return 1;
+//				}
+//			}
+//			
+//			return -1;
+//		}
+//		
+//		//排序极角
+//		private function stepOne():void
+//		{
+//			//先找Y值最小，X值最小的点
+//			for(var i:int = 0; i < orgVexs.length; i++)
+//			{
+//				if(orgVexs[i].y < cur.y)
+//				{
+//					cur = orgVexs[i];//找最低点
+//				}else if(orgVexs[i].y == cur.y)
+//				{
+//					if(orgVexs[i].x < cur.x)
+//					{
+//						cur = orgVexs[i];//找最左点
+//					}
+//				}
+//			}
+//			orgVexs.sort(cmp);
+//		}
+//		
+//		//计算凸点
+//		private function stepTow():void
+//		{
+//			//将头三个点先加入凸体
+//			for(var i:int = 0; i < 3; i++)
+//			{
+//				convexVexs.push(orgVexs[i]);
+//			}
+//			var index:int;
+//			while( i <= orgVexs.length)
+//			{
+//				index = convexVexs.length - 1;
+//				//当前点
+//				var cur:VBVector
+//				if(i == orgVexs.length)//计算最后一个点需要包含第一个点
+//				{
+//					cur = orgVexs[0];
+//				}else
+//				{
+//					cur = orgVexs[i];
+//				}
+//				//上一个点
+//				var pre:VBVector = convexVexs[index];
+//				//上上一点
+//				var prepre:VBVector = convexVexs[index - 1];
+//				//计算角的转向
+//				var ppp:VBVector = prepre.minus(pre);
+//				var cp:VBVector = cur.minus(prepre);
+//				
+//				var PC:Number = ppp.vectorMult(cp);
+//				//P在C的逆时针方向
+//				if(PC > 0)
+//				{
+//					convexVexs.pop();
+//				}else{//P在C的顺时针方向
+//					
+//					if(i != orgVexs.length)
+//					{
+//						convexVexs.push(cur);
+//					}
+//					i++;
+//				}
+//			}
+//		}
 		
 //-----------------------------------------------------------------------------		
 		//计算凸体 Graham算法 （这个版本有问题，看上面的算法）
