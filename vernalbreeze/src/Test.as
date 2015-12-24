@@ -22,9 +22,33 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
+		private var convexVexs:Vector.<VBVector> = new Vector.<VBVector>();
 		public function Test()
 		{
 			
+		}
+		//旋转卡壳算法
+		private function rotatingCalipers():void
+		{
+			var minArea:Number = Number.MAX_VALUE;
+			//循环计算每条边
+			for(var i:int = 0, j:int = convexVexs.length - 1; i < convexVexs.length; j = i, i++)
+			{
+				//计算e0轴 及 i-j轴作为的X轴
+				var e0:VBVector = convexVexs[i].minus(convexVexs[i]);
+				//标准化
+				e0.normalizeEquals();
+				//计算e0的正交轴 e1作为Y轴
+				var e1:VBVector = new VBVector(-e0.y, e0.x);
+				
+				//包围矩形的4个顶点
+				var minx:Number = 0, maxx:Number = 0, miny:Number = 0, maxy:Number = 0;
+				//计算每个点在 e0, e1 上的投影，找到矩形对应的4个顶点
+				for(var k:int = 0; k < convexVexs.length; k++)
+				{
+					
+				}
+			}
 		}
 //-----------------------------------------------------------------------------		
 		//判断角度左拐还是右拐
