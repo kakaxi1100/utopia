@@ -22,5 +22,6 @@ package test.shape
 			g.moveTo(v1.x, v1.y);
 			g.lineTo(v2.x, v2.y);
 		}
+		
 	}
 }
