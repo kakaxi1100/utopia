@@ -1,5 +1,7 @@
 package org.ares.vernalbreeze
 {
+	import test.collision.VBOBB;
+
 	public class VBMathUtil
 	{
 		public function VBMathUtil()
@@ -7,7 +9,7 @@ package org.ares.vernalbreeze
 		}
 		/**
 		 *计算三角形的内角 
-		 * 计算公式是余弦定理
+		 * 计算公式是余弦定理（也可以用矢量的点积来计算）
 		 * Cosc = （da*da+db*db-dc*dc）/2dadb
 		 */		
 		public static function caculateAngle(a:VBVector, b:VBVector, c:VBVector):void
@@ -131,7 +133,8 @@ package org.ares.vernalbreeze
 		
 		/**
 		 *找到最小点
-		 * 根据极角排序 
+		 * 根据极角排序,并且去掉重复点
+		 * 必须注意它会改变原始数组
 		 * @param originVexs
 		 * 
 		 */		
@@ -151,8 +154,30 @@ package org.ares.vernalbreeze
 					}
 				}
 			}
+			//根据极角排序
 			originVexs.sort(compare);
+			//去掉重复点
+			duplicateRemoval(originVexs);
 		}
+		
+		/**
+		 *在排序过后去掉重复的点 
+		 * @param originVexs
+		 * 
+		 */		
+		private static function duplicateRemoval(originVexs:Vector.<VBVector>):void
+		{
+			for(var i:int = 0, j:int = 1; j < originVexs.length; i++, j++)
+			{
+				if(originVexs[i].equal(originVexs[j]))
+				{
+					originVexs.splice(j,1);
+					j--;
+					i--;
+				}
+			}
+		}
+		
 		/**
 		 *比较函数
 		 * 其实就是比较极角，按照从大到小或者从小到
@@ -185,5 +210,8 @@ package org.ares.vernalbreeze
 			return -1;
 		}
 //--------------------------------------------------------------------------------------------
+//-------------------计算OMBB-------------------------------------------------------------------------
+		
+//--------------------------------------------------------------------------------------------		
 	}
 }

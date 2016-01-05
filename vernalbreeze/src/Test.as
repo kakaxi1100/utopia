@@ -4,6 +4,8 @@ package
 	import flash.display.BitmapData;
 	import flash.display.GraphicsPathCommand;
 	import flash.display.Sprite;
+	import flash.display.StageAlign;
+	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
@@ -23,26 +25,45 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
-		//测试OBB
-		private var cur:VBVector;
+//		public function Test()
+//		{
+//			
+//		}
+//-----------------------------------------------------------------------------		
+		//OBB (完整代码，正确版本)
+		/*private var cur:VBVector;
 		private var convexVexs:Vector.<VBVector> = new Vector.<VBVector>();
 		private var orgVexs:Vector.<VBVector> = new Vector.<VBVector>();
 		private var sp:Sprite = new Sprite();
 		private var sp2:Sprite = new Sprite();
 		public function Test()
 		{
-			convexVexs.push(new VBVector(0,0), new VBVector(100,0), new VBVector(100,100), new VBVector(0,100));
+//			convexVexs.push(new VBVector(0,0), new VBVector(0,100), new VBVector(100,100));
 			addChild(sp);
 			addChild(sp2);
+//			stage.align = StageAlign.TOP_LEFT;
+			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
 			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+			
+//			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
+		
+//		private var key:Boolean;
+//		protected function onEnterFrame(event:Event):void
+//		{
+//			if(key)
+//			{
+//				sp.rotation += 1;
+//			}
+//		}
 		
 		protected function onKeyUp(event:KeyboardEvent):void
 		{
 			switch(event.keyCode)
 			{
-				case Keyboard.SPACE:
+				case Keyboard.UP:
+//					key = true;
 					VBMathUtil.convexVolume(orgVexs,convexVexs);
 					for(var i:int = 0; i < convexVexs.length; i++)
 					{
@@ -51,14 +72,36 @@ package
 						{
 							next = 0;
 						}
-						DrawUtil.drawLine(sp.graphics, convexVexs[i],convexVexs[next]);
+						DrawUtil.drawLine(sp.graphics, convexVexs[i],convexVexs[next],2);
 					}
 					
 					var testOBB:VBOBB = new VBOBB();
-					rotatingRectangle(testOBB);
-					trace("d");
+					//trace(rotatingRectangle(testOBB));
+					testOBB.updateOBB(convexVexs);
+					trace(testOBB);
+					//求四个顶点的值
+					//1.在世界坐标系下求出半宽和半高对于OBB轴向的矢量值
+					var tempW:VBVector = testOBB.x.mult(testOBB.halfWidth);//计算宽度的向量
+					var tempH:VBVector = testOBB.y.mult(testOBB.halfHeight);//计算高度的向量
+					//2.此时根据根据半宽和半高在 e0-e1 轴向上的矢量和既可以算出四个顶点 相对于世界坐标（0，0）的位置
+					var a:VBVector = new VBVector(tempW.x + tempH.x, tempW.y + tempH.y);
+					var b:VBVector = new VBVector(-tempW.x + tempH.x, -tempW.y + tempH.y);
+					var c:VBVector = new VBVector(-tempW.x - tempH.x, -tempW.y - tempH.y);
+					var d:VBVector = new VBVector(tempW.x - tempH.x, tempW.y - tempH.y);
+					trace(a,b,c,d);
+					//3.再加上中心点在世界坐标的位置求出各点的世界坐标
+					a.plusEquals(testOBB.center);
+					b.plusEquals(testOBB.center);
+					c.plusEquals(testOBB.center);
+					d.plusEquals(testOBB.center);
+					trace(a,b,c,d);
+					DrawUtil.drawLine(sp.graphics, a, b, 2, 0xffff00);
+					DrawUtil.drawLine(sp.graphics, b, c, 2, 0xffff00);
+					DrawUtil.drawLine(sp.graphics, c, d, 2, 0xffff00);
+					DrawUtil.drawLine(sp.graphics, d, a, 2, 0xffff00);
 					break;
 				case Keyboard.DOWN://清除点
+//					key = false;
 					convexVexs.length = 0;
 					orgVexs.length = 0;
 					this.graphics.clear();
@@ -72,96 +115,7 @@ package
 		{
 			var temp:VBVector = new VBVector(stage.mouseX, stage.mouseY);
 			orgVexs.push(temp);
-			DrawUtil.drawRim(this.graphics,temp); 
-		}
-		
-		private function cmp(v1:VBVector, v2:VBVector):Number
-		{
-			
-			var v1c:VBVector = v1.minus(cur);
-			var v2c:VBVector = v2.minus(cur);
-			
-			var v1v2:Number = v1c.vectorMult(v2c);
-			//角的转向
-			if(v1v2 < 0)
-			{
-				return 1;
-			}else if(v1v2 == 0)
-			{
-				var v1len:Number = v1.distance(cur);
-				var v2len:Number = v2.distance(cur);
-				if(v1len > v2len)
-				{
-					return 1;
-				}
-			}
-			
-			return -1;
-		}
-		
-		//排序极角
-		private function stepOne():void
-		{
-			//先找Y值最小，X值最小的点
-			for(var i:int = 0; i < orgVexs.length; i++)
-			{
-				if(orgVexs[i].y < cur.y)
-				{
-					cur = orgVexs[i];//找最低点
-				}else if(orgVexs[i].y == cur.y)
-				{
-					if(orgVexs[i].x < cur.x)
-					{
-						cur = orgVexs[i];//找最左点
-					}
-				}
-			}
-			orgVexs.sort(cmp);
-		}
-		
-		//计算凸点
-		private function stepTow():void
-		{
-			//将头三个点先加入凸体
-			for(var i:int = 0; i < 3; i++)
-			{
-				convexVexs.push(orgVexs[i]);
-			}
-			var index:int;
-			while( i <= orgVexs.length)
-			{
-				index = convexVexs.length - 1;
-				//当前点
-				var cur:VBVector
-				if(i == orgVexs.length)//计算最后一个点需要包含第一个点
-				{
-					cur = orgVexs[0];
-				}else
-				{
-					cur = orgVexs[i];
-				}
-				//上一个点
-				var pre:VBVector = convexVexs[index];
-				//上上一点
-				var prepre:VBVector = convexVexs[index - 1];
-				//计算角的转向
-				var ppp:VBVector = prepre.minus(pre);
-				var cp:VBVector = cur.minus(prepre);
-				
-				var PC:Number = ppp.vectorMult(cp);
-				//P在C的逆时针方向
-				if(PC > 0)
-				{
-					convexVexs.pop();
-				}else{//P在C的顺时针方向
-					
-					if(i != orgVexs.length)
-					{
-						convexVexs.push(cur);
-					}
-					i++;
-				}
-			}
+			DrawUtil.drawRim(sp.graphics,temp, 5); 
 		}
 		
 		//OBB 的中心，X轴和Y轴
@@ -218,15 +172,16 @@ package
 					var tempx:VBVector = e0.mult((mine0 + maxe0)).mult(0.5);
 					var tempy:VBVector = e1.mult((mine1 + maxe1)).mult(0.5);
 					obb.center = convexVexs[j].plus(tempx.plus(tempy));
+					obb.halfWidth = (maxe0 - mine0)*0.5;
+					obb.halfHeight = (maxe1 - mine1)*0.5;
 					obb.x = e0;
 					obb.y = e1;
-					trace(minArea);
 				}
 			}
 			return minArea;
-		}
+		}*/
 //-----------------------------------------------------------------------------		
-		//OBB初步代码
+		//OBB初步代码 (有错误 ，正确见上面版本)
 		/*private var convexVexs:Vector.<VBVector> = new Vector.<VBVector>();
 		public function Test()
 		{

@@ -95,6 +95,8 @@ package org.ares.vernalbreeze
 		
 		/**
 		 *点积（标积） 
+		 * 点积的几何意义：1，求投影
+		 * 1.|A|·|B|·cosα
 		 * @param v
 		 * @return 
 		 * 
@@ -105,6 +107,10 @@ package org.ares.vernalbreeze
 		}
 		/**
 		 *叉积（矢积） 
+		 * 叉积即几何意义：1，求面积 3，求一个矢量相对于另一个矢量的位置（顺时针方向或逆时针方向）
+		 * 1.|A|·|B|·sinα
+		 * 2.|x1 y1|
+		 *   |x2 y2|= x1*y2 - x2*y1
 		 * @param v
 		 * @return 
 		 * 
@@ -159,6 +165,17 @@ package org.ares.vernalbreeze
 			multEquals(1 / m);
 		}
 		
+		/**
+		 *判断两个向量是否相等 
+		 * @param v
+		 * @return 
+		 * 
+		 */		
+		public function equal(v:VBVector):Boolean
+		{
+			return (this.x == v.x && this.y == v.y);
+		}
+		
 		public function setTo(px:Number, py:Number):void
 		{
 			x = px;
@@ -177,7 +194,7 @@ package org.ares.vernalbreeze
 		
 		public function toString():String 
 		{
-			return "( "+x + " , " + y +" )";
+			return "( "+ x + " , " + y +" )";
 		}
 	}
 }

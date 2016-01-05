@@ -22,7 +22,14 @@ package test.collision
 			stepOne(vertexs);
 			stepTow(vertexs);
 		}
-		
+		/**
+		 * 第一步
+		 *找到间隔最大的两个顶点
+		 * 算出这两个顶点的中点作为包围圆的圆心
+		 *  这两个顶点距离的一半即是半径
+		 * @param vertexs
+		 * 
+		 */		
 		private function stepOne(vertexs:Vector.<VBVector>):void
 		{
 			var max:Number = 0;
@@ -47,6 +54,12 @@ package test.collision
 			r = max*0.5;
 		}
 		
+		/**
+		 *第二步
+		 * 计算所有点到中心点的距离，如果比 第一步 算出的 半径大，则将半径赋值为此点到圆心的距离 
+		 * @param vertexs
+		 * 
+		 */		
 		private function stepTow(vertexs:Vector.<VBVector>):void
 		{
 			for(var i:int = 0; i<vertexs.length; i++)

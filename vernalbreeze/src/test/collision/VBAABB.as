@@ -21,7 +21,12 @@ package test.collision
 		public function VBAABB()
 		{
 		}
-		
+		/**
+		 *计算AABB
+		 * 取得所有顶点值 
+		 * @param vertexs
+		 * 
+		 */		
 		public function updateAABB(vertexs:Vector.<VBVector>):void
 		{
 			if(vertexs.length == 0) return;
