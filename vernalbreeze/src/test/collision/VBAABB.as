@@ -14,10 +14,10 @@ package test.collision
 	 */
 	public class VBAABB
 	{
-		private var mMin:VBVector = new VBVector();
-		private var mMax:VBVector = new VBVector();
+		public var min:VBVector = new VBVector();
+		public var max:VBVector = new VBVector();
 		
-		public var shape:Rectangle = new Rectangle();
+		//public var shape:Rectangle = new Rectangle();
 		public function VBAABB()
 		{
 		}
@@ -54,11 +54,28 @@ package test.collision
 					xmin = vertexs[i].x;
 				}
 			}
+			min.setTo(xmin,ymin);
+			max.setTo(xmax,ymax);
 			//开始构建AABB
-			shape.x = xmin;
-			shape.y = ymin;
-			shape.width = xmax - xmin;
-			shape.height = ymax - ymin;
+//			shape.x = xmin;
+//			shape.y = ymin;
+//			shape.width = xmax - xmin;
+//			shape.height = ymax - ymin;
+		}
+		
+		/**
+		 *针对世界坐标系
+		 * 测试两个AABB是否相交 
+		 * true 相交 false 不相交
+		 * @param a
+		 * @return 
+		 * 
+		 */		
+		public function hitTestAABB(bb:VBAABB):Boolean
+		{
+			if(bb.max.x < this.min.x || bb.min.x > this.max.x) return false;
+			if(bb.max.y < this.min.y || bb.min.x > this.max.x) return false;
+			return true;
 		}
 	}
 }

@@ -25,6 +25,7 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
+//		//测试AABB相交
 //		public function Test()
 //		{
 //			
@@ -892,10 +893,12 @@ package
 			ab.updateAABB(vx);
 			
 			abs.graphics.lineStyle(2, 0xff0000);
-			abs.graphics.drawRect(ab.shape.x, ab.shape.y, ab.shape.width, ab.shape.height);
+//			abs.graphics.drawRect(ab.shape.x, ab.shape.y, ab.shape.width, ab.shape.height);
+			DrawUtil.drawAABB(abs.graphics, ab);
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
+		//转变为世界坐标系
 		private function changeToWorld():void
 		{
 			for(var i:int = 0; i < vx.length; i++)
@@ -905,9 +908,9 @@ package
 			}
 		}
 		
+		//计算出每个顶点的位置
 		// |cosθ, -sinθ| |x|
-		// |sinθ, cosθ |*|y|
-		 	
+		// |sinθ, cosθ |*|y| 	
 		private function calculateVX():void
 		{
 			vx[0].y = Math.sin(sp.rotation*degrees)*0 + Math.cos(sp.rotation*degrees)*0;
@@ -931,9 +934,9 @@ package
 			calculateVX();
 			ab.updateAABB(vx);
 			abs.graphics.clear();
-			abs.graphics.lineStyle(1, 0xff0000);
-			abs.graphics.drawRect(ab.shape.x, ab.shape.y, ab.shape.width, ab.shape.height);
-		}	*/	
+//			abs.graphics.drawRect(ab.shape.x, ab.shape.y, ab.shape.width, ab.shape.height);
+			DrawUtil.drawAABB(abs.graphics, ab);
+		}*/	
 //-------------------------------------------------------------------------------------------		
 		//带图形的旋转测试
 		/*[Embed(source="test/assets/popular.png")]
