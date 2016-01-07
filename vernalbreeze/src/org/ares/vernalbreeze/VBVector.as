@@ -95,7 +95,7 @@ package org.ares.vernalbreeze
 		
 		/**
 		 *点积（标积） 
-		 * 点积的几何意义：1，求投影
+		 * 点积的几何意义：1，求投影 2，计算锐角或者钝角
 		 * 1.|A|·|B|·cosα
 		 * @param v
 		 * @return 

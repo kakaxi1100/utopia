@@ -14,8 +14,8 @@ package test.collision
 	 */
 	public class VBAABB
 	{
-		public var min:VBVector = new VBVector();
-		public var max:VBVector = new VBVector();
+		public var min:VBVector;// = new VBVector();
+		public var max:VBVector;// = new VBVector();
 		
 		//public var shape:Rectangle = new Rectangle();
 		public function VBAABB()
@@ -74,7 +74,7 @@ package test.collision
 		public function hitTestAABB(bb:VBAABB):Boolean
 		{
 			if(bb.max.x < this.min.x || bb.min.x > this.max.x) return false;
-			if(bb.max.y < this.min.y || bb.min.x > this.max.x) return false;
+			if(bb.max.y < this.min.y || bb.min.y > this.max.y) return false;
 			return true;
 		}
 	}

@@ -25,11 +25,333 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
-//		//测试AABB相交
-//		public function Test()
-//		{
-//			
-//		}
+		private var obb1:VBOBB = new VBOBB();
+		private var obb2:VBOBB = new VBOBB();
+		
+		private var sp1:Sprite = new Sprite();
+		private var sp2:Sprite = new Sprite();
+		private var curSP:Sprite = sp1;
+		
+		private var orgVexs1:Vector.<VBVector> = new Vector.<VBVector>();
+		private var orgVexs2:Vector.<VBVector> = new Vector.<VBVector>();
+		private var curOrg:Vector.<VBVector> = orgVexs1;
+
+		private var convexVexs1:Vector.<VBVector> = new Vector.<VBVector>();
+		private var convexVexs2:Vector.<VBVector> = new Vector.<VBVector>();
+		private var curConvex:Vector.<VBVector> = convexVexs1;
+		
+		private var key:int = 0;
+		public function Test()
+		{
+			addChild(sp1);
+			addChild(sp2);
+			
+			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
+			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		protected function onEnterFrame(event:Event):void
+		{
+			if(key == 0) return;
+			//开始旋转
+			
+		}
+		
+		protected function onKeyUp(event:KeyboardEvent):void
+		{
+			switch(event.keyCode)
+			{
+				case Keyboard.A://切换到 A 图形
+					curSP = sp1;
+					curOrg = orgVexs1;
+					curConvex = convexVexs1;
+					break;
+				case Keyboard.B://切换到 B 图形
+					curSP = sp2;
+					curOrg = orgVexs2;
+					curConvex = convexVexs2;
+					break;
+				case Keyboard.M:// 计算凸体
+					VBMathUtil.convexVolume(orgVexs1,convexVexs1);
+					VBMathUtil.convexVolume(orgVexs2,convexVexs2);
+					//画凸体
+					DrawUtil.drawPolygon(sp1.graphics, convexVexs1, 2, 0xffff00);
+					DrawUtil.drawPolygon(sp2.graphics, convexVexs2, 2, 0xffff00);
+					//计算OBB
+					obb1.updateOBB(convexVexs1);
+					obb2.updateOBB(convexVexs2);
+					//画OBB
+					DrawUtil.drawOBB(sp1.graphics,obb1,2,0x00ff00);
+					DrawUtil.drawOBB(sp2.graphics,obb2,2,0x00ff00);
+					break;
+				case Keyboard.N://rest
+					orgVexs1= new Vector.<VBVector>();
+					orgVexs2= new Vector.<VBVector>();
+					curOrg= orgVexs1;
+					
+					convexVexs1= new Vector.<VBVector>();
+					convexVexs2= new Vector.<VBVector>();
+					curConvex= convexVexs1;
+
+					sp1.graphics.clear();
+					sp2.graphics.clear();
+					curSP = sp1;
+					break;
+				case Keyboard.SPACE://开始和停止旋转
+					key = key^1;
+					break;
+			}
+		}
+		
+		protected function onMouseClick(event:MouseEvent):void
+		{
+			var temp:VBVector = new VBVector(curSP.mouseX, curSP.mouseY);
+			curOrg.push(temp);
+			if(curSP == sp1)
+			{
+				DrawUtil.drawRim(curSP.graphics,temp, 5, 2, 0x00ffff); 
+			}else
+			{
+				DrawUtil.drawRim(curSP.graphics,temp, 5, 2, 0xff00ff); 
+			}
+		}
+		//-----------------------------------------------------------------------------		
+		//包围圆相交测试
+		/*private var rim1:VBRim = new VBRim();
+		private var rim2:VBRim = new VBRim();
+		//顶点集1
+		private var vx1:Vector.<VBVector> = new Vector.<VBVector>;
+		//顶点集2
+		private var vx2:Vector.<VBVector> = new Vector.<VBVector>;
+		//图形1
+		private var sp1:Sprite = new Sprite();
+		//图形2
+		private var sp2:Sprite = new Sprite();
+		
+		private var degrees:Number = Math.PI/180;
+		public function Test()
+		{
+			addChild(sp1);
+			sp1.x = 200;
+			sp1.y = 100;
+			addChild(sp2);
+			sp2.x = 260;
+			sp2.y = 160;
+			
+			vx1.push(new VBVector(0,0), new VBVector(40,0), new VBVector(40,80), new VBVector(0,80));
+			for(var i:int = 0, j:int = 1; j < vx1.length; i++,j++)
+			{
+				DrawUtil.drawLine(sp1.graphics, vx1[i], vx1[j], 1, 0xffffff);
+			}
+			DrawUtil.drawLine(sp1.graphics, vx1[j - 1], vx1[0], 1, 0xffffff);
+			
+			vx2.push(new VBVector(0,0), new VBVector(80,0), new VBVector(80,40), new VBVector(0,40));
+			for(i = 0, j = 1; j < vx1.length; i++,j++)
+			{
+				DrawUtil.drawLine(sp2.graphics, vx2[i], vx2[j], 1, 0xffffff);
+			}
+			DrawUtil.drawLine(sp2.graphics, vx2[j - 1], vx2[0], 1, 0xffffff);
+			
+			changeToWorld();
+			rim1.updateRim(vx1);
+			rim2.updateRim(vx2);
+			
+			DrawUtil.drawRim(this.graphics, rim1.c, rim1.r);
+			DrawUtil.drawRim(this.graphics, rim2.c, rim2.r);
+			
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		private var key:Boolean = false;
+		protected function onEnterFrame(event:Event):void
+		{
+			if(key) return;
+			sp1.rotation += 1;
+			sp2.rotation += 1;
+			
+			changeToWorld();
+			rim1.updateRim(vx1);
+			rim2.updateRim(vx2);
+			
+			this.graphics.clear();
+			if(rim1.hitTestRim(rim2))
+			{
+				//				key = true;
+				DrawUtil.drawRim(this.graphics, rim1.c, rim1.r, 2);
+				DrawUtil.drawRim(this.graphics, rim2.c, rim2.r, 2);
+			}else
+			{
+				DrawUtil.drawRim(this.graphics, rim1.c, rim1.r, 2, 0xffff00);
+				DrawUtil.drawRim(this.graphics, rim2.c, rim2.r, 2, 0xffff00);
+			}
+		}
+		
+		//转变为世界坐标系
+		private function changeToWorld():void
+		{
+			calculateVX();
+			for(var i:int = 0; i < 4; i++)
+			{
+				vx1[i].x += sp1.x;
+				vx1[i].y += sp1.y;
+				
+				vx2[i].x += sp2.x;
+				vx2[i].y += sp2.y;
+			}
+		}
+		
+		//计算出每个顶点的位置
+		//旋转矩阵公式
+		// |cosθ, -sinθ| |x|
+		// |sinθ, cosθ |*|y| 	
+		private function calculateVX():void
+		{
+			vx1[0].y = Math.sin(sp1.rotation*degrees)*0 + Math.cos(sp1.rotation*degrees)*0;
+			vx1[0].x = Math.cos(sp1.rotation*degrees)*0 - Math.sin(sp1.rotation*degrees)*0;
+			
+			vx1[1].y = Math.sin(sp1.rotation*degrees)*40 + Math.cos(sp1.rotation*degrees)*0;
+			vx1[1].x = Math.cos(sp1.rotation*degrees)*40 - Math.sin(sp1.rotation*degrees)*0;
+			
+			vx1[2].y = Math.sin(sp1.rotation*degrees)*40 + Math.cos(sp1.rotation*degrees)*80;
+			vx1[2].x = Math.cos(sp1.rotation*degrees)*40 - Math.sin(sp1.rotation*degrees)*80;
+			
+			vx1[3].y = Math.sin(sp1.rotation*degrees)*0 + Math.cos(sp1.rotation*degrees)*80;
+			vx1[3].x = Math.cos(sp1.rotation*degrees)*0 - Math.sin(sp1.rotation*degrees)*80;
+			
+			vx2[0].y = Math.sin(sp2.rotation*degrees)*0 + Math.cos(sp2.rotation*degrees)*0;
+			vx2[0].x = Math.cos(sp2.rotation*degrees)*0 - Math.sin(sp2.rotation*degrees)*0;
+			
+			vx2[1].y = Math.sin(sp2.rotation*degrees)*80 + Math.cos(sp2.rotation*degrees)*0;
+			vx2[1].x = Math.cos(sp2.rotation*degrees)*80 - Math.sin(sp2.rotation*degrees)*0;
+			
+			vx2[2].y = Math.sin(sp2.rotation*degrees)*80 + Math.cos(sp2.rotation*degrees)*40;
+			vx2[2].x = Math.cos(sp2.rotation*degrees)*80 - Math.sin(sp2.rotation*degrees)*40;
+			
+			vx2[3].y = Math.sin(sp2.rotation*degrees)*0 + Math.cos(sp2.rotation*degrees)*40;
+			vx2[3].x = Math.cos(sp2.rotation*degrees)*0 - Math.sin(sp2.rotation*degrees)*40;	
+		}*/
+//-----------------------------------------------------------------------------		
+		//AABB相交测试
+		/*private var aabb1:VBAABB = new VBAABB();
+		private var aabb2:VBAABB = new VBAABB();
+		//顶点集1
+		private var vx1:Vector.<VBVector> = new Vector.<VBVector>;
+		//顶点集2
+		private var vx2:Vector.<VBVector> = new Vector.<VBVector>;
+		//图形1
+		private var sp1:Sprite = new Sprite();
+		//sp1 轴向 相对于世界坐标系
+		private var sp1e0:VBVector = new VBVector();
+		private var sp1e1:VBVector = new VBVector();
+		//图形2
+		private var sp2:Sprite = new Sprite();
+		//sp2 轴向 相对于世界坐标系
+		private var sp2e0:VBVector = new VBVector();
+		private var sp2e1:VBVector = new VBVector();
+		
+		private var degrees:Number = Math.PI/180;
+		public function Test()
+		{
+			addChild(sp1);
+			sp1.x = 200;
+			sp1.y = 100;
+			addChild(sp2);
+			sp2.x = 260;
+			sp2.y = 160;
+			
+			vx1.push(new VBVector(0,0), new VBVector(40,0), new VBVector(40,80), new VBVector(0,80));
+			sp1e0 = vx1[1].minus(vx1[0]);
+			sp1e0.normalizeEquals();
+			sp1e1 = vx1[3].minus(vx1[0]);
+			sp1e1.normalizeEquals();
+			for(var i:int = 0, j:int = 1; j < vx1.length; i++,j++)
+			{
+				DrawUtil.drawLine(sp1.graphics, vx1[i], vx1[j], 1, 0xffffff);
+			}
+			DrawUtil.drawLine(sp1.graphics, vx1[j - 1], vx1[0], 1, 0xffffff);
+			
+			
+			vx2.push(new VBVector(0,0), new VBVector(80,0), new VBVector(80,40), new VBVector(0,40));
+			sp2e0 = vx2[1].minus(vx2[0]);
+			sp2e0.normalizeEquals();
+			sp2e1 = vx2[3].minus(vx2[0]);
+			sp2e1.normalizeEquals();
+			for(i = 0, j = 1; j < vx1.length; i++,j++)
+			{
+				DrawUtil.drawLine(sp2.graphics, vx2[i], vx2[j], 1, 0xffffff);
+			}
+			DrawUtil.drawLine(sp2.graphics, vx2[j - 1], vx2[0], 1, 0xffffff);
+			
+			changeToWorld();
+			aabb1.updateAABB(vx1);
+			aabb2.updateAABB(vx2);
+			
+			DrawUtil.drawAABB(this.graphics, aabb1,2);
+			DrawUtil.drawAABB(this.graphics, aabb2,2);
+			
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		private var key:Boolean = false;
+		protected function onEnterFrame(event:Event):void
+		{
+			if(key) return;
+			sp1.rotation += 1;
+			sp2.rotation += 1;
+			
+			changeToWorld();
+			aabb1.updateAABB(vx1);
+			aabb2.updateAABB(vx2);
+			
+			this.graphics.clear();
+			if(aabb1.hitTestAABB(aabb2))
+			{
+//				key = true;
+				DrawUtil.drawAABB(this.graphics, aabb1,2,0xff0000);
+				DrawUtil.drawAABB(this.graphics, aabb2,2,0xff0000);
+			}else
+			{
+				DrawUtil.drawAABB(this.graphics, aabb1,2);
+				DrawUtil.drawAABB(this.graphics, aabb2,2);
+			}
+		}
+		
+		//将顶点坐标转换成世界坐标
+		private function changeToWorld():void
+		{
+			updatee0e1();
+			calculateVX();
+			for(var i:int = 0; i<4; i++)
+			{
+				vx1[i].x += sp1.x;
+				vx1[i].y += sp1.y;
+				vx2[i].x += sp2.x;
+				vx2[i].y += sp2.y;
+			}
+		}
+		
+		//根据旋转的角度计算轴向
+		private function updatee0e1():void
+		{
+			sp1e0.setTo(Math.cos(sp1.rotation*degrees), Math.sin(sp1.rotation*degrees));
+			sp1e1.setTo(-sp1e0.y, sp1e0.x);
+			sp2e0.setTo(Math.cos(sp2.rotation*degrees), Math.sin(sp2.rotation*degrees));
+			sp2e1.setTo(-sp2e0.y, sp2e0.x);
+		}
+		
+		private function calculateVX():void
+		{
+			vx1[0].setTo(0,0);
+			vx1[1] = sp1e0.mult(40);
+			vx1[2] = sp1e0.mult(40).plus(sp1e1.mult(80));
+			vx1[3] = sp1e1.mult(80);
+			
+			vx2[0].setTo(0,0);
+			vx2[1] = sp2e0.mult(80);
+			vx2[2] = sp2e0.mult(80).plus(sp2e1.mult(40));
+			vx2[3] = sp2e1.mult(40);
+		}*/
 //-----------------------------------------------------------------------------		
 		//OBB (完整代码，正确版本)
 		/*private var cur:VBVector;

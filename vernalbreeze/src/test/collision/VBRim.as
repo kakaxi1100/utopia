@@ -11,13 +11,13 @@ package test.collision
 	 */	
 	public class VBRim
 	{
-		public var c:VBVector = new VBVector();
-		public var r:Number = 0;
+		public var c:VBVector;
+		public var r:Number;
 		public function VBRim()
 		{
 		}
 		
-		public function update(vertexs:Vector.<VBVector>):void
+		public function updateRim(vertexs:Vector.<VBVector>):void
 		{
 			stepOne(vertexs);
 			stepTow(vertexs);
@@ -70,6 +70,24 @@ package test.collision
 					r = temp;
 				}
 			}
+		}
+		
+		/**
+		 *两圆的相交判读
+		 * 相交返回 true ，不相交返回false 
+		 * @param rim
+		 * @return 
+		 * 
+		 */		
+		public function hitTestRim(rim:VBRim):Boolean
+		{
+			var d:VBVector = this.c.minus(rim.c);
+			//距离的平方
+			var distance2:Number = d.scalarMult(d);
+			//两球半径相加
+			var radiusSum:Number = this.r + rim.r;
+			//两圆的距离比半径加和大则没有碰上 false，否则两圆的距离比半径的加和要小则碰上了 true
+			return (distance2 <= radiusSum*radiusSum);
 		}
 	}
 }
