@@ -75,6 +75,7 @@ package
 			DrawUtil.drawRim(sp1.graphics,new VBVector(0,0), 5, 2, 0x00ffff);
 			DrawUtil.drawRim(sp1.graphics,new VBVector(-30,0), 5, 2, 0x00ffff);
 			DrawUtil.drawRim(sp1.graphics,new VBVector(0,60), 5, 2, 0x00ffff);
+			sp1.rotation = 90;
 			
 		}
 		
