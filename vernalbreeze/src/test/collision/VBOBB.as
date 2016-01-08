@@ -125,7 +125,7 @@ package test.collision
 			rs[0][1] = this.x.scalarMult(obb.y);//B-e1 --- A-e0
 			rs[1][0] = this.y.scalarMult(obb.x);//B-e0 --- A-e1
 			rs[1][1] = this.y.scalarMult(obb.y);//B-e1 --- A-e1
-			
+			//RS的绝对值
 			absrs[0][0] = Math.abs(rs[0][0]);
 			absrs[0][1] = Math.abs(rs[0][1]);
 			absrs[1][0] = Math.abs(rs[1][0]);
@@ -135,8 +135,7 @@ package test.collision
 			//首先将B相对于A的中心坐标得到
 			var t:VBVector = obb.center.minus(this.center);
 			//在求出中心点在A中每个坐标轴上的距离 即 t 在A 的每个轴上的投影距离
-			t.x = this.x.scalarMult(t);//A-e0 轴
-			t.y = this.y.scalarMult(t);//A-e1 轴
+			t = new VBVector(this.x.scalarMult(t), this.y.scalarMult(t));//A-e0 轴 和 A-e1 轴
 			
 			//3.首先计算 A 的两个轴
 			//A-e0 轴

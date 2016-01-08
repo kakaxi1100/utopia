@@ -31,8 +31,10 @@ package
 		private var sp1:Sprite = new Sprite();
 		private var sp2:Sprite = new Sprite();
 		private var curSP:Sprite = sp1;
+		private var obbsp1:Sprite = new Sprite();
+		private var obbsp2:Sprite = new Sprite();
 		
-		private var orgVexs1:Vector.<VBVector> = new Vector.<VBVector>();
+		private var orgVexs1:Vector.<VBVector> = new Vector.<VBVector>();//本地坐标
 		private var orgVexs2:Vector.<VBVector> = new Vector.<VBVector>();
 		private var curOrg:Vector.<VBVector> = orgVexs1;
 
@@ -40,22 +42,103 @@ package
 		private var convexVexs2:Vector.<VBVector> = new Vector.<VBVector>();
 		private var curConvex:Vector.<VBVector> = convexVexs1;
 		
+		private var newVexs1:Vector.<VBVector>;
+		private var newVexs2:Vector.<VBVector>;
+		
+		private var degrees:Number = Math.PI/180;
 		private var key:int = 0;
+		private var isAuto:Boolean = false;
 		public function Test()
 		{
 			addChild(sp1);
+			sp1.x = 200;
+			sp1.y = 160;
 			addChild(sp2);
+			sp2.x = 260;
+			sp2.y = 160;
+			
+			addChild(obbsp1);
+			addChild(obbsp2);
 			
 			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
 			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			//stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			
+			this.graphics.beginFill(0xff0000,1);
+			this.graphics.drawCircle(sp1.x, sp1.y, 5);
+			this.graphics.endFill();
+			
+			this.graphics.beginFill(0xffffff,1);
+			this.graphics.drawCircle(sp2.x, sp2.y, 5);
+			this.graphics.endFill();
+			
+			DrawUtil.drawRim(sp1.graphics,new VBVector(0,0), 5, 2, 0x00ffff);
+			DrawUtil.drawRim(sp1.graphics,new VBVector(-30,0), 5, 2, 0x00ffff);
+			DrawUtil.drawRim(sp1.graphics,new VBVector(0,60), 5, 2, 0x00ffff);
+			
 		}
 		
 		protected function onEnterFrame(event:Event):void
 		{
 			if(key == 0) return;
 			//开始旋转
+			if(isAuto)
+			{
+				sp1.rotation += 1;
+				sp2.rotation += 1;
+			}
+			//计算旋转点坐标
+			updateOBB();
+			//清空画布
+			sp1.graphics.clear();
+			sp2.graphics.clear();
+			obbsp1.graphics.clear();
+			obbsp2.graphics.clear();
 			
+			//画顶点
+			for(var i:int = 0; i< newVexs1.length; i++)
+			{
+				DrawUtil.drawRim(sp1.graphics,newVexs1[i], 5, 2, 0x00ffff); 
+			}
+			for(i = 0; i< newVexs2.length; i++)
+			{
+				DrawUtil.drawRim(sp2.graphics,newVexs2[i], 5, 2, 0xff00ff); 
+			}
+			trace(newVexs1);
+			trace(newVexs2);
+			//画凸体
+			DrawUtil.drawPolygon(sp1.graphics, newVexs1, 2, 0xffff00);
+			DrawUtil.drawPolygon(sp2.graphics, newVexs2, 2, 0xffff00);
+			//转换成世界坐标,这里可以简化，其实轴向和半宽半高都一样，就是中心点的位置需要转成世界坐标的位置
+			//计算OBB
+			var temp1vexs:Vector.<VBVector> = new Vector.<VBVector>;
+			var temp2vexs:Vector.<VBVector> = new Vector.<VBVector>;
+			for(i = 0; i < newVexs1.length; i++)
+			{	
+				var temp1:VBVector = new VBVector();
+				temp1.x = newVexs1[i].x + sp1.x;
+				temp1.y = newVexs1[i].y + sp1.y;
+				temp1vexs.push(temp1)
+			}
+			for(i = 0; i < newVexs2.length; i++)
+			{
+				var temp2:VBVector = new VBVector();
+				temp2.x = newVexs2[i].x + sp2.x;
+				temp2.y = newVexs2[i].y + sp2.y;
+				temp2vexs.push(temp2);
+			}
+			obb1.updateOBB(temp1vexs);
+			obb2.updateOBB(temp2vexs);
+			//画OBB
+			if(obb1.hitTestOBB(obb2))
+			{
+				DrawUtil.drawOBB(obbsp1.graphics,obb1,2,0xff0000);
+				DrawUtil.drawOBB(obbsp2.graphics,obb2,2,0xff0000);
+			}else
+			{
+				DrawUtil.drawOBB(obbsp1.graphics,obb1,2,0x00ff00);
+				DrawUtil.drawOBB(obbsp2.graphics,obb2,2,0x00ff00);
+			}
 		}
 		
 		protected function onKeyUp(event:KeyboardEvent):void
@@ -73,17 +156,44 @@ package
 					curConvex = convexVexs2;
 					break;
 				case Keyboard.M:// 计算凸体
+					convexVexs1.push(new VBVector(0, 0), new VBVector(0,30), new VBVector(60,0));
+					convexVexs2.push(new VBVector(0,0), new VBVector(0,30),  new VBVector(60,0));
 					VBMathUtil.convexVolume(orgVexs1,convexVexs1);
 					VBMathUtil.convexVolume(orgVexs2,convexVexs2);
 					//画凸体
 					DrawUtil.drawPolygon(sp1.graphics, convexVexs1, 2, 0xffff00);
 					DrawUtil.drawPolygon(sp2.graphics, convexVexs2, 2, 0xffff00);
+					//转换成世界坐标
 					//计算OBB
-					obb1.updateOBB(convexVexs1);
-					obb2.updateOBB(convexVexs2);
+					var temp1vexs:Vector.<VBVector> = new Vector.<VBVector>;
+					var temp2vexs:Vector.<VBVector> = new Vector.<VBVector>;
+					for(var i:int = 0; i <convexVexs1.length; i++ )
+					{	
+						var temp1:VBVector = new VBVector();
+						temp1.x = convexVexs1[i].x + sp1.x;
+						temp1.y = convexVexs1[i].y + sp1.y;
+						temp1vexs.push(temp1)
+					}
+					for(i = 0; i < convexVexs2.length; i++)
+					{
+						var temp2:VBVector = new VBVector();
+						temp2.x = convexVexs2[i].x + sp2.x;
+						temp2.y = convexVexs2[i].y + sp2.y;
+						temp2vexs.push(temp2);
+					}
+					
+					obb1.updateOBB(temp1vexs);
+					obb2.updateOBB(temp2vexs);
 					//画OBB
-					DrawUtil.drawOBB(sp1.graphics,obb1,2,0x00ff00);
-					DrawUtil.drawOBB(sp2.graphics,obb2,2,0x00ff00);
+					if(obb1.hitTestOBB(obb2))
+					{
+						DrawUtil.drawOBB(obbsp1.graphics,obb1,2,0xff0000);
+						DrawUtil.drawOBB(obbsp2.graphics,obb2,2,0xff0000);
+					}else
+					{
+						DrawUtil.drawOBB(obbsp1.graphics,obb1,2,0x00ff00);
+						DrawUtil.drawOBB(obbsp2.graphics,obb2,2,0x00ff00);
+					}
 					break;
 				case Keyboard.N://rest
 					orgVexs1= new Vector.<VBVector>();
@@ -97,10 +207,57 @@ package
 					sp1.graphics.clear();
 					sp2.graphics.clear();
 					curSP = sp1;
+					obbsp1.graphics.clear();
+					obbsp2.graphics.clear();
 					break;
 				case Keyboard.SPACE://开始和停止旋转
 					key = key^1;
+					isAuto = true;
 					break;
+				case Keyboard.LEFT:
+					key = 1;
+					isAuto = false;
+					sp1.rotation += 90;
+					sp2.rotation += 90;
+					onEnterFrame(null);
+					break;
+				case Keyboard.RIGHT:
+					key = 1;
+					isAuto = false;
+					sp1.rotation -= 90;
+					sp2.rotation -= 90;
+					onEnterFrame(null);
+					break;
+			}
+		}
+		
+		
+		//*图形执行旋转操作之后
+		//* 轴向变了
+		//* 中心点的位置也变了 
+		//* 根据旋转矩阵具体变化如下
+		//* 
+		//* |cosq -sinq| |x|
+		//* |sinq  cosq|*|y|
+		//*	
+		private function updateOBB():void
+		{
+			newVexs1 = new Vector.<VBVector>();
+			newVexs2 = new Vector.<VBVector>();
+			var v:VBVector;
+			for(var i:int = 0; i < convexVexs1.length; i++)
+			{
+				v = new VBVector();
+				v.x = Math.cos(sp1.rotation*degrees)*convexVexs1[i].x - Math.sin(sp1.rotation*degrees)*convexVexs1[i].y;
+				v.y = Math.sin(sp1.rotation*degrees)*convexVexs1[i].x + Math.cos(sp1.rotation*degrees)*convexVexs1[i].y;
+				newVexs1.push(v);
+			}
+			for(i = 0; i < convexVexs2.length; i++)
+			{
+				v = new VBVector();
+				v.x = Math.cos(sp2.rotation*degrees)*convexVexs2[i].x - Math.sin(sp2.rotation*degrees)*convexVexs2[i].y;
+				v.y = Math.sin(sp2.rotation*degrees)*convexVexs2[i].x + Math.cos(sp2.rotation*degrees)*convexVexs2[i].y;
+				newVexs2.push(v);
 			}
 		}
 		
