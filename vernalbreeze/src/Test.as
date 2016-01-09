@@ -31,6 +31,7 @@ package
 		private var sp1:Sprite = new Sprite();
 		private var sp2:Sprite = new Sprite();
 		private var curSP:Sprite = sp1;
+		
 		private var obbsp1:Sprite = new Sprite();
 		private var obbsp2:Sprite = new Sprite();
 		
@@ -48,6 +49,9 @@ package
 		private var degrees:Number = Math.PI/180;
 		private var key:int = 0;
 		private var isAuto:Boolean = false;
+		
+		private var sp1rotation:Number = 0;
+		private var sp2rotation:Number = 0;
 		public function Test()
 		{
 			addChild(sp1);
@@ -62,7 +66,7 @@ package
 			
 			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
 			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
-			//stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			
 			this.graphics.beginFill(0xff0000,1);
 			this.graphics.drawCircle(sp1.x, sp1.y, 5);
@@ -71,12 +75,6 @@ package
 			this.graphics.beginFill(0xffffff,1);
 			this.graphics.drawCircle(sp2.x, sp2.y, 5);
 			this.graphics.endFill();
-			
-			DrawUtil.drawRim(sp1.graphics,new VBVector(0,0), 5, 2, 0x00ffff);
-			DrawUtil.drawRim(sp1.graphics,new VBVector(-30,0), 5, 2, 0x00ffff);
-			DrawUtil.drawRim(sp1.graphics,new VBVector(0,60), 5, 2, 0x00ffff);
-			sp1.rotation = 90;
-			
 		}
 		
 		protected function onEnterFrame(event:Event):void
@@ -85,8 +83,8 @@ package
 			//开始旋转
 			if(isAuto)
 			{
-				sp1.rotation += 1;
-				sp2.rotation += 1;
+				sp1rotation += 1;
+				sp2rotation += 1;
 			}
 			//计算旋转点坐标
 			updateOBB();
@@ -105,8 +103,6 @@ package
 			{
 				DrawUtil.drawRim(sp2.graphics,newVexs2[i], 5, 2, 0xff00ff); 
 			}
-			trace(newVexs1);
-			trace(newVexs2);
 			//画凸体
 			DrawUtil.drawPolygon(sp1.graphics, newVexs1, 2, 0xffff00);
 			DrawUtil.drawPolygon(sp2.graphics, newVexs2, 2, 0xffff00);
@@ -157,8 +153,8 @@ package
 					curConvex = convexVexs2;
 					break;
 				case Keyboard.M:// 计算凸体
-					convexVexs1.push(new VBVector(0, 0), new VBVector(0,30), new VBVector(60,0));
-					convexVexs2.push(new VBVector(0,0), new VBVector(0,30),  new VBVector(60,0));
+//					convexVexs1.push(new VBVector(0, 0), new VBVector(0,30), new VBVector(60,0));
+//					convexVexs2.push(new VBVector(0,0), new VBVector(0,30),  new VBVector(60,0));
 					VBMathUtil.convexVolume(orgVexs1,convexVexs1);
 					VBMathUtil.convexVolume(orgVexs2,convexVexs2);
 					//画凸体
@@ -218,15 +214,19 @@ package
 				case Keyboard.LEFT:
 					key = 1;
 					isAuto = false;
-					sp1.rotation += 90;
-					sp2.rotation += 90;
+					//这里有陷阱，它本来旋转了90度，算出的点是旋转90度之后的点，在+上这个旋转的度数，显示的就是180度
+					//所以不能直接rotation+
+//					sp1.rotation += 90;
+//					sp2.rotation += 90;
+					sp1rotation += 90;
+					sp2rotation += 90;
 					onEnterFrame(null);
 					break;
 				case Keyboard.RIGHT:
 					key = 1;
 					isAuto = false;
-					sp1.rotation -= 90;
-					sp2.rotation -= 90;
+					sp1rotation -= 90;
+					sp2rotation -= 90;
 					onEnterFrame(null);
 					break;
 			}
@@ -249,15 +249,15 @@ package
 			for(var i:int = 0; i < convexVexs1.length; i++)
 			{
 				v = new VBVector();
-				v.x = Math.cos(sp1.rotation*degrees)*convexVexs1[i].x - Math.sin(sp1.rotation*degrees)*convexVexs1[i].y;
-				v.y = Math.sin(sp1.rotation*degrees)*convexVexs1[i].x + Math.cos(sp1.rotation*degrees)*convexVexs1[i].y;
+				v.x = Math.cos(sp1rotation*degrees)*convexVexs1[i].x - Math.sin(sp1rotation*degrees)*convexVexs1[i].y;
+				v.y = Math.sin(sp1rotation*degrees)*convexVexs1[i].x + Math.cos(sp1rotation*degrees)*convexVexs1[i].y;
 				newVexs1.push(v);
 			}
 			for(i = 0; i < convexVexs2.length; i++)
 			{
 				v = new VBVector();
-				v.x = Math.cos(sp2.rotation*degrees)*convexVexs2[i].x - Math.sin(sp2.rotation*degrees)*convexVexs2[i].y;
-				v.y = Math.sin(sp2.rotation*degrees)*convexVexs2[i].x + Math.cos(sp2.rotation*degrees)*convexVexs2[i].y;
+				v.x = Math.cos(sp2rotation*degrees)*convexVexs2[i].x - Math.sin(sp2rotation*degrees)*convexVexs2[i].y;
+				v.y = Math.sin(sp2rotation*degrees)*convexVexs2[i].x + Math.cos(sp2rotation*degrees)*convexVexs2[i].y;
 				newVexs2.push(v);
 			}
 		}
