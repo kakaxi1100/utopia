@@ -25,7 +25,81 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
-		private var obb1:VBOBB = new VBOBB();
+		public function Test()
+		{
+			
+		}
+//-----------------------------------------------------------------------------		
+		//测试AABB上离指定点最近的点,和最近距离计算
+		/*private var pdot:VBVector = new VBVector();
+		private var qdot:VBVector;
+		private var aabb:VBAABB = new VBAABB();
+		private var vexs:Vector.<VBVector> = new Vector.<VBVector>;
+		public function Test()
+		{
+			vexs.push(new VBVector(100,110),new VBVector(150,180),new VBVector(200,230),new VBVector(250,300));
+			aabb.updateAABB(vexs);
+			DrawUtil.drawAABB(this.graphics, aabb,2);
+			
+			pdot.setTo(260,260);
+			qdot = VBMathUtil.closestPtPointAABB(pdot, aabb);
+			DrawUtil.drawRim(this.graphics, pdot, 5, 2, 0x00ff00);
+			DrawUtil.drawRim(this.graphics, qdot, 5, 2, 0xff0000);
+			
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+		}
+		
+		protected function onMouseMove(event:MouseEvent):void
+		{
+			pdot.setTo(stage.mouseX, stage.mouseY);
+			qdot = VBMathUtil.closestPtPointAABB(pdot, aabb);
+			this.graphics.clear();
+			DrawUtil.drawAABB(this.graphics, aabb,2);
+			DrawUtil.drawRim(this.graphics, pdot, 5, 2, 0x00ff00);
+			DrawUtil.drawRim(this.graphics, qdot, 5, 2, 0xff0000);
+			trace(VBMathUtil.squareDistancePointAABB(pdot, aabb));
+		}*/
+//-----------------------------------------------------------------------------		
+		//测试线段上离指定点最近的点,和最近距离计算
+		/*private var adot:VBVector = new VBVector();
+		private var bdot:VBVector = new VBVector();
+		private var cdot:VBVector = new VBVector();
+		private var ddot:VBVector;
+		public function Test()
+		{
+			adot.setTo(100,100);
+			bdot.setTo(150,260);
+			cdot.setTo(49,80);
+			
+			DrawUtil.drawLine(this.graphics, adot, bdot, 2, 0xffffff);
+			DrawUtil.drawRim(this.graphics, cdot, 5, 2, 0x00ff00);
+			
+			ddot = VBMathUtil.closestPtPointSegment(cdot,adot,bdot);
+			DrawUtil.drawRim(this.graphics, ddot, 5, 2, 0xff0000);
+			trace(VBMathUtil.squareDistancePointSegment(adot,bdot,cdot));
+			
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+		}
+		
+		protected function onMouseMove(event:MouseEvent):void
+		{
+			cdot.x = stage.mouseX;
+			cdot.y = stage.mouseY;
+			this.graphics.clear();
+			DrawUtil.drawLine(this.graphics, adot, bdot, 2, 0xffffff);
+			DrawUtil.drawRim(this.graphics, cdot, 5, 2, 0x00ff00);
+			
+			ddot = VBMathUtil.closestPtPointSegment(cdot,adot,bdot);
+			DrawUtil.drawRim(this.graphics, ddot, 5, 2, 0xff0000);
+			trace(VBMathUtil.squareDistancePointSegment(adot,bdot,cdot));
+		}*/
+
+//-----------------------------------------------------------------------------		
+		//OBB 相交测试
+		//先绘制 A 的点，然后按下按键B 再绘制B点
+		//绘制完后 按下 M 建， 计算 OBB
+		//最后按下 空格键，旋转两个图形
+		/*private var obb1:VBOBB = new VBOBB();
 		private var obb2:VBOBB = new VBOBB();
 		
 		private var sp1:Sprite = new Sprite();
@@ -58,8 +132,8 @@ package
 			sp1.x = 200;
 			sp1.y = 160;
 			addChild(sp2);
-			sp2.x = 260;
-			sp2.y = 160;
+			sp2.x = 300;
+			sp2.y = 260;
 			
 			addChild(obbsp1);
 			addChild(obbsp2);
@@ -193,6 +267,9 @@ package
 					}
 					break;
 				case Keyboard.N://rest
+					key = 0;
+					sp1rotation = sp2rotation = 0;
+					
 					orgVexs1= new Vector.<VBVector>();
 					orgVexs2= new Vector.<VBVector>();
 					curOrg= orgVexs1;
@@ -233,14 +310,14 @@ package
 		}
 		
 		
-		//*图形执行旋转操作之后
-		//* 轴向变了
-		//* 中心点的位置也变了 
-		//* 根据旋转矩阵具体变化如下
-		//* 
-		//* |cosq -sinq| |x|
-		//* |sinq  cosq|*|y|
-		//*	
+		//图形执行旋转操作之后
+		// 轴向变了
+		// 中心点的位置也变了 
+		// 根据旋转矩阵具体变化如下
+		// 
+		// |cosq -sinq| |x|
+		// |sinq  cosq|*|y|
+		//
 		private function updateOBB():void
 		{
 			newVexs1 = new Vector.<VBVector>();
@@ -273,8 +350,8 @@ package
 			{
 				DrawUtil.drawRim(curSP.graphics,temp, 5, 2, 0xff00ff); 
 			}
-		}
-		//-----------------------------------------------------------------------------		
+		}*/
+//-----------------------------------------------------------------------------		
 		//包围圆相交测试
 		/*private var rim1:VBRim = new VBRim();
 		private var rim2:VBRim = new VBRim();

@@ -14,8 +14,8 @@ package test.collision
 	 */
 	public class VBAABB
 	{
-		public var min:VBVector;// = new VBVector();
-		public var max:VBVector;// = new VBVector();
+		public var min:VBVector = new VBVector();
+		public var max:VBVector = new VBVector();
 		
 		//public var shape:Rectangle = new Rectangle();
 		public function VBAABB()

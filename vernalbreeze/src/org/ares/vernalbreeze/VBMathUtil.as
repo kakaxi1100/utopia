@@ -1,5 +1,6 @@
 package org.ares.vernalbreeze
 {
+	import test.collision.VBAABB;
 	import test.collision.VBOBB;
 
 	public class VBMathUtil
@@ -210,5 +211,148 @@ package org.ares.vernalbreeze
 			return -1;
 		}
 //--------------------------------------------------------------------------------------------	
+//-------------------------计算线段上离指定点最近距离的点---------------------------------------
+		/**
+		 *给定点段 ab，和点c，计算在线段ab上离c点最点的点d
+		 * 其中a是起点，就是坐标轴中点
+		 * 线段ab上的点d可以参数化为 P(t) = A + t(B - A)
+		 * t 表示 c 在线段ab上的投影,与整个线段的比例
+		 * t = (ac) · normal(ab)/|ab| 而 normal(ab) = (ab)/|ab|
+		 * 两式带入得到
+		 * t = (ac)·(ab)/|ab|*|ab|
+		 * 假如d在线段ab内
+		 * 则有 0<= t <=1
+		 * 否则 d 在ab的延长线上
+		 * 假如在a的左边，则 t < 0, 则最近点是a
+		 * 假如在b的右边，则 t > 1, 则最近点是b
+		 * 
+		 * @param c
+		 * @param a
+		 * @param b
+		 * @param t
+		 * @param d
+		 * 
+		 */		
+		public static function closestPtPointSegment(c:VBVector, a:VBVector, b:VBVector/*, t:Number, d:VBVector*/):VBVector
+		{
+			//1.将a作为原点
+			var ab:VBVector = b.minus(a);
+			//2.计算t
+			var t:Number = c.minus(a).scalarMult(ab)/ab.scalarMult(ab);
+			//3.判断是否超出
+			if(t < 0) t = 0;
+			if(t > 1) t = 1;
+			//计算d
+			var d:VBVector = a.plus(ab.mult(t));
+			
+			return d;
+		}
+//--------------------------------------------------------------------------------------------
+//----------------------------计算点到线段的距离,返回平方值-------------------------------------
+		/**
+		 *线段AB，和线段外一点C，返回 C 到 AB 的距离的平方
+		 * 由上式知道D为C在AB上的投影CD即为 C 到 AB 的距离
+		 * CD·CD = AC·AC - AD·AD
+		 * 
+		 * 由上面式子得(注意点积，和最后一个矢量AB)
+		 * 
+		 * D = A + (AC·AB/AB·AB)*(AB)可以得出D点坐标
+		 * 所以
+		 * AD = (AC·AB/AB·AB)*(AB)
+		 * 将(AC·AB/AB·AB)这个看作常数K
+		 * AD = K*(AB)
+		 * AD·AD = K^2(AB·AB) = ((AC·AB)/(AB·AB))^2*(AB·AB) = (AC·AB)^2/(AB·AB)
+		 * 所以 
+		 * CD·CD = AC·AC - (AC·AB)^2/(AB·AB)
+		 * 
+		 * 当D在AB 的延长线上是
+		 * 假如 D 在 A 的右边
+		 * AC·AC<=0 则A点离C点最近
+		 * 
+		 * 假如D 在B 的左边
+		 * AC·AB >= AB·AB (因为没有标准化), 此时 B 点离C点最近
+		 * 
+		 * @param a
+		 * @param b
+		 * @param c
+		 * @return 
+		 * 
+		 */		
+		public static function squareDistancePointSegment(a:VBVector, b:VBVector, c:VBVector):Number
+		{
+			var ab:VBVector = b.minus(a); 
+			var ac:VBVector = c.minus(a);
+			var bc:VBVector = c.minus(b);
+			
+			var e:Number = ab.scalarMult(ac);
+			if(e <= 0) return ac.scalarMult(ac);
+			var f:Number = ab.scalarMult(ab);
+			if(e >= f) return bc.scalarMult(bc);
+			
+			return ac.scalarMult(ac) - e*e/f;
+		}
+//------------------------------------------------------------------------------------------
+//----------------------------计算AABB上到指定点最近的点-------------------------------------
+		/**
+		 *P点为指定点
+		 * 返回AABB上离P最近的点Q
+		 * 只要将P的值和 AABB 的max和min 对比后就能得到Q点 
+		 * @param p
+		 * @param aabb
+		 * @return 
+		 * 
+		 */		
+		public static function closestPtPointAABB(p:VBVector, aabb:VBAABB/*, q:VBVector*/):VBVector
+		{
+			var q:VBVector = new VBVector();
+			var v:Number;
+
+			v = p.x;
+			if(v < aabb.min.x) v = aabb.min.x;
+			if(v > aabb.max.x) v = aabb.max.x;
+			q.x = v
+			
+			v = p.y;
+			if(v < aabb.min.y) v = aabb.min.y;
+			if(v > aabb.max.y) v = aabb.max.y;
+			q.y = v;
+			
+			return q;
+		}
+//------------------------------------------------------------------------------------------
+//----------------------------计算点到AABB的距离的平方---------------------------------------
+		/**
+		 *即最近点Q到P的距离
+		 * 但是无需显示计算出Q
+		 * 分别计算出 X,Y轴的分量
+		 * 根据勾股定理，可以得到距离的平方 
+		 * @param p
+		 * @param aabb
+		 * @return 
+		 * 
+		 */		
+		public static function squareDistancePointAABB(p:VBVector, aabb:VBAABB):Number
+		{
+			var sqDist:Number = 0;
+			var v:Number;
+			//X轴
+			v = p.x;
+			if(v < aabb.min.x) sqDist += (aabb.min.x - v)*(aabb.min.x - v);
+			if(v > aabb.max.x) sqDist += (v - aabb.max.x)*(v - aabb.max.x);
+			//Y轴
+			v = p.y;
+			if(v < aabb.min.y) sqDist += (aabb.min.y - v)*(aabb.min.y - v);
+			if(v > aabb.max.y) sqDist += (v - aabb.max.y)*(v - aabb.max.y);
+			//其它情况在AABB的内部，所以距离是0
+			return sqDist;
+		}
+//------------------------------------------------------------------------------------------
+//----------------------------计算OBB上到指定点最近的点---------------------------------------
+		public static function closestPtPointOBB(p:VBVector, obb:VBOBB/*, q:VBVector*/):VBVector
+		{
+			var q:VBVector;
+			
+			return q;
+		}
 	}
 }
