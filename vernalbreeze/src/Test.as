@@ -10,6 +10,7 @@ package
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.geom.Transform;
 	import flash.ui.Keyboard;
@@ -25,10 +26,65 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
+		
+//------------------------------------------------------------------------------------		
+		//测试OBB上离指定点最近的点,和最近距离计算
+		/*private var obb:VBOBB = new VBOBB();
+		private var orgVexs:Vector.<VBVector> = new Vector.<VBVector>();
+		private var convexVexs:Vector.<VBVector> = new Vector.<VBVector>();
+		
+		private var p:VBVector = new VBVector();
+		private var q:VBVector;
+		private var key:int = 0;
 		public function Test()
 		{
-			
+			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
+			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
+		
+		protected function onEnterFrame(event:Event):void
+		{
+			if(key == 0) return;
+			p.setTo(stage.mouseX, stage.mouseY);
+			q = VBMathUtil.closestPtPointOBB(p, obb);
+			trace(VBMathUtil.squareDistancePointOBB(p, obb));
+			
+			this.graphics.clear();
+			DrawUtil.drawRim(this.graphics, p, 5, 2, 0x00ffff);
+			DrawUtil.drawRim(this.graphics, q, 5, 2, 0xff0000);
+
+			DrawUtil.drawPolygon(this.graphics, convexVexs, 2, 0xffff00);
+			DrawUtil.drawOBB(this.graphics,obb,2,0x00ff00);
+		} 
+		
+		protected function onKeyUp(event:KeyboardEvent):void
+		{
+			switch(event.keyCode)
+			{
+				case Keyboard.M:
+					VBMathUtil.convexVolume(orgVexs,convexVexs);
+					obb.updateOBB(convexVexs);
+					DrawUtil.drawPolygon(this.graphics, convexVexs, 2, 0xffff00);
+					DrawUtil.drawOBB(this.graphics,obb,2,0x00ff00);
+					break;
+				case Keyboard.N:
+					orgVexs = new Vector.<VBVector>;
+					convexVexs = new Vector.<VBVector>;
+					this.graphics.clear();
+					break;
+				case Keyboard.SPACE:
+					key = key^1;
+					break;
+			}
+		}
+		
+		protected function onMouseClick(event:MouseEvent):void
+		{
+			var temp:VBVector = new VBVector(stage.mouseX, stage.mouseY);
+			orgVexs.push(temp);
+			DrawUtil.drawRim(this.graphics,temp, 5, 2, 0x00ffff); 
+		}*/
 //-----------------------------------------------------------------------------		
 		//测试AABB上离指定点最近的点,和最近距离计算
 		/*private var pdot:VBVector = new VBVector();

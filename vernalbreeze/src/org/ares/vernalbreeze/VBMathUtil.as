@@ -348,11 +348,77 @@ package org.ares.vernalbreeze
 		}
 //------------------------------------------------------------------------------------------
 //----------------------------计算OBB上到指定点最近的点---------------------------------------
+		/**
+		 *首先将P点的坐标转到 OBB 下的坐标
+		 * 然后可以根据AABB的计算方法，得到 OBB坐标下的 Q 点坐标
+		 * 最后再将Q点的坐标转换成 世界坐标
+		 * QO = QC+CO
+		 *  
+		 * @param p
+		 * @param obb
+		 * @return 
+		 * 
+		 */		
 		public static function closestPtPointOBB(p:VBVector, obb:VBOBB/*, q:VBVector*/):VBVector
 		{
-			var q:VBVector;
+			var q:VBVector = new VBVector();
+			//计算 QC 的值
+			q.setTo(obb.center.x, obb.center.y);
+			var dist:Number;
+			//算出P点在OBB下的坐标 d
+			var d:VBVector = p.minus(obb.center);
+			//再算出OBB下Q点的坐标
+			//这里可以画图分析很简单
+			//X轴 即e0 轴
+			//求出 d点在e0轴的投影
+			dist = d.scalarMult(obb.x);
+			//假如超过了半宽就让他 dist 等于半宽
+			if(dist > obb.halfWidth) dist = obb.halfWidth;
+			if(dist < -obb.halfWidth) dist = -obb.halfWidth;
+			q.plusEquals(obb.x.mult(dist));//先算出 e0 轴上 Q 点的世界坐标
+			
+			//Y轴 即e1 轴
+			//求出 d点在e1轴的投影
+			dist = d.scalarMult(obb.y);
+			//假如超过了半高就让他 dist 等于半高
+			if(dist > obb.halfHeight) dist = obb.halfHeight;
+			if(dist < -obb.halfHeight) dist = -obb.halfHeight;
+			q.plusEquals(obb.y.mult(dist));// 之前已经算出 e1 轴了 这里 e0 + e1 轴的 坐标直接等于 Q 点的世界坐标
 			
 			return q;
 		}
+//------------------------------------------------------------------------------------------
+//----------------------------计算点到OBB的距离的平方----------------------------------------
+		/**
+		 *计算出最近点，然后根据勾股定理求距离 
+		 * @param p
+		 * @param obb
+		 * @return 
+		 * 
+		 */		
+		public static function squareDistancePointOBB(p:VBVector, obb:VBOBB):Number
+		{
+			var closest:VBVector = closestPtPointOBB(p, obb);
+			var d:VBVector = closest.minus(p);
+			//勾股定理
+			var sqDist:Number = d.scalarMult(d);
+			
+			return sqDist;
+		}
+//------------------------------------------------------------------------------------------
+//----------------------------计算矩形上到指定点最近的点 (VBrect)-----------------------------
+	/**
+	 * 由于和OBB的计算方式一样，这里暂时省略
+	*/
+//------------------------------------------------------------------------------------------
+//----------------------------计算三角形上到指定点最近的点------------------------------------
+		/**
+		 * 有两种计算方法，判断 P 在△ABC 内部还是外部，如果在内部，那就是P点，如果在外部
+		 * 可以按照点到直线的最近点，求出 Q点，但是需要计算三个边 AB,BC,CA，取最小的效率很低
+		 * 所以我们采用第二种算法见下解释
+		 */
+		
+		
+//------------------------------------------------------------------------------------------
 	}
 }
