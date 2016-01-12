@@ -102,5 +102,24 @@ package test.shape
 				DrawUtil.drawLine(g, vertex[i], vertex[next],thickness, color);
 			}
 		}
+		
+		/**
+		 *画三角形 
+		 * @param g
+		 * @param a
+		 * @param b
+		 * @param c
+		 * @param thickness
+		 * @param color
+		 * 
+		 */		
+		public static function drawTriangle(g:Graphics, a:VBVector, b:VBVector, c:VBVector, thickness:Number = 1, color:uint = 0x00ff00):void
+		{
+			g.lineStyle(thickness,color);
+			g.moveTo(a.x, a.y);
+			g.lineTo(b.x, b.y);
+			g.lineTo(c.x, c.y);
+			g.lineTo(a.x, a.y);
+		}
 	}
 }

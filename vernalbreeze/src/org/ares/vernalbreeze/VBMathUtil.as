@@ -2,12 +2,15 @@ package org.ares.vernalbreeze
 {
 	import test.collision.VBAABB;
 	import test.collision.VBOBB;
+	import test.collision.VBRim;
+	import test.collision.VBSegment;
 
 	public class VBMathUtil
 	{
 		public function VBMathUtil()
 		{
 		}
+//----------------------------计算三角形三个内角度数-------------------------------------------
 		/**
 		 *计算三角形的内角 
 		 * 计算公式是余弦定理（也可以用矢量的点积来计算）
@@ -36,7 +39,8 @@ package org.ares.vernalbreeze
 			
 			trace(degreec, degreeb, degreea);
 		}
-		
+//--------------------------------------------------------------------------------------------
+//----------------------------计算点是否在三角形内部-------------------------------------------
 		/**
 		 * 计算点是否在三角形内部
 		 * 点  A,B,C 构成一个三角形
@@ -54,6 +58,8 @@ package org.ares.vernalbreeze
 		 * 如果有一个为0，另外一正一负，则M在三角形的延长线上
 		 * 如果有两个为0，则在三角形的顶点上
 		 * 不可能出现三个0的情况
+		 * 
+		 * 在内部返回true，在外部返回false
 		 */
 		public static function dotInTriangle(a:VBVector, b:VBVector, c:VBVector, p:VBVector):Boolean
 		{
@@ -72,6 +78,26 @@ package org.ares.vernalbreeze
 			
 			return false;
 		}
+//--------------------------------------------------------------------------------------------
+//------------------计算三角形带符号面积--------------------------------------------------------	
+		/**
+		 *就是算叉积 
+		 * 
+		 * ACXBC = |a||b|*sinθ
+		 * 以C为中心点， 由A像B旋转，它的符号也就是sinθ的符号
+		 * 假如是大于0， 则 B在A的逆时针方向
+		 * 如果小于0， 则 B在A的顺时针方向
+		 * @param a
+		 * @param b
+		 * @param c
+		 * @return 
+		 * 
+		 */		
+		public static function signedTriangleArea(a:VBVector, b:VBVector, c:VBVector):Number
+		{
+			return (a.x - c.x)*(b.y - c.y) - (a.y - c.y)*(b.x - c.x);
+		}
+//--------------------------------------------------------------------------------------------
 //------------------计算凸体------------------------------------------------------------------	
 		private static var cur:VBVector;
 		public static function convexVolume(originVexs:Vector.<VBVector>, convexVexs:Vector.<VBVector>):void
@@ -413,12 +439,163 @@ package org.ares.vernalbreeze
 //------------------------------------------------------------------------------------------
 //----------------------------计算三角形上到指定点最近的点------------------------------------
 		/**
-		 * 有两种计算方法，判断 P 在△ABC 内部还是外部，如果在内部，那就是P点，如果在外部
-		 * 可以按照点到直线的最近点，求出 Q点，但是需要计算三个边 AB,BC,CA，取最小的效率很低
-		 * 所以我们采用第二种算法见下解释
+		 * 判断 P 在△ABC 内部还是外部，如果在内部，那就是P点，如果在外部
+		 * 可以按照点到直线的最近点，求出 Q点
 		 */
-		
+		public static function closestPtPointTriangle(p:VBVector, a:VBVector, b:VBVector, c:VBVector):VBVector
+		{
+			var q:VBVector = new VBVector(p.x, p.y);
+			//1.是否在三角形内部
+			//假如在三角形内部，那么就是 p 点
+			//假如不在三角形内部，那么就计算它到三边的距离取最小值
+			if(dotInTriangle(a,b,c,p) == false)
+			{
+				var temp:Vector.<VBVector> = new <VBVector>[a, b];
+				var abp:Number = squareDistancePointSegment(a,b,p);
+				var acp:Number = squareDistancePointSegment(a,c,p);
+				var bcp:Number = squareDistancePointSegment(b,c,p);
+				var min:Number = abp;
+				if(acp <= min)
+				{
+					temp[0] = a;
+					temp[1] = c;
+					min = acp
+				}
+				if(bcp <= min)
+				{
+					temp[0] = b;
+					temp[1] = c;
+				}
+				
+				q = closestPtPointSegment(p, temp[0], temp[1]);
+			}
+			return q;
+		}
 		
 //------------------------------------------------------------------------------------------
+//-------------------------------计算两线段相交的交点----------------------------------------
+		/**
+		 *一条线段与 另一条线段相交
+		 * 必定满足这条线段的两个端点分别位于另一条线段的两侧
+		 * 
+		 * A-------B C------D
+		 * 即 AB 在CD 的两侧，CD也在AB的两侧
+		 * 
+		 * 判断在直线两侧，只需要判断如 ABC和ABD的符号相反，就表示 CD在AB的两侧
+		 * 
+		 * 返回值判断是否相交
+		 * 
+		 * 交点值求解,假设相交于P点
+		 * AB的直线方程可以说 L(t) = a + t*(b-a)
+		 * t = AP/AB  0<= t <=1
+		 * 
+		 * 由A向CD做垂线得h1， 由B向CD做垂线得h2
+		 * 由相似三角形的比可以得出 (注意符号,h1,h2 反号，所以是 h1-h2）
+		 * t = AP/AB = h1/h1 - h2
+		 * 以CD为底可以转化成面积(注意面积也是带符号的 所以减就是和)
+		 * t = (CD*h1*1/2)/(CD*h1*1/2) - (CD*h2*1/2) = △ACD/△ACD - △BCD
+		 * 
+		 * @param a
+		 * @param b
+		 * @param c
+		 * @param d
+		 * @param p
+		 * 
+		 */		
+		public static function intersectionSegmentSegment(a:VBVector, b:VBVector, c:VBVector, d:VBVector, p:VBVector):Boolean
+		{
+			//计算 ABC和ABD的带符号面积
+			var a1:Number = signedTriangleArea(a,b,c);
+			var a2:Number = signedTriangleArea(a,b,d);
+			//CD位于AB两端
+			if(a1*a2 < 0)
+			{
+				//计算 CDA和CDB的带符号面积
+				var a3:Number = signedTriangleArea(c,d,a);
+				//a1和a3符号相等？？？有待验证，假设相等则有以下条件成立
+				//这里有个技巧 ABC+ABD = CDA + CDB---> a1 - a2 = a3 - a4
+				//CDB = ABC + ABD - CDA ---> a4 = a3 + a2 - a1
+				//但是这里还是采用叉积计算
+				var a4:Number = signedTriangleArea(c,d,b);
+				//AB位于CD两端，两线段相交
+				if(a3*a4 < 0)
+				{
+					// 计算t值
+					var t:Number = a3/(a3 - a4);
+					var temp:VBVector = a.plus(b.minus(a).mult(t));
+					p.setTo(temp.x, temp.y);
+					return true;						
+				}
+			}
+			//线段不相交
+			return false;
+		}		
+//----------------------------------------------------------------------------------------
+//------------------图元碰撞检测-----------------------------------------------------------
+		/**
+		 *判断直线是否与圆相交 
+		 * @param s
+		 * @param l
+		 * @return 
+		 * 
+		 */		
+		public static function collideRimLine(s:test.collision.VBRim, l:VBSegment):Boolean
+		{
+			var dist:Number = s.c.scalarMult(l.normal);
+			return Math.abs(dist) <= s.r;
+		}
+		
+		/**
+		 *判断圆是否位于直线的负半平面 
+		 * @param s
+		 * @param l
+		 * @return 
+		 * 
+		 */		
+		public static function insideRimLine(s:test.collision.VBRim, l:VBSegment):Boolean
+		{
+			var dist:Number = s.c.scalarMult(l.normal);
+			return dist < -s.r;
+		}
+		
+		/**
+		 *假如负半平面全是实体 
+		 * @param s
+		 * @param l
+		 * @return 
+		 * 
+		 */		
+		public static function insideRimHalfspace(s:test.collision.VBRim, l:VBSegment):Boolean
+		{
+			var dist:Number = s.c.scalarMult(l.normal);
+			return dist <= s.r;
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

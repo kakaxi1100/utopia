@@ -26,7 +26,71 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
+		private var a:VBVector;
+		private var b:VBVector;
+		private var c:VBVector;
+		private var d:VBVector;
+		private var p:VBVector;;
+		public function Test()
+		{
+			a = new VBVector(350,200);
+			b = new VBVector(100,180);
+			c = new VBVector(150,200);
+			d = new VBVector(60, 90);
+			p = new VBVector();
+			
+			DrawUtil.drawLine(this.graphics, a,b,2,0xffff00);
+			DrawUtil.drawLine(this.graphics, c,d,2,0x00ffff);
+			
+			VBMathUtil.intersectionSegmentSegment(a,b,c,d,p);
+			DrawUtil.drawRim(this.graphics, p, 5, 2, 0xff0000);
+			
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
 		
+		protected function onEnterFrame(event:Event):void
+		{
+			c.setTo(stage.mouseX, stage.mouseY);
+			VBMathUtil.intersectionSegmentSegment(a,b,c,d,p);
+			
+			this.graphics.clear();
+			DrawUtil.drawLine(this.graphics, a,b,2,0xffff00);
+			DrawUtil.drawLine(this.graphics, c,d,2,0x00ffff);
+			DrawUtil.drawRim(this.graphics, p, 5, 2, 0xff0000);
+		}
+		//------------------------------------------------------------------------------------		
+		//测试点到三角形的最近点
+		/*private var a:VBVector;
+		private var b:VBVector;
+		private var c:VBVector;
+		private var p:VBVector;
+		private var q:VBVector;
+		public function Test()
+		{
+			a = new VBVector(300,100);
+			b = new VBVector(50,80);
+			c = new VBVector(150,200);
+			
+			p = new VBVector(150,30);
+			
+			q = VBMathUtil.closestPtPointTriangle(p,a,b,c);
+			
+			DrawUtil.drawRim(this.graphics, p, 5, 2, 0x00ffff);
+			DrawUtil.drawRim(this.graphics, q, 5, 2);
+			DrawUtil.drawTriangle(this.graphics, a,b,c, 2, 0xffff00);
+			
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		protected function onEnterFrame(event:Event):void
+		{
+			p.setTo(stage.mouseX, stage.mouseY);
+			q = VBMathUtil.closestPtPointTriangle(p,a,b,c);
+			this.graphics.clear();
+			DrawUtil.drawRim(this.graphics, p, 5, 2, 0x00ffff);
+			DrawUtil.drawRim(this.graphics, q, 5, 2);
+			DrawUtil.drawTriangle(this.graphics, a,b,c, 2, 0xffff00);
+		}*/
 //------------------------------------------------------------------------------------		
 		//测试OBB上离指定点最近的点,和最近距离计算
 		/*private var obb:VBOBB = new VBOBB();
