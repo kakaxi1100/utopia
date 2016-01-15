@@ -26,7 +26,14 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
-		private var a:VBVector;
+		
+//		public function Test()
+//		{
+//			
+//		}
+//---------------------------------------------------------------------------		
+		//测试两线段相交
+		/*private var a:VBVector;
 		private var b:VBVector;
 		private var c:VBVector;
 		private var d:VBVector;
@@ -57,8 +64,8 @@ package
 			DrawUtil.drawLine(this.graphics, a,b,2,0xffff00);
 			DrawUtil.drawLine(this.graphics, c,d,2,0x00ffff);
 			DrawUtil.drawRim(this.graphics, p, 5, 2, 0xff0000);
-		}
-		//------------------------------------------------------------------------------------		
+		}*/
+//------------------------------------------------------------------------------------		
 		//测试点到三角形的最近点
 		/*private var a:VBVector;
 		private var b:VBVector;

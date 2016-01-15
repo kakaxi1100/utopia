@@ -4,6 +4,7 @@ package org.ares.vernalbreeze
 	import test.collision.VBOBB;
 	import test.collision.VBRim;
 	import test.collision.VBSegment;
+	import test.collision.VBTriangle;
 
 	public class VBMathUtil
 	{
@@ -532,8 +533,10 @@ package org.ares.vernalbreeze
 		}		
 //----------------------------------------------------------------------------------------
 //------------------图元碰撞检测-----------------------------------------------------------
+//-------------------圆与线相交------------------------------------------------------------
 		/**
 		 *判断直线是否与圆相交 
+		 * 假如直线不过原点，还要减去原点到直线的距离
 		 * @param s
 		 * @param l
 		 * @return 
@@ -541,7 +544,7 @@ package org.ares.vernalbreeze
 		 */		
 		public static function collideRimLine(s:test.collision.VBRim, l:VBSegment):Boolean
 		{
-			var dist:Number = s.c.scalarMult(l.normal);
+			var dist:Number = s.c.scalarMult(l.normal) - l.d;
 			return Math.abs(dist) <= s.r;
 		}
 		
@@ -554,7 +557,7 @@ package org.ares.vernalbreeze
 		 */		
 		public static function insideRimLine(s:test.collision.VBRim, l:VBSegment):Boolean
 		{
-			var dist:Number = s.c.scalarMult(l.normal);
+			var dist:Number = s.c.scalarMult(l.normal) - l.d;
 			return dist < -s.r;
 		}
 		
@@ -570,6 +573,178 @@ package org.ares.vernalbreeze
 			var dist:Number = s.c.scalarMult(l.normal);
 			return dist <= s.r;
 		}
+//-------------------------------OBB与线相交----------------------------------------------------
+		/**
+		 *先计算OBB顶点到直线法线的投影算出 半径 R
+		 * 再减去中心点到直线法线的投影S
+		 * 假如 -R<=S<=R 则相交 相交深度 就是 S-R
+		 * @param obb
+		 * @param l
+		 * @return 
+		 * 
+		 * 另外如果 s<= -r 则OBB处于负半空间 ; s>=r OBB处于正半空间中
+		 * 
+		 * true相交 false 不相交
+		 */		
+		public static function testOBBLine(obb:VBOBB, l:VBSegment):Boolean
+		{
+			//先计算半径值
+			//计算顶点矢量
+			var vertex:VBVector = obb.x.mult(obb.halfWidth).plusEquals(obb.y.mult(obb.halfHeight));
+			//计算顶点到直线法线的投影
+			var r:Number = l.normal.scalarMult(vertex);
+			//计算中心点到直线法线的投影
+			var s:Number = l.normal.scalarMult(obb.center) - l.d;
+			
+			return Math.abs(s) <= Math.abs(r)
+		}
+//-------------------------------AABB与线相交----------------------------------------------------
+		/**
+		 *计算AABB和直线相交，和 OBB 类似
+		 * 求出顶点到法线的投影和中心点对比 
+		 * @param aabb
+		 * @param l
+		 * 
+		 * true相交 false 不相交
+		 */		
+		public static function testAABBLine(aabb:VBAABB, l:VBSegment):Boolean
+		{
+			//计算AABB的中心点
+			var c:VBVector = aabb.max.plus(aabb.min).multEquals(0.5);
+			//计算中心点到顶点的长度
+			var e:VBVector = aabb.max.minus(c);
+			//这个长度在直线法线上的投影
+			var r:Number = l.normal.scalarMult(e);
+			//计算中心点到直线法线上的投影
+			var s:Number = l.normal.scalarMult(c) - l.d;
+			
+			return Math.abs(s) <= Math.abs(r)
+		}
+//-------------------------------AABB与圆相交----------------------------------------------------
+		/**
+		 * 只需要判断圆的中心离AABB最近的点的距离与圆的半径比较即可
+		 * 比圆的半径大则分离，比圆的半径小则相交
+		 * 
+		 * @param rim
+		 * @param aabb
+		 * @param p
+		 * @return 
+		 * 
+		 */		
+		public static function testRimAABB(rim:test.collision.VBRim, aabb:VBAABB, p:VBVector):Boolean
+		{
+			//计算最近点
+			var temp:VBVector = closestPtPointAABB(rim.c, aabb);
+			p.setTo(temp.x, temp.y);
+			//计算最近点到圆心的矢量
+			var v:VBVector = p.minus(rim.c);
+			//比较次距离和圆的半径(用平方算)
+			return v.scalarMult(v) <= rim.r*rim.r;
+		}
+//-------------------------------OBB与圆相交----------------------------------------------------
+		/**
+		 *与AABB测试是一样的，只是将求最近点换成了OBB
+		 * @param rim
+		 * @param obb
+		 * @param p
+		 * @return 
+		 * 
+		 */		
+		public static function testRimOBB(rim:test.collision.VBRim, obb:VBOBB, p:VBVector):Boolean
+		{
+			//计算最近点
+			var temp:VBVector = closestPtPointOBB(rim.c, obb);
+			p.setTo(temp.x, temp.y);
+			//计算最近点到圆心的矢量
+			var v:VBVector = p.minus(rim.c);
+			//比较次距离和圆的半径(用平方算)
+			return v.scalarMult(v) <= rim.r*rim.r;
+		}
+//-------------------------------三角形与圆相交----------------------------------------------------	
+		/**
+		 *也是与AABB一样的 
+		 * @param rim
+		 * @param triangle
+		 * @param p
+		 * @return 
+		 * 
+		 */		
+		public static function testRimTriangle(rim:test.collision.VBRim, triangle:VBTriangle, p:VBVector):Boolean
+		{
+			//计算最近点
+			var temp:VBVector = closestPtPointTriangle(rim.c, triangle.a, triangle.b, triangle.c);
+			p.setTo(temp.x, temp.y);
+			//计算最近点到圆心的矢量
+			var v:VBVector = p.minus(rim.c);
+			//比较次距离和圆的半径(用平方算)
+			return v.scalarMult(v) <= rim.r*rim.r;
+		}
+//-------------------------------射线与圆相交----------------------------------------------------
+		/**
+		 * 设射线方程为
+		 * R(t) = P + td
+		 * 其中P 为射线的起点， d 为射线的方向， t>=0 表示射线上的点离P的距离	
+		 * 
+		 * 设圆的方程为 
+		 * (X-C)·(X-C) = r^2
+		 * X表示圆上的点，C表示圆的中心，r表示半径
+		 * 
+		 * 则直线与圆的交点可以表示成
+		 * ((P + td)-C)·((P + td)-C) = r^2 
+		 * 右边式子展开
+		 * ((P-C)+td)·((P-C)+td)
+		 * 令 m = P-C
+		 * 则原式子化简为
+		 * (m+td)·(m+td)= r^2
+		 * 点积化简为
+		 * (m·m) + 2t(m·d)+t(d·d)-r^2 = 0
+		 * 由于d是直线的方向，是标准化向量，所以 d·d = 1,简化方程得
+		 * t^2+2t(m·d)+(m·m)-r^2 = 0
+		 * 设 b=m·d c=(m·m)-r^2
+		 * t^2+2tb+c= 0 方程式求解得
+		 * t=-b±(b^2-c)^(1/2)
+		 * 设k=(b^2-c) 那么 
+		 * k<0 方程无实根 线与圆无焦点
+		 * k=0 方程有一个实根 线与圆相切
+		 * k>0 方程有两个实根 线与圆相交
+		 * 最小点的情况是 t = -b-(b^2-c)^(1/2)
+		 * 
+		 * 但有一种情况需要注意
+		 * 就是管线在圆外，且方向背向圆，则这种相交无效，要区分出来
+		 *  
+		 * @param ray
+		 * @param rim
+		 * @return 
+		 * 
+		 * 0--不相交
+		 * 1--相交1点
+		 * 2--相交2点
+		 */		
+		public static function intersectRayRim(ray:VBSegment, rim:test.collision.VBRim):Boolean
+		{
+			//计算m值 C就是原点咯
+			var m:VBVector = ray.start.minus(rim.c);
+			//计算b值
+			var b:Number = m.scalarMult(ray.direction);
+			//计算c值
+			var c:Number = m.scalarMult(m) - rim.r*rim.r;
+			//区分特殊情况
+			//c>0 表示PC的距离大于r
+			//b是m在射线方向上的投影，假如>0则方向与PC 相反，如果同向则方向与PC相同
+			//在圆外且背向圆
+			if(c > 0 && b > 0)
+			{
+				return false;
+			}
+			//计算平方根
+			var discr:Number = b*b - c;
+			//没有实根
+			if(discr < 0)
+			{
+				return false;
+			}
+			return false;
+		}
 	}
 }
 
@@ -577,6 +752,19 @@ package org.ares.vernalbreeze
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 
 
 

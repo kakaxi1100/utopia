@@ -1,5 +1,6 @@
 package test.collision
 {
+	import org.ares.vernalbreeze.VBMathUtil;
 	import org.ares.vernalbreeze.VBVector;
 
 	/**
@@ -16,14 +17,25 @@ package test.collision
 	 */	
 	public class VBSegment
 	{
-		
+		//起始点
 		public var start:VBVector;
+		//非起始点的另外一点
 		public var end:VBVector;
 		
+		//直线的法线
 		private var mNormal:VBVector;
+		//直线的方向
+		private var mDirection:VBVector;
+		//直线离远点的距离
+		private var mDistance:Number;
+		
+		private var mZeroVector:VBVector;
 		public function VBSegment()
 		{
 			mNormal = new VBVector();
+			mDistance = 0;
+			mZeroVector = new VBVector();
+			mDirection = new VBVector();
 		}
 		
 		//取得法线
@@ -33,6 +45,22 @@ package test.collision
 			mNormal.setTo(temp.y, -temp.x);
 			
 			return mNormal;
+		}
+		//取得方向
+		public function get direction():VBVector
+		{
+			var temp:VBVector = end.minus(start);
+			temp.normalizeEquals();
+			mDirection.setTo(temp.x, temp.y);
+			
+			return mDirection;
+		}
+		
+		//取得(0,0)到直线的距离d
+		public function get d():Number
+		{
+			mDistance = Math.sqrt(VBMathUtil.squareDistancePointSegment(start, end, mZeroVector));
+			return mDistance;
 		}
 	}
 }
