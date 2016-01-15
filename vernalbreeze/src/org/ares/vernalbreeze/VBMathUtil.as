@@ -743,6 +743,8 @@ package org.ares.vernalbreeze
 			{
 				return false;
 			}
+			//取得最小实数根
+			
 			return false;
 		}
 	}
