@@ -26,11 +26,11 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
-		
-//		public function Test()
-//		{
-//			
-//		}
+		//测试线段与圆相交
+		public function Test()
+		{
+			
+		}
 //---------------------------------------------------------------------------		
 		//测试两线段相交
 		/*private var a:VBVector;

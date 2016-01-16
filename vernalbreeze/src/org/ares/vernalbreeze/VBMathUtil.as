@@ -720,7 +720,7 @@ package org.ares.vernalbreeze
 		 * 1--相交1点
 		 * 2--相交2点
 		 */		
-		public static function intersectRayRim(ray:VBSegment, rim:test.collision.VBRim):Boolean
+		public static function intersectRayRim(ray:VBSegment, rim:test.collision.VBRim, q:VBVector):Boolean
 		{
 			//计算m值 C就是原点咯
 			var m:VBVector = ray.start.minus(rim.c);
@@ -730,7 +730,7 @@ package org.ares.vernalbreeze
 			var c:Number = m.scalarMult(m) - rim.r*rim.r;
 			//区分特殊情况
 			//c>0 表示PC的距离大于r
-			//b是m在射线方向上的投影，假如>0则方向与PC 相反，如果同向则方向与PC相同
+			//b是m在射线方向上的投影，假如>0则方向与PC 相反(与CP相同)，如果同向则方向与PC相同
 			//在圆外且背向圆
 			if(c > 0 && b > 0)
 			{
@@ -743,8 +743,16 @@ package org.ares.vernalbreeze
 			{
 				return false;
 			}
+			//以下部分还未理解，需要进一步考察，先纯翻译过来
 			//取得最小实数根
-			
+			var t:Number = -b-Math.sqrt(discr);
+			//假如 t<0，说明P在圆内部，所以只会相交与一点
+			if(t<0)
+			{
+				t = 0;
+			}
+			var temp:VBVector = ray.start.plus(ray.direction.mult(t));
+			q.setTo(temp.x, temp.y);
 			return false;
 		}
 	}

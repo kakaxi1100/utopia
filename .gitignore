@@ -2,6 +2,7 @@
 vernalbreeze/bin/
 vernalbreeze/bin-debug/
 vernalbreeze/bin-release/
+vernalbreeze/desktop.ini
 
 # Other files and folders
 vernalbreeze/.settings/
