@@ -32,6 +32,8 @@ package test.collision
 		private var mZeroVector:VBVector;
 		public function VBSegment()
 		{
+			start = new VBVector();
+			end = new VBVector();
 			mNormal = new VBVector();
 			mDistance = 0;
 			mZeroVector = new VBVector();

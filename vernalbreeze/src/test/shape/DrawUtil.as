@@ -6,6 +6,8 @@ package test.shape
 	
 	import test.collision.VBAABB;
 	import test.collision.VBOBB;
+	import test.collision.VBRim;
+	import test.collision.VBSegment;
 
 	public class DrawUtil
 	{
@@ -26,6 +28,11 @@ package test.shape
 			g.lineStyle(thickness,color);
 			g.drawCircle(v.x,v.y,r);
 		}
+		public static function drawRim2(g:Graphics, rim:VBRim, thickness:Number = 1, color:uint = 0xff0000):void
+		{
+			g.lineStyle(thickness,color);
+			g.drawCircle(rim.c.x,rim.c.y,rim.r);
+		}
 		/**
 		 *画线 从 V1 点 到 V2 点
 		 * @param g
@@ -42,6 +49,12 @@ package test.shape
 			g.lineTo(v2.x, v2.y);
 		}
 		
+		public static function drawLine2(g:Graphics, vs:VBSegment, thickness:Number = 1, color:uint = 0x00ff00):void
+		{
+			g.lineStyle(thickness,color);
+			g.moveTo(vs.start.x, vs.start.y);
+			g.lineTo(vs.end.x, vs.end.y);
+		}
 		/**
 		 *画 AABB 
 		 * @param g

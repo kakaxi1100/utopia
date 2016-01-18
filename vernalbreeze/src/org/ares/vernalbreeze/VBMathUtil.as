@@ -720,7 +720,7 @@ package org.ares.vernalbreeze
 		 * 1--相交1点
 		 * 2--相交2点
 		 */		
-		public static function intersectRayRim(ray:VBSegment, rim:test.collision.VBRim, q:VBVector):Boolean
+		public static function intersectRayRim(ray:VBSegment, rim:test.collision.VBRim, q:VBVector, p:VBVector):Boolean
 		{
 			//计算m值 C就是原点咯
 			var m:VBVector = ray.start.minus(rim.c);
@@ -743,7 +743,7 @@ package org.ares.vernalbreeze
 			{
 				return false;
 			}
-			//以下部分还未理解，需要进一步考察，先纯翻译过来
+			//需要画出射线与圆相交的各种情况，然后分析
 			//取得最小实数根
 			var t:Number = -b-Math.sqrt(discr);
 			//假如 t<0，说明P在圆内部，所以只会相交与一点
@@ -753,6 +753,10 @@ package org.ares.vernalbreeze
 			}
 			var temp:VBVector = ray.start.plus(ray.direction.mult(t));
 			q.setTo(temp.x, temp.y);
+			//新加的内容，可以去掉
+			var t2:Number= -b+Math.sqrt(discr);
+			temp = ray.start.plus(ray.direction.mult(t2));
+			p.setTo(temp.x, temp.y);
 			return false;
 		}
 	}

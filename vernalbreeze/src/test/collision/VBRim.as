@@ -15,6 +15,8 @@ package test.collision
 		public var r:Number;
 		public function VBRim()
 		{
+			c = new VBVector();
+			r = 0;
 		}
 		
 		public function updateRim(vertexs:Vector.<VBVector>):void

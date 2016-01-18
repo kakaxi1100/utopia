@@ -21,16 +21,50 @@ package
 	import test.collision.VBAABB;
 	import test.collision.VBOBB;
 	import test.collision.VBRim;
+	import test.collision.VBSegment;
 	import test.shape.DrawUtil;
 	
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
-		//测试线段与圆相交
 		public function Test()
 		{
 			
 		}
+//---------------------------------------------------------------------------		
+		//测试线段与圆相交
+		/*private var rim:VBRim = new VBRim();
+		private var ray:VBSegment = new VBSegment();
+		private var q:VBVector = new VBVector();
+		private var p:VBVector = new VBVector();
+		public function Test()
+		{
+			rim.c.setTo(100,100);
+			rim.r = 100;
+			
+			ray.start.setTo(50,50);
+			ray.end.setTo(500,500);
+			
+			VBMathUtil.intersectRayRim(ray, rim, q,p);
+			
+			DrawUtil.drawRim(this.graphics, p, 5, 2, 0xffff00);
+			DrawUtil.drawRim(this.graphics, q, 5, 2, 0xffff00);
+			DrawUtil.drawRim2(this.graphics, rim,2);
+			DrawUtil.drawLine2(this.graphics, ray,2);
+			
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		protected function onEnterFrame(event:Event):void
+		{
+			rim.c.setTo(stage.mouseX,stage.mouseY);
+			VBMathUtil.intersectRayRim(ray, rim, q,p);
+			this.graphics.clear();
+			DrawUtil.drawRim(this.graphics, p, 5, 2, 0xffff00);
+			DrawUtil.drawRim(this.graphics, q, 5, 2, 0xffff00);
+			DrawUtil.drawRim2(this.graphics, rim,2);
+			DrawUtil.drawLine2(this.graphics, ray,2);
+		}*/
 //---------------------------------------------------------------------------		
 		//测试两线段相交
 		/*private var a:VBVector;
