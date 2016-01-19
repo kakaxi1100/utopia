@@ -59,7 +59,7 @@ package test.collision
 		}
 		
 		//取得(0,0)到直线的距离d
-		public function get d():Number
+		public function get distanceToZero():Number
 		{
 			mDistance = Math.sqrt(VBMathUtil.squareDistancePointSegment(start, end, mZeroVector));
 			return mDistance;

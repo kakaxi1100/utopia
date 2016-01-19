@@ -14,12 +14,14 @@ package test.collision
 	 */
 	public class VBAABB
 	{
-		public var min:VBVector = new VBVector();
-		public var max:VBVector = new VBVector();
+		public var min:VBVector;
+		public var max:VBVector;
 		
 		//public var shape:Rectangle = new Rectangle();
 		public function VBAABB()
 		{
+			min = new VBVector();
+			max = new VBVector();
 		}
 		/**
 		 *计算AABB

@@ -27,9 +27,37 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
+		private var aabb:VBAABB = new VBAABB();
+		private var ray:VBSegment = new VBSegment();
+		private var q:VBVector = new VBVector();
+		private var p:VBVector = new VBVector();
 		public function Test()
 		{
+			ray.start.setTo(50,50);
+			ray.end.setTo(500,500);
 			
+			aabb.min.setTo(100,100);
+			aabb.max.setTo(200,200);
+			
+			VBMathUtil.intersectRayAABB(ray, aabb, q, p);
+			
+			DrawUtil.drawRim(this.graphics, p, 5, 2, 0xffff00);
+			DrawUtil.drawRim(this.graphics, q, 5, 2, 0xffff00);
+			DrawUtil.drawAABB(this.graphics, aabb,2,0x00ffff);
+			DrawUtil.drawLine2(this.graphics, ray,2);
+			
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		protected function onEnterFrame(event:Event):void
+		{
+			aabb.min.setTo(stage.mouseX, stage.mouseY);
+			aabb.max.setTo(100+stage.mouseX,100+stage.mouseY);
+			VBMathUtil.intersectRayAABB(ray, aabb, q,p);
+			this.graphics.clear();
+			DrawUtil.drawRim(this.graphics, p, 5, 2, 0xffff00);
+			DrawUtil.drawAABB(this.graphics, aabb,2,0x00ffff);
+			DrawUtil.drawLine2(this.graphics, ray,2);
+			DrawUtil.drawRim(this.graphics, q, 5, 2, 0xffff00);
 		}
 //---------------------------------------------------------------------------		
 		//测试线段与圆相交

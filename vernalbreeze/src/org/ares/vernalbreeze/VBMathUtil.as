@@ -8,6 +8,8 @@ package org.ares.vernalbreeze
 
 	public class VBMathUtil
 	{
+		//一个阈值（极小的值），用于判定是否平行等
+		private static var EPSILON:Number = 0.01;
 		public function VBMathUtil()
 		{
 		}
@@ -544,7 +546,7 @@ package org.ares.vernalbreeze
 		 */		
 		public static function collideRimLine(s:test.collision.VBRim, l:VBSegment):Boolean
 		{
-			var dist:Number = s.c.scalarMult(l.normal) - l.d;
+			var dist:Number = s.c.scalarMult(l.normal) - l.distanceToZero;
 			return Math.abs(dist) <= s.r;
 		}
 		
@@ -557,7 +559,7 @@ package org.ares.vernalbreeze
 		 */		
 		public static function insideRimLine(s:test.collision.VBRim, l:VBSegment):Boolean
 		{
-			var dist:Number = s.c.scalarMult(l.normal) - l.d;
+			var dist:Number = s.c.scalarMult(l.normal) - l.distanceToZero;
 			return dist < -s.r;
 		}
 		
@@ -594,7 +596,7 @@ package org.ares.vernalbreeze
 			//计算顶点到直线法线的投影
 			var r:Number = l.normal.scalarMult(vertex);
 			//计算中心点到直线法线的投影
-			var s:Number = l.normal.scalarMult(obb.center) - l.d;
+			var s:Number = l.normal.scalarMult(obb.center) - l.distanceToZero;
 			
 			return Math.abs(s) <= Math.abs(r)
 		}
@@ -616,7 +618,7 @@ package org.ares.vernalbreeze
 			//这个长度在直线法线上的投影
 			var r:Number = l.normal.scalarMult(e);
 			//计算中心点到直线法线上的投影
-			var s:Number = l.normal.scalarMult(c) - l.d;
+			var s:Number = l.normal.scalarMult(c) - l.distanceToZero;
 			
 			return Math.abs(s) <= Math.abs(r)
 		}
@@ -701,6 +703,8 @@ package org.ares.vernalbreeze
 		 * 由于d是直线的方向，是标准化向量，所以 d·d = 1,简化方程得
 		 * t^2+2t(m·d)+(m·m)-r^2 = 0
 		 * 设 b=m·d c=(m·m)-r^2
+		 * 特别注意令b的符号，可以判断出cp与射线方向是同向还是背向(同向和背向只是相对概念，它可以表示一簇同向的线或一簇背向的线)
+		 * (记住用点积判断夹角是锐角还是钝角)
 		 * t^2+2tb+c= 0 方程式求解得
 		 * t=-b±(b^2-c)^(1/2)
 		 * 设k=(b^2-c) 那么 
@@ -759,6 +763,137 @@ package org.ares.vernalbreeze
 			p.setTo(temp.x, temp.y);
 			return false;
 		}
+		
+		/**
+		 *计算射线与圆相交，不涉及求焦点 可以作为提前退出判断
+		 * t^2+2t(m·d)+(m·m)-r^2 = 0 
+		 * b=m·d c=(m·m)-r^2
+		 * 假如c<0 ,则判别式有值，所有方程组有解(直线的情况下)，必然相交
+		 * 现在是射线，所有还应该判断，假如射线的起点再圆外的话，射线的方向是不是背离圆
+		 * 
+		 * 判别式解释：
+		 * ax^2+bx+c=0
+		 * Δ=b^2-4ac
+		 * x=(-b±Δ^(1/2))/2a
+		 * 
+		 * @param ray
+		 * @param rim
+		 * @return 
+		 * 
+		 * true 相交, false 不相交
+		 */		
+		public static function testRayRim(ray:VBSegment, rim:test.collision.VBRim):Boolean
+		{
+			//计算m值 C就是原点咯
+			var m:VBVector = ray.start.minus(rim.c);
+			//计算c值
+			var c:Number = m.scalarMult(m) - rim.r*rim.r;
+			if(c < 0 ) return true;
+			//c值大于0，表示在圆外，再判断是否背离圆
+			var b:Number = m.scalarMult(ray.direction);
+			//背离圆
+			if(b > 0) return false;
+			//最后看判别式
+			//计算平方根,假如小于0，则无交点
+			var discr:Number = b*b - c;
+			if(discr < 0) return false;
+			
+			return false;
+		}
+//-------------------------------射线与长方形相交----------------------------------------------------
+		/**
+		 * 判断射线与长方形相交，只需要判断它与这个长方形展开后的两个平面x-slab y-slab相交后的线段是否有重叠部分
+		 * (注意书中此算法有错误)
+		 * (先要检查是否平行与轴，如果平行的话，直接判断点是否再区间内，就能判断是否相交)
+		 * 
+		 * 设射线方程为
+		 * R(t) = P + td
+		 * 平面由隐式定义方程X·n=D， (其中X为平面上的点，n为平面法向量，D为原点到平面的距离是一个数而不是矢量) 
+		 * 再二维坐标系上表现的是直线比如
+		 * x = 5 这条直线 n = (0,1)
+		 * y = 4 这条直线 n = (1,0)
+		 * 
+		 * 将直线方程带入平面方程可以得到
+		 * (P+td)·n=D
+		 * t = (D-P·n)/d·n
+		 * t>=0
+		 * 
+		 * 然后 AABB
+		 * 对于X轴有两条直线构成的平面 min.x, max.x n = (0,1) x-slab
+		 * 对于Y轴有两条直线构成的平面 min.y, max.y n = (1,0) y-slab
+		 * 
+		 * 将X轴的两条线带入 t 方程，可以求出两个交点 t1,t2 设 t2>t1
+		 * 将Y轴的两条线带入 t 方程，可以求出两个交点 t3,t4 设 t4>t3
+		 * 
+		 * 将交点t值带入射线方程，可以得出交点，可以发现，t值大的再射线上的距离就圆，t值小的再射线上的距离就近
+		 * 所以只需要比较t值，就能判断 x-slab 的线段是否与 y-slab 的线段相交
+		 * t1>t4 t3>t2 则不相交
+		 * 也就是一个slab的最小值比最另一个slab的最大值大就不相交
+		 * 
+		 */		
+		public static function intersectRayAABB(ray:VBSegment, aabb:VBAABB, q:VBVector, p:VBVector):Boolean
+		{
+			var tmin:Number = 0;
+			var tmax:Number = Number.MAX_VALUE;
+			//先判断是否平行
+			//X,Y轴
+			if(Math.abs(ray.direction.x) < EPSILON)
+			{
+				//射线起点不在AABB中，则不会相交
+				if(ray.start.x < aabb.min.x || ray.start.x > aabb.max.x)
+				{
+					return false;
+				}
+			}else if(Math.abs(ray.direction.y) < EPSILON)
+			{
+				//射线起点不在AABB中，则不会相交
+				if(ray.start.y < aabb.min.y || ray.start.y > aabb.max.y)
+				{
+					return false;
+				}
+			}else{
+				//计算t值
+				//X轴上的交点
+				var ood:Number = 1/ray.direction.x;
+				var t1:Number = (aabb.min.x - ray.start.x)*ood;
+				var t2:Number = (aabb.max.x - ray.start.x)*ood;
+				var temp:Number;
+				//让t1小于t2 这样t1代表入口，t2代表出口
+				if(t1 > t2)
+				{
+					temp = t1;
+					t1 = t2;
+					t2 = temp;
+				}
+				//将入口值赋值
+				if(t1 > tmin) tmin = t1;
+				if(t2 < tmax) tmax = t2;
+				//最小值比最大值还大
+				if(tmin > tmax) return false;
+				//y轴
+				ood = 1/ray.direction.y;
+				t1 = (aabb.min.y - ray.start.y)*ood;
+				t2 = (aabb.max.y - ray.start.y)*ood;
+				//让t1小于t2 这样t1代表入口，t2代表出口
+				if(t1 > t2)
+				{
+					temp = t1;
+					t1 = t2;
+					t2 = temp;
+				}
+				if(t1 > tmin) tmin = t1;
+				if(t2 < tmax) tmax = t2;
+				//最小值比最大值还大
+				if(tmin > tmax) return false;
+			}
+			//取得最小交点
+			var tempQ:VBVector = ray.start.plus(ray.direction.mult(tmin));
+			q.setTo(tempQ.x, tempQ.y);
+			tempQ = ray.start.plus(ray.direction.mult(tmax));
+			p.setTo(tempQ.x, tempQ.y);
+			return true;
+		}
+
 	}
 }
 
