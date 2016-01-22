@@ -27,13 +27,71 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="400",width="550")]
 	public class Test extends Sprite
 	{
-		private var aabb:VBAABB = new VBAABB();
+		//动态圆相交测试(注意要改变testMovingRimRim方法来达到测试效果)
+		private var rim0:VBRim = new VBRim();
+		private var rim1:VBRim = new VBRim();
+		private var d:VBVector = new VBVector(1,0);
+		public function Test()
+		{
+			rim0.c.setTo(100,200);
+			rim0.r = 10;
+			rim1.c.setTo(300,200);
+			rim1.r = 10;
+			
+			//--test----
+//			VBMathUtil.testMovingRimRim(this.graphics, rim0, d, 0, 400, rim1);
+			//----
+			VBMathUtil.testMovingRimRim(rim0, d, 0, 400, rim1);
+			DrawUtil.drawRim2(this.graphics, rim0, 2, 0x00ff00);
+			DrawUtil.drawRim2(this.graphics, rim1, 2, 0xffff00);
+		}
+//---------------------------------------------------------------------------			
+		//测试线段和AABB相交
+		/*private var aabb:VBAABB = new VBAABB();
+		private var sg:VBSegment = new VBSegment();
+		public function Test()
+		{
+			sg.start.setTo(50,50);
+			sg.end.setTo(300,200);
+			aabb.min.setTo(100 + 100,100+50);
+			aabb.max.setTo(200 + 100,200+50);
+			
+			if(VBMathUtil.testSegmentAABB(sg, aabb))
+			{
+				DrawUtil.drawAABB(this.graphics, aabb,2,0xff0000);
+			}else
+			{
+				DrawUtil.drawAABB(this.graphics, aabb,2,0x00ffff);
+			}
+			DrawUtil.drawLine2(this.graphics, sg,2);
+			
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		protected function onEnterFrame(event:Event):void
+		{
+			aabb.min.setTo(stage.mouseX, stage.mouseY);
+			aabb.max.setTo(100+stage.mouseX,100+stage.mouseY);
+			this.graphics.clear();
+			if(VBMathUtil.testSegmentAABB(sg, aabb))
+			{
+				DrawUtil.drawAABB(this.graphics, aabb,2,0xff0000);
+			}else
+			{
+				DrawUtil.drawAABB(this.graphics, aabb,2,0x00ffff);
+			}
+			
+			DrawUtil.drawLine2(this.graphics, sg,2);
+		}*/
+//---------------------------------------------------------------------------		
+		//测试线段与AABB相交并有交点
+		/*private var aabb:VBAABB = new VBAABB();
 		private var ray:VBSegment = new VBSegment();
 		private var q:VBVector = new VBVector();
 		private var p:VBVector = new VBVector();
 		public function Test()
 		{
-			ray.start.setTo(50,50);
+			ray.start.setTo(150,150);
 			ray.end.setTo(500,500);
 			
 			aabb.min.setTo(100,100);
@@ -58,9 +116,9 @@ package
 			DrawUtil.drawAABB(this.graphics, aabb,2,0x00ffff);
 			DrawUtil.drawLine2(this.graphics, ray,2);
 			DrawUtil.drawRim(this.graphics, q, 5, 2, 0xffff00);
-		}
+		}*/
 //---------------------------------------------------------------------------		
-		//测试线段与圆相交
+		//测试线段与圆相交并有交点
 		/*private var rim:VBRim = new VBRim();
 		private var ray:VBSegment = new VBSegment();
 		private var q:VBVector = new VBVector();
@@ -316,12 +374,12 @@ package
 		private var sp1rotation:Number = 0;
 		private var sp2rotation:Number = 0;
 		public function Test()
-		{
+		{	
 			addChild(sp1);
 			sp1.x = 200;
-			sp1.y = 160;
+			sp1.y = 180;
 			addChild(sp2);
-			sp2.x = 300;
+			sp2.x = 200;
 			sp2.y = 260;
 			
 			addChild(obbsp1);

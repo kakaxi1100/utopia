@@ -1,15 +1,21 @@
 package org.ares.vernalbreeze
 {
+	import flash.display.Graphics;
+	
 	import test.collision.VBAABB;
 	import test.collision.VBOBB;
 	import test.collision.VBRim;
 	import test.collision.VBSegment;
 	import test.collision.VBTriangle;
+	import test.shape.DrawUtil;
 
 	public class VBMathUtil
 	{
 		//一个阈值（极小的值），用于判定是否平行等
 		private static var EPSILON:Number = 0.01;
+		//一个阈值（极小的值），用于判定动态相交是否退出
+		private static var INTERVAL_EPSILON:Number = 0.01;
+
 		public function VBMathUtil()
 		{
 		}
@@ -800,7 +806,7 @@ package org.ares.vernalbreeze
 			
 			return false;
 		}
-//-------------------------------射线与长方形相交----------------------------------------------------
+//-------------------------------射线与AABB相交----------------------------------------------------
 		/**
 		 * 判断射线与长方形相交，只需要判断它与这个长方形展开后的两个平面x-slab y-slab相交后的线段是否有重叠部分
 		 * (注意书中此算法有错误)
@@ -893,7 +899,136 @@ package org.ares.vernalbreeze
 			p.setTo(tempQ.x, tempQ.y);
 			return true;
 		}
-
+//-------------------------------线段与AABB相交--------------------------------------------------
+		/**
+		 *判断线段与AABB相交
+		 * 用分离轴测试即可
+		 * 先计算AABB的中心点和半长(半宽，半高)
+		 * 再计算线段的中心点和半长
+		 * 
+		 * 将AABB中心点的到线段中心的距离和AABB的半长+线段的半长做比较
+		 * 如果前者大则不相交，如果后者大则相交
+		 *  
+		 * 要比较4个轴
+		 * AABB的2个轴，和直线方向的两个轴(直线的方向和方向的法向)
+		 * 
+		 * @param segment
+		 * @param aabb
+		 * @return 
+		 * 
+		 */		
+		public static function testSegmentAABB(segment:VBSegment, aabb:VBAABB):Boolean
+		{
+			//计算AABB的中点
+			var c:VBVector = aabb.max.plus(aabb.min).multEquals(0.5);
+			//半宽和半高 
+			var e:VBVector = aabb.max.minus(c);//它的 x是半宽，y是半高
+			//计算线段的中点
+			var m:VBVector = segment.start.plus(segment.end).multEquals(0.5);
+			//线段半长矢量
+			var d:VBVector = segment.end.minus(m);
+			//将线段中点转到AABB坐标系
+			m.minusEquals(c);
+			//然后用分离轴来测试
+			//先测试X轴
+			//看看直线的半长在X轴上的投影
+			var adx:Number = Math.abs(d.x);
+			//判断半宽+直线的半长，是否比两中心的距离大
+			if(Math.abs(m.x) > e.x + adx)
+			{
+				return false;
+			}
+			//再测试Y轴
+			var ady:Number = Math.abs(d.y);
+			if(Math.abs(m.y) > e.y + ady)
+			{
+				return false;
+			}
+			//比较直线的轴
+			//首先比较直线方向上的投影-e0
+			//m.multEquals(-1);
+			//求MC在e0上的投影
+			var ds:Number = Math.abs(m.scalarMult(segment.direction));
+			//求aabb.max-aabb.c到线段方向上的投影
+			var maxe:Number = Math.abs(e.scalarMult(segment.direction));
+			if(ds >　maxe + d.magnitude()) return false;
+			
+			//再求在直线法向的投影-e1
+			ds = Math.abs(m.scalarMult(segment.normal));
+			//此时aabb顶点再法线上投影，不是 aabb.min或aabb.max这两个点，而是除这个之外的另两个顶点
+			//所有 e 要么 x 反向 ，要么y反向
+			e.x*=-1;
+			//计算aabb顶点到中心的距离在直线法线上的投影
+			maxe = Math.abs(e.scalarMult(segment.normal));
+			//由于线段再法线上的高度投影是 0 
+			if(ds >　maxe + 0) return false;
+			
+			return true;
+		}
+//-------------------------------运动相交测试--------------------------------------------------
+//------------------------------运动圆相交测试--------------------------------------------------
+		/**
+		 *运动圆形的相交测试
+		 * 
+		 * rim0 rim1 分别表示两圆
+		 * rim1 静止不动，计算rim0相对于rim1的运动
+		 * 假设圆rim0起始于t0点
+		 * t0 是它现在所处的位置的比例， t1是它将要(或者说是下一帧)要达到的位置的比例
+		 * 
+		 * 产生一个包围圆包含t0和t1位置所产生的圆，中心点是 mid，如果没有与 rim1 相碰则没有发生碰撞。
+		 * 圆的中心点为
+		 * mid = rim0.c + mid*d
+		 * 半径为
+		 * r = (mid - t0)*|d| + rim0.r
+		 * 
+		 * 否则，递归判断
+		 * 是t0-mid 所包含的圆发生了碰撞 还是t1-mid所包含的圆发生了碰撞
+		 * 直到这个圆小到一定程度，就结束递归
+		 *  
+		 * @param rim0
+		 * @param d1
+		 * @param t0
+		 * @param t1
+		 * @param rim1
+		 * @return 
+		 * 
+		 */		
+		public static function testMovingRimRim(/*g:Graphics,*/ rim0:test.collision.VBRim, d:VBVector, 
+												t0:Number, t1:Number, rim1:test.collision.VBRim):Boolean
+		{
+			//创建一个包围圆包含了 t0-t1位置
+			var b:test.collision.VBRim = new test.collision.VBRim();
+			//计算b中心点的位置
+			var mid:Number = (t0+t1)*0.5;
+			//计算半径
+			var r:Number = d.mult(mid - t0).magnitude()+rim0.r;
+			b.c = rim0.c.plus(d.mult(mid));
+			b.r = r;
+			
+			//test---------------------------------
+//			var temp:test.collision.VBRim = new test.collision.VBRim();
+//			temp.c = rim0.c.plus(d.mult(t1));
+//			temp.r = rim0.r;
+//			DrawUtil.drawRim2(g, b, 2, 0xff0000);
+//			DrawUtil.drawRim2(g, temp, 2, 0x00ff00);
+			//-------------------------------------
+			//判断是否和rim1相交
+			//如果不相交就退出判断
+			if(b.hitTestRim(rim1) == false) return false;
+			
+			//假如t1和t0的位置足够小，说明基本上已经找到相撞的位置了，可以提出了
+			if(t1 - t0 < INTERVAL_EPSILON)
+			{
+				//这里应该取得一个t值，一遍再函数外部可以获取真正的圆的位置
+				return true;
+			}
+			
+			//判断t0-mid的包围圆是否相交
+			//假如相交就不用再检测 mid-t1圆了
+			if(testMovingRimRim(/*g,*/ rim0, d, t0, mid, rim1)) return true;
+			
+			return testMovingRimRim(/*g,*/ rim0, d, mid, t1, rim1);
+		}
 	}
 }
 
