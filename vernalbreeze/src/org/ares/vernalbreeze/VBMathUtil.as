@@ -1029,6 +1029,159 @@ package org.ares.vernalbreeze
 			
 			return testMovingRimRim(/*g,*/ rim0, d, mid, t1, rim1);
 		}
+//------------------------------运动圆与平面相交测试-----------------------------------------------
+		/**
+		 *运动圆与平面相交
+		 * 
+		 * 平面由隐式定义方程X·n=D
+		 * 假设圆的圆心为C 半径为 r, 其将要达到的位置,位移方向向量为v,则圆的位移可以用一下方程表示
+		 * C(t) = C + tv 0≤t≤1 t=0时是当前位置, t=1时是要达到的位置
+		 * 一点R距离平面的有符号距离为, R在平面法向上的投影在与D相减 (n • R) - d
+		 * 若|(n • C) - d|≤r 则圆与平面相交
+		 * 
+		 * 圆相对于平面的运动方式可以按下列状态加以分析：
+		 * 考察 (n • v)的符号
+		 * 若 (n • v)>0, 如果圆位于平面正面，则圆背离平面运动;如果圆位于平面的背面，则圆朝向平面运动, 即圆在顺着法线的方向(-90°~90°)运动.考虑极端情况则顺着平面法线移动
+		 * 若 (n • v)<0, 情况则相反;考虑极端情况就是圆逆着平面法线移动
+		 * 
+		 * 正好(n • C) - d的符号表明了圆与平面的位置关系。
+		 * 结合两者可以得出
+		 * (n • v)*((n • C) - d)>0 圆背离平面运动
+		 * (n • v)*((n • C) - d)<0 圆朝向平面运动
+		 * (n • v)=0 圆以平行于平面的方式运动
+		 * 
+		 * 交点的求法
+		 * 如果圆朝着平面运动，则一定会有交点,交点求法为
+		 * 首先将平面朝着圆的方向移动 r 的距离，r 的符号跟圆在平面的正面还是背面有关, 在正面就是 r 在背面就是 -r
+		 * n • Q = D ± r
+		 * 
+		 * 交点就是求线段 S(t) = C + tv 与置换后的平面的交点
+		 * 解：
+		 * (X·n)=D±r
+		 * n •(C+tv) = D±r
+		 * (n • C)+t(n • v) = D±r
+		 * t = (±r - ((n • C)-d))/(n • v)
+		 * 当 0≤t≤1 圆在t时刻与平面相交，且与平面的交点为Q=C(t)±rn//即与置换平面的交点再平移r在n上的距离
+		 * 
+		 * @param rim
+		 * @param plane
+		 * @return 
+		 * 
+		 */		
+		public static function insersectMovingRimPlane(rim:test.collision.VBRim, v:VBVector, plane:VBSegment, q:VBVector):Boolean
+		{
+			//计算圆与平面的距离
+			var dist:Number = plane.normal.scalarMult(rim.c) - plane.distanceToZero;
+			//假如已经相交
+			if(Math.abs(dist) <= rim.r)
+			{
+				//交点设置为原点
+				q = rim.c;
+				return true;
+			}else
+			{
+				//计算(n • v)
+				var denom:Number = plane.normal.scalarMult(v);
+				//圆运动平行或者远离平面
+				if(denom*dist >= 0)
+				{
+					return false;
+				}else
+				{
+					//圆朝向平面运动,则圆肯定会相交
+					//根据圆所在的方向，将平面移动  rim.r 的距离
+					var r:Number = dist > 0?rim.r:-rim.r;
+					var t:Number = (r-dist)/denom;
+					q = rim.c.plus(v.mult(t).minus(plane.normal.mult(r)));
+					return true;
+				}
+			}
+		}
+		
+		/**
+		 *仅仅测试圆是否与直线相交
+		 * 
+		 * start 为圆的起点
+		 * end 为圆最终要运动到的位置
+		 * 如果起点或终点的圆与平面相交则运动圆与平面相交
+		 * 如果起点和终点分别位于平面的两侧则运动员与平面相交
+		 * 其它情况则不相交
+		 * 
+		 * @param start
+		 * @param end
+		 * @param r
+		 * @param plane
+		 * @return 
+		 * 
+		 * true 相交 ; false 不相交
+		 */		
+		public static function testMovingRimPlane(start:VBVector, end:VBVector, r:Number, plane:VBSegment):Boolean
+		{
+			var startDist:Number = start.scalarMult(plane.normal) - plane.distanceToZero;
+			var endDist:Number = end.scalarMult(plane.normal) - plane.distanceToZero;
+			//在直线两侧
+			if(startDist*endDist < 0) return true;
+			//起点或者中点相交
+			if(Math.abs(startDist) <= r || Math.abs(endDist) <= r)
+			{
+				return true;
+			}
+			return false;
+		}
+//------------------------------运动圆与圆的相交测试-----------------------------------------------
+		/**
+		 *设两个圆的位移方程为
+		 * P0(t) = C0 + tV0 0≤t≤1
+		 * P1(t) = C1 + tV1 0≤t≤1
+		 * 
+		 * 在t时刻两球心之间的向量为
+		 * d(t) = (C0 + tV0) - (C1 + tV1) = (C0-C1)+t(V0 - V1)
+		 * 当向量d的长度等于圆半径之和是，二者相交
+		 * d(t) • d(t) = (r0 + r1)^2
+		 * 假设 s=C0-C1, v=V0-V1, r=r0+r1
+		 * (s+tv) • (s+tv) = r^2
+		 * (s • s)+2(v • s)t+(v • v)t^2 = r^2
+		 * (v • v)t^2 + 2(v • s)t + (s • s - r^2) = 0 => at^2 + 2bt + c = 0
+		 * t = (-b±(b^2-ac)^(1/2))/a
+		 * 判别式：
+		 * Δ = (b^2-ac)
+		 * Δ<0 两圆不相交
+		 * Δ=0 两圆相切
+		 * Δ>0 较小的t值表示首次相交，较大的t值表示首次相交后穿越并停止相交的那个时刻.
+		 * 首次碰撞表示为
+		 * t = (-b - Δ^(1/2))/a
+		 * 
+		 * @param rim0
+		 * @param rim1
+		 * @param v0
+		 * @param v1
+		 * @return 
+		 * 
+		 */		
+		public static function testMovingRimRim2(rim0:test.collision.VBRim, rim1:test.collision.VBRim, v0:VBVector, v1:VBVector):Boolean
+		{
+			var s:VBVector = rim0.c.minus(rim1.c);
+			var v:VBVector = v1.minus(v0);
+			var r:Number = rim0.r + rim1.r;
+			var c:Number = s.scalarMult(s) - r*r;
+			//开始就相交了
+			if(c < 0)
+			{
+				//t = 0;
+				return true;	
+			}
+			var a:Number = v.scalarMult(v);
+			//两个圆几乎没有相对运动
+			if(a<EPSILON) return false;
+			var b:Number = v.scalarMult(s);
+			//两个圆背离运动
+			if(b >= 0) return false;
+			var d:Number = b*b - a*c;
+			//没有实根不相交
+			if(d < 0) return false;
+			var t:Number = (-b - Math.sqrt(d))/a;
+			return false;
+		}
 	}
 }
 
