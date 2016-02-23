@@ -15,13 +15,26 @@ package
 	[SWF(frameRate="60", backgroundColor="0",height="600",width="800")]
 	public class GeometryTest extends Sprite
 	{
+		private const CLIP_X:uint = 0;
+		private const CLIP_Y:uint = 0;
+		private const CLIP_H:uint = 600;
+		private const CLIP_W:uint = 800;
+		
 		private var bmd:BitmapData = new BitmapData(800,600, false, 0);
 		private var bmp:Bitmap = new Bitmap(bmd);
-		private var clip:Rectangle = new Rectangle(200,100,200,200);
-		
+		private var clip:Rectangle = new Rectangle(CLIP_X,CLIP_Y,CLIP_W,CLIP_H);
+		private var polygen:Poligen2D = new Poligen2D();
 		public function GeometryTest()
 		{
+			addChild(bmp);
 			
+			polygen.state = 1;
+			polygen.x0 = 0;
+			polygen.y0 = 0;
+			polygen.vlist.push(new Point(0 + CLIP_X,0 + CLIP_Y), new Point(50+CLIP_X,0+CLIP_Y), new Point(25+CLIP_X,25+CLIP_Y), 
+				new Point(50+CLIP_X,50+CLIP_Y), new Point(0+CLIP_X,50+CLIP_Y));
+			
+			drawPolygen2D(polygen);
 		}
 		
 		private function drawPolygen2D(polygen:Poligen2D):int
@@ -79,10 +92,10 @@ package
 				p1Code |= CLIP_CODE_E;
 			}
 			
-			if(yc1 < clipRect.bottom)
+			if(yc1 < clipRect.top)
 			{
 				p1Code |= CLIP_CODE_N;
-			}else if(yc1 > clipRect.top)
+			}else if(yc1 > clipRect.bottom)
 			{
 				p1Code |= CLIP_CODE_S;
 			}
@@ -95,10 +108,10 @@ package
 				p2Code |= CLIP_CODE_E;
 			}
 			
-			if(yc2 < clipRect.bottom)
+			if(yc2 < clipRect.top)
 			{
 				p2Code |= CLIP_CODE_N;
-			}else if(yc2 > clipRect.top)
+			}else if(yc2 > clipRect.bottom)
 			{
 				p2Code |= CLIP_CODE_S;
 			}
