@@ -4,9 +4,23 @@ vernalbreeze/bin-debug/
 vernalbreeze/bin-release/
 vernalbreeze/desktop.ini
 
+eva/bin/
+eva/bin-debug/
+eva/bin-release/
+
+fireflight/bin/
+fireflight/bin-debug/
+fireflight/bin-release/
+
 # Other files and folders
 vernalbreeze/.settings/
 vernalbreeze.~ml
+
+eva/.settings/
+eva.~ml
+
+fireflight/.settings/
+firtflight.~ml
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
