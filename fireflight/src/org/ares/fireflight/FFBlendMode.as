@@ -142,10 +142,3 @@ package org.ares.fireflight
 		}
 	}
 }
-class Color
-{
-	public var alpha:uint;
-	public var red:uint;
-	public var green:uint;
-	public var blue:uint;
-}

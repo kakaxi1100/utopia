@@ -27,11 +27,17 @@ package
 			test.x = 400;
 			test.y = 150;
 			
-			ct1.redOffset = 0;
-			ct1.greenOffset = -255;
-			ct1.blueOffset = -255;
+//			test.bitmapData.fillRect(test.bitmapData.rect, 0x22ffff00);
+			
+			ct1.redMultiplier = 0;
+			ct1.greenMultiplier = 0;
+			ct1.blueMultiplier = 0;
+			ct1.redOffset = 255;
+			ct1.greenOffset = 0;
+			ct1.blueOffset = 0;
 //			ct1.alphaOffset = 0;
-			test.bitmapData.draw(test.bitmapData, null, ct1);
+//			test.bitmapData.draw(test.bitmapData, null, ct1);
+			test.bitmapData.colorTransform(test.bitmapData.rect,ct1);
 			
 //			bm.x = 400;
 //			bm.y = 200;
@@ -55,11 +61,11 @@ package
 //			test.x = stage.mouseX;
 //			test.y = stage.mouseY;
 //			ct1.redOffset -= 0.01;
-			count += 0.1;
-			ct1.redOffset = -count;
-			ct1.greenOffset = count;
-			test.bitmapData.draw(test.bitmapData, null, ct1);
-			
+			ct1.redOffset -= 1;
+			ct1.greenOffset += 1;
+//			trace(ct1);
+			test.bitmapData.colorTransform(test.bitmapData.rect, ct1);
+//			
 			a = getTimer();
 		}	
 	}

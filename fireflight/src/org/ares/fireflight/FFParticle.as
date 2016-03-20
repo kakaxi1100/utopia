@@ -1,5 +1,7 @@
 package org.ares.fireflight
 {
+	import flash.geom.ColorTransform;
+
 	/**
 	 *速度的设定方式 是按 m/s 来设定的， 假设帧频是 60fps
 	 * 则有 每帧移动的 像素点为  px = v/60; 加入   v = 10, 则 px = 0.166666 
@@ -37,6 +39,14 @@ package org.ares.fireflight
 		//stepSize = (endsize - startsize)*time/lifespan
 		//然后在用  CurSize + stepSize = CurSize
 		private var mCurSize:Number;
+		//起始的颜色值
+		private var mStartColor:uint;
+		//结束时候的颜色值
+		private var mEndColor:uint;
+		//色差
+		private var mColorDiff:Number;
+		//当前颜色的变化方案
+		private var mColorTransform:ColorTransform;
 		public function FFParticle()
 		{
 
@@ -69,6 +79,15 @@ package org.ares.fireflight
 				return false;
 			}
 			return true;
+		}
+		/**
+		 *计算色变 
+		 * @param duration
+		 * 
+		 */		
+		private function discoloration(duration:Number):void
+		{
+			
 		}
 		/**
 		 *形变计算
