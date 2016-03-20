@@ -119,7 +119,7 @@ package org.ares.fireflight
 		{
 //			mPosition = new FFVector(380+40*Math.random(), 580);
 			mPosition = new FFVector(400, 500);
-			mVelocity = new FFVector(0, -(Math.random()*60+70));
+			mVelocity = new FFVector(Math.random()*4-2, -(Math.random()*60+70));
 			mAcceleration = new FFVector();
 			mForceAccum = new FFVector();
 			mDamping = 1;
