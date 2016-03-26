@@ -14,7 +14,7 @@ package org.ares.fireflight
 			if(arg.length == 1)
 			{
 				var c:uint = arg[0];
-				this.alpha = c >> 24;
+				this.alpha = (c >> 24)&0xFF;
 				this.red = (c >> 16)&0xFF;
 				this.green = (c >> 8)&0xFF;
 				this.blue = c&0xFF;	

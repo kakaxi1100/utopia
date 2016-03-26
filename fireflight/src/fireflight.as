@@ -1,9 +1,11 @@
 package
 {
 	import flash.display.Bitmap;
+	import flash.display.BlendMode;
 	import flash.display.Sprite;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.geom.ColorTransform;
 	import flash.utils.getTimer;
 	
 	import org.ares.fireflight.FFParticle;
@@ -18,7 +20,9 @@ package
 		private var p:FFParticle = new FFParticle();
 		private var a:Number;
 		private var plist:Vector.<FFParticle> = new Vector.<FFParticle>;
+		private var clist:Vector.<ColorTransform> = new Vector.<ColorTransform>;
 		private var slist:Vector.<Sprite> = new Vector.<Sprite>;
+		private var blist:Vector.<Bitmap> = new Vector.<Bitmap>;
 		
 		public function fireflight()
 		{
@@ -32,12 +36,27 @@ package
 				var p:FFParticle = new FFParticle();
 				p.init();
 				plist.push(p);
+				
 				var bm:Bitmap = new Dot();
 				var sp:Sprite = new Sprite();
 				bm.x = -16;
 				bm.y = -16;
+				var ct:ColorTransform = new ColorTransform();
+				ct.alphaMultiplier = 0;
+				ct.redMultiplier = 0;
+				ct.greenMultiplier = 0;
+				ct.blueMultiplier = 0;
+				ct.alphaOffset = p.curAlpha;
+				ct.redOffset = p.curRed;
+				ct.greenOffset = p.curGreen;
+				ct.blueOffset = p.curBlue;
+				bm.bitmapData.colorTransform(bm.bitmapData.rect, ct);
+				clist.push(ct);
+				blist.push(bm);
+				
 				sp.addChild(bm);
 				addChild(sp);
+				
 				sp.x = p.position.x;
 				sp.y = p.position.y;
 				sp.width = p.curSize;
@@ -63,6 +82,13 @@ package
 				slist[i].y = plist[i].position.y;
 				slist[i].width = plist[i].curSize;
 				slist[i].height = plist[i].curSize;
+//				slist[i].blendMode = BlendMode.SCREEN;
+				clist[i].alphaOffset = plist[i].curAlpha;
+				clist[i].redOffset = plist[i].curRed;
+				clist[i].greenOffset = plist[i].curGreen;
+				clist[i].blueOffset = plist[i].curBlue;
+				blist[i].bitmapData.colorTransform(blist[i].bitmapData.rect, clist[i]);
+				
 				plist[i].update(d);
 			}
 			a = getTimer();

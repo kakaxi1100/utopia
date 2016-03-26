@@ -39,23 +39,6 @@ package org.ares.fireflight
 		}
 		
 		/**
-		 *变暗模式
-		 * 两个像素值之间取最小值返回 
-		 * 在显示对象原色和背景颜色中选择相对较暗的颜色（具有较小值的颜色）。此设置通常用于叠加类型。
-		 * @param topPixel
-		 * @param bottomPixel
-		 * @return 
-		 * 
-		 */		
-		public static function darken(topPixel:uint, bottomPixel:uint):uint
-		{
-			var a:uint = alpha(topPixel) < alpha(bottomPixel) ? alpha(topPixel):alpha(bottomPixel);
-			var r:uint = red(topPixel) < red(bottomPixel) ? red(topPixel):red(bottomPixel);
-			var g:uint = green(topPixel) < green(bottomPixel) ? green(topPixel):green(bottomPixel);
-			var b:uint = blue(topPixel) < blue(bottomPixel) ? blue(topPixel):blue(bottomPixel);
-			return setPixel(a,r,g,b);
-		}
-		/**
 		 * 正片叠加
 		 *将显示对象的原色值与背景颜色的原色值相乘，然后除以 0xFF 进行标准化，从而得到较暗的颜色。此设置通常用于阴影和深度效果。
 		 * 例如，如果显示对象中一个像素的某个原色（例如红色）与背景中对应的像素颜色的值均为 0x88，则相乘结果为 0x4840。除以 0xFF 
@@ -82,63 +65,19 @@ package org.ares.fireflight
 		 * @return 
 		 * 
 		 */		
-		private static function setPixel(a:uint, r:uint, g:uint, b:uint):uint
+		private static function setPixel(a:uint, r:uint, g:uint, b:uint):FFColor
 		{
-			return a<<24+r<<16+g<<8+b;
+			return new FFColor(a,r,g,b);
 		}
 		/**
 		 *取得颜色值 
 		 * @return 
 		 * 
 		 */		
-		private static function getPixel(p:uint):Color
+		private static function getPixel(p:uint):FFColor
 		{
-			var c:Color = new Color();
-			c.alpha = alpha(p);
-			c.red = red(p);
-			c.green = green(p);
-			c.blue = blue(p);
+			var c:FFColor = new FFColor(p);
 			return c;
-		}
-		/**
-		 *取得像素alpha值 
-		 * @param pixel
-		 * @return 
-		 * 
-		 */		
-		private static function alpha(pixel:uint):uint
-		{
-			return pixel>>24;
-		}
-		/**
-		 *取得像素红色值 
-		 * @param pixel
-		 * @return 
-		 * 
-		 */		
-		private static function red(pixel:uint):uint
-		{
-			return (pixel>>16)&0xFF;
-		}
-		/**
-		 *取得像素绿色值
-		 * @param pixel
-		 * @return 
-		 * 
-		 */		
-		private static function green(pixel:uint):uint
-		{
-			return (pixel>>8)&0xFF;
-		}
-		/**
-		 *取得像素蓝色值 
-		 * @param pixel
-		 * @return 
-		 * 
-		 */		
-		private static function blue(pixel:uint):uint
-		{
-			return pixel&0xFF;
 		}
 	}
 }
