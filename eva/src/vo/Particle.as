@@ -230,6 +230,7 @@ package vo
 		public function set lifespan(value:Number):void
 		{
 			mLifespan = value;
+			mCurLife = mLifespan;
 		}
 		
 		public function get curSize():Number
@@ -246,6 +247,17 @@ package vo
 		{
 			mColor = value;
 		}
+
+		public function get curLife():Number
+		{
+			return mCurLife;
+		}
+
+		public function set curLife(value:Number):void
+		{
+			mCurLife = value;
+		}
+
 		
 	}
 }

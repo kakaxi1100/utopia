@@ -2,16 +2,16 @@ package vo
 {
 	public class PayLoad
 	{
-		public var posx:Number = 0;
-		public var posy:Number = 0;
 		public var color:uint = 0;
 		
-		private var plist:Vector.<Particle> = new Vector.<Particle>();
+		private var mHead:Particle;
+		
+		public var plist:Vector.<Particle> = new Vector.<Particle>();
 		public function PayLoad()
 		{
 		}
 		
-		public function addParticle(vx:Number, vy:Number, life:Number):void
+		public function addParticle(posx:Number, posy:Number,vx:Number, vy:Number, life:Number):Particle
 		{
 			var p:Particle = new Particle();
 			p.init();
@@ -20,8 +20,23 @@ package vo
 			p.damping = 0.99;
 			p.lifespan = life;
 			p.color = color;
-			
-			plist.push(p);
+			if(mHead == null)
+			{
+				mHead = p;
+			}else{
+				plist.push(p);
+			}
+			return p;
+		}
+
+		public function length():uint
+		{
+			return plist.length;
+		}
+		
+		public function get head():Particle
+		{
+			return mHead;
 		}
 	}
 }
