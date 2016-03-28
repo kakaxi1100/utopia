@@ -13,9 +13,20 @@ package vo
 		{
 		}
 		
-		public function emit():void
+		public function addPayload(pl:PayLoad):void
 		{
-			
+			mPayloadList.push(pl);
+		}
+		
+		public function emit(duration:Number):void
+		{
+			var len:uint = 0;
+			while(len < mPayloadList.length)
+			{
+				var p:PayLoad = mPayloadList[len];
+				p.update(duration);
+				len++;
+			}
 		}
 	}
 }

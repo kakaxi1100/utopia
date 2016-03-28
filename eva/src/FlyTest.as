@@ -22,7 +22,7 @@ package
 		private var blur:BlurFilter = new BlurFilter(4,4,1);
 		private var darken:ColorTransform = new ColorTransform(1,1,1,0.86);
 		private var origin:Point = new Point();
-		private var pl:PayLoad = new PayLoad(); 
+		private var pl:PayLoad = new PayLoad(new Particle()); 
 		private var force:EVector = new EVector(0,20);
 		private var sparkAlpha:uint = 0;
 		private var sparkColor:uint = 0;
@@ -31,25 +31,26 @@ package
 			addChild(bmp);
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			a = getTimer();
-			//初始化承载器
-			pl.color = 0x6AC62E;
 			
 			//添加第一个粒子
 			var vx:Number = -100;
 			var vy:Number = -100;
-			var life:Number = 10;
-			pl.addParticle(800, 300, vx, vy, life);
-			pl.head.addForce(new EVector(100, 100));
+			var life:Number = 5;
+			//初始化承载器
+			pl.head.init();
+			pl.head.color = 0x6AC62E;
+			pl.head.position.setTo(800,300);
+			pl.head.velocity.setTo(vx, vy);
+			pl.head.lifespan = life;
+			pl.head.damping = 0.99;
 		}
 		
 		protected function onEnterFrame(event:Event):void
 		{
 			var d:Number = (getTimer() - a)/1000;
+			
 			bmd.lock();
 //			bmd.fillRect(bmd.rect, 0);
-			
-			pl.head.addForce(force);
-			pl.head.update(d);
 			
 			if(pl.head.lifeTime(d) == true)
 			{
@@ -57,13 +58,13 @@ package
 				{
 					var rd:Number = Math.random();
 					var p:Particle = pl.addParticle(pl.head.position.x - rd*pl.head.velocity.x, 
-													pl.head.position.y - rd*pl.head.velocity.y, 0,0,0);
+													pl.head.position.y - rd*pl.head.velocity.y, 0,0,0,pl.head.color);
 					p.velocity.setTo(0.2*Math.random()*2 - 1, 0.2*Math.random()*2 - 1);
 					p.lifespan = Math.random()*2 + 1;
-					p.color =  pl.color;
+					p.color =  pl.head.color;
 				}
 			}
-			bmd.colorTransform(bmd.rect, darken);
+//			bmd.colorTransform(bmd.rect, darken);
 			bmd.applyFilter(bmd, bmd.rect, origin, blur);
 			for(i = 0; i < pl.length(); i++)
 			{
@@ -78,6 +79,10 @@ package
 //				trace(sparkColor);
 			}
 			bmd.unlock();
+			
+			pl.head.addForce(force);
+			pl.head.update(d);
+			
 			a = getTimer();
 		}
 	}

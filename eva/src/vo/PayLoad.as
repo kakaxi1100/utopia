@@ -1,17 +1,37 @@
 package vo
 {
 	public class PayLoad
-	{
-		public var color:uint = 0;
-		
+	{	
 		private var mHead:Particle;
 		
 		public var plist:Vector.<Particle> = new Vector.<Particle>();
-		public function PayLoad()
+		
+		private var gs:IGenerationStrategy;
+		public function PayLoad(head:Particle = null, generation:IGenerationStrategy = null)
 		{
+			mHead = head;
+			gs = generation;
 		}
 		
-		public function addParticle(posx:Number, posy:Number,vx:Number, vy:Number, life:Number):Particle
+		public function update(duration:Number):void
+		{
+			/*generate particles*/
+			if(gs != null)
+			{
+				gs.generation(this);
+			}
+			/*filter & transform apply on bitmap*/
+			var len:uint = 0;
+			while(len < plist.length)
+			{
+				plist[len].update(duration);
+				len++;
+			}
+			mHead.update(duration);
+			
+		}
+		
+		public function addParticle(posx:Number, posy:Number,vx:Number, vy:Number, life:Number, color:uint):Particle
 		{
 			var p:Particle = new Particle();
 			p.init();
@@ -20,12 +40,8 @@ package vo
 			p.damping = 0.99;
 			p.lifespan = life;
 			p.color = color;
-			if(mHead == null)
-			{
-				mHead = p;
-			}else{
-				plist.push(p);
-			}
+			plist.push(p);
+
 			return p;
 		}
 
