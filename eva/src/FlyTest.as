@@ -11,7 +11,7 @@ package
 	
 	import vo.EVector;
 	import vo.Particle;
-	import vo.PayLoad;
+	import vo.Payload;
 	
 	[SWF(frameRate="60",width="800",height="600",backgroundColor="0xcccccc")]
 	public class FlyTest extends Sprite
@@ -22,7 +22,7 @@ package
 		private var blur:BlurFilter = new BlurFilter(4,4,1);
 		private var darken:ColorTransform = new ColorTransform(1,1,1,0.86);
 		private var origin:Point = new Point();
-		private var pl:PayLoad = new PayLoad(new Particle()); 
+		private var pl:Payload = new Payload(new Particle()); 
 		private var force:EVector = new EVector(0,20);
 		private var sparkAlpha:uint = 0;
 		private var sparkColor:uint = 0;

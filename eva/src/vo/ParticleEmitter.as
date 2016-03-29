@@ -2,30 +2,38 @@ package vo
 {
 	/**
 	 *发射器
-	 * 用来装载承载器 
+	 * 用来控制发射承载器的个数及方式
 	 * @author Administrator
 	 * 
 	 */	
 	public class ParticleEmitter
 	{
-		private var mPayloadList:Vector.<PayLoad> = new Vector.<PayLoad>();
+		private var minitSGList:Vector.<IInitStrategy>;
+		private var mGenerSGList:Vector.<IGenerationStrategy>;
+		private var payloadList:Vector.<Payload>;
 		public function ParticleEmitter()
 		{
+			minitSGList = new Vector.<IInitStrategy>();
+			mGenerSGList = new Vector.<IGenerationStrategy>();
+			payloadList = new Vector.<Payload>();
 		}
 		
-		public function addPayload(pl:PayLoad):void
+		public function addPayload(iniIndex:uint, generIndex:uint):void
 		{
-			mPayloadList.push(pl);
+			var p:Payload = PayloadManager.getInstance().addPayload();
+			p.initStrategy = minitSGList[iniIndex];
+			p.generationStragegy = mGenerSGList[generIndex];
+			payloadList.push(p);
 		}
 		
 		public function emit(duration:Number):void
 		{
 			var len:uint = 0;
-			while(len < mPayloadList.length)
+			for(var i:int = 0; i < payloadList.length; i++)
 			{
-				var p:PayLoad = mPayloadList[len];
-				p.update(duration);
-				len++;
+				var p:Payload = PayloadManager.getInstance().addPayload();
+				p.initStrategy = payloadList[i].initStrategy;
+				p.reset();
 			}
 		}
 	}

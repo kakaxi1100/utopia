@@ -1,58 +1,61 @@
 package vo
 {
-	public class PayLoad
+	public class Payload
 	{	
 		private var mHead:Particle;
 		
-		public var plist:Vector.<Particle> = new Vector.<Particle>();
-		
-		private var gs:IGenerationStrategy;
-		public function PayLoad(head:Particle = null, generation:IGenerationStrategy = null)
+		private var mIS:IInitStrategy;
+		private var mGS:IGenerationStrategy;
+		public function Payload(mIS:IInitStrategy = null, generation:IGenerationStrategy = null)
 		{
-			mHead = head;
-			gs = generation;
+			mHead = ParticlePool.getInstance().createParticle();
+			reset();
+			mGS = generation;
 		}
 		
-		public function update(duration:Number):void
+		public function reset():void
 		{
-			/*generate particles*/
-			if(gs != null)
+			if(mIS != null)
 			{
-				gs.generation(this);
+				mIS.reset(mHead);
+			}else{
+				mHead.init();
 			}
-			/*filter & transform apply on bitmap*/
-			var len:uint = 0;
-			while(len < plist.length)
+		}
+		
+		public function update(duration:Number):Boolean
+		{
+			if(mHead.lifeTime(duration) == false)
 			{
-				plist[len].update(duration);
-				len++;
+				PayloadManager.getInstance().removePayload(this);
+				return false;
+			}
+			if(mGS != null)
+			{
+				mGS.generation(this);
 			}
 			mHead.update(duration);
-			
+			return true;
 		}
-		
-		public function addParticle(posx:Number, posy:Number,vx:Number, vy:Number, life:Number, color:uint):Particle
+	
+		public function set generationStragegy(value:IGenerationStrategy):void
 		{
-			var p:Particle = new Particle();
-			p.init();
-			p.position.setTo(posx, posy);
-			p.velocity.setTo(vx, vy);
-			p.damping = 0.99;
-			p.lifespan = life;
-			p.color = color;
-			plist.push(p);
-
-			return p;
+			mGS = value;
 		}
 
-		public function length():uint
+		public function get generationStragegy():IGenerationStrategy
 		{
-			return plist.length;
+			return mGS;
 		}
 		
-		public function get head():Particle
+		public function set initStrategy(value:IInitStrategy):void
 		{
-			return mHead;
+			mIS = value;
+		}
+		
+		public function get initStrategy():IInitStrategy
+		{
+			return mIS;
 		}
 	}
 }
