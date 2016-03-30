@@ -96,6 +96,9 @@ package vo
 		
 		/**
 		 * 积分器物理运算
+		 * 这里需要越简单越好，否则会非常非常卡
+		 * 
+		 * 需要优化这里
 		 * 输入是秒
 		 * @param duration
 		 * 
@@ -106,12 +109,12 @@ package vo
 			//更新位置 采用简化公式 s = vt
 			mPosition.plusScaledVector(mVelocity, duration);
 			//计算加速度 f = ma a = f/m 所以当前的加速度等于初始设定的加速度加上a
-			var tempAcc:EVector = mAcceleration.clone();
+			var tempAcc:EVector = mAcceleration.clone();//主要是这里卡
 			tempAcc.plusScaledVector(mForceAccum,mInverseMass);
 			//更新速度 v = at
 			mVelocity.plusScaledVector(tempAcc, duration);
 			//速度受阻尼影响逐渐减小 v*=d
-			mVelocity.multEquals(Math.pow(mDamping, duration));
+			mVelocity.multEquals(Math.pow(mDamping, duration));//其次是这里卡
 			//清除力, 因为力有可能只作用一个瞬间
 			//所以力要怎么施加在物体上，需要每帧都进行计算
 			//因为力要在粒子运行之前先运算
@@ -128,25 +131,41 @@ package vo
 			mForceAccum.plusEquals(v);
 		}
 		
+		public function resert():void
+		{
+			mPosition.setTo(0,0);
+			mVelocity.setTo(0,0);
+			mAcceleration.setTo(0,0);
+			mForceAccum.setTo(0,0);
+			mDamping = 1;
+			mInverseMass = 1;
+			mStartSize = 0;
+			mEndSize = 0;
+			mLifespan = 0;
+			mColor = 0;
+			
+			mCurSize = mStartSize;
+			mSizeDiff = mEndSize - mStartSize;
+			mCurLife = mLifespan;
+		}
+		
 		public function init():void
 		{
-			//			mPosition = new EVector(380+40*Math.random(), 580);
 			mPosition = new EVector();
 			mVelocity = new EVector();
 			mAcceleration = new EVector();
 			mForceAccum = new EVector();
 			mDamping = 1;
 			mInverseMass = 1;
-			mStartSize = 10;
-			mEndSize = 10;
-			mLifespan = 1;
+			mStartSize = 0;
+			mEndSize = 0;
+			mLifespan = 0;
 			mColor = 0;
 			//记得当上面某些值改变时需要重新计算下面的值
 			//这里是计算出的初值
 			mCurSize = mStartSize;
 			mSizeDiff = mEndSize - mStartSize;
 			mCurLife = mLifespan;
-			
 		}
 		
 		//--粒子位置属性

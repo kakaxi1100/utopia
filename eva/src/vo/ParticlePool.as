@@ -24,7 +24,8 @@ package vo
 			if(mPool.length == 0)
 			{
 				p = new Particle();
-				mPool.push(p);
+				p.init();
+//				mPool.push(p);
 			}else
 			{
 				p = mPool.pop();

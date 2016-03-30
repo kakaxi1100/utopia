@@ -1,5 +1,11 @@
 package vo
 {
+	/**
+	 *payload 管理器
+	 * 用来执行payload的创建，删除和每帧的更新
+	 * @author juli
+	 * 
+	 */	
 	public class PayloadManager
 	{
 		private var plist:Vector.<Payload>;
@@ -27,16 +33,19 @@ package vo
 			{
 				if(p == plist[i])
 				{
-					mPool.removePayload(plist.splice(i, 1)[0]);
+					var pl:Payload = plist.splice(i, 1)[0];
+					pl.head.resert();
+					pl.baseX = pl.baseY = 0;
+					mPool.removePayload(pl);
 					return true;
 				}
 			}
 			return false;
 		}
 		
-		public function addPayload():Payload
+		public function addPayload(g:IGenerationStrategy):Payload
 		{
-			var p:Payload = PayloadPool.getInstance().createPayload();
+			var p:Payload = PayloadPool.getInstance().createPayload(g);
 			plist.push(p);
 			return p;
 		}

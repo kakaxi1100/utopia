@@ -3,37 +3,40 @@ package vo
 	/**
 	 *发射器
 	 * 用来控制发射承载器的个数及方式
+	 * 注意一个发射器只能拥有一个初始化策略和一个产生粒子策略
+	 * 如果在同一个地方发射多个初始化策略，则需要多个发射器
+	 * 发射的初始位置也是又emitter决定的
 	 * @author Administrator
 	 * 
 	 */	
 	public class ParticleEmitter
 	{
-		private var minitSGList:Vector.<IInitStrategy>;
-		private var mGenerSGList:Vector.<IGenerationStrategy>;
-		private var payloadList:Vector.<Payload>;
-		public function ParticleEmitter()
+		public var posX:Number;
+		public var posY:Number;
+		//初始化策略
+		private var minitSG:IInitStrategy;
+		//产生粒子策略
+		private var mGenerSG:IGenerationStrategy;
+		//payload 的个数
+		private var count:uint;
+		public function ParticleEmitter(c:uint, isg:IInitStrategy, gsg:IGenerationStrategy)
 		{
-			minitSGList = new Vector.<IInitStrategy>();
-			mGenerSGList = new Vector.<IGenerationStrategy>();
-			payloadList = new Vector.<Payload>();
+			posX = 0;
+			posY = 0;
+			count = c;
+			minitSG = isg;
+			mGenerSG = gsg;
 		}
 		
-		public function addPayload(iniIndex:uint, generIndex:uint):void
-		{
-			var p:Payload = PayloadManager.getInstance().addPayload();
-			p.initStrategy = minitSGList[iniIndex];
-			p.generationStragegy = mGenerSGList[generIndex];
-			payloadList.push(p);
-		}
-		
-		public function emit(duration:Number):void
+		public function emit():void
 		{
 			var len:uint = 0;
-			for(var i:int = 0; i < payloadList.length; i++)
+			for(var i:int = 0; i < count; i++)
 			{
-				var p:Payload = PayloadManager.getInstance().addPayload();
-				p.initStrategy = payloadList[i].initStrategy;
-				p.reset();
+				var p:Payload = PayloadManager.getInstance().addPayload(mGenerSG);
+				p.baseX = posX;
+				p.baseY = posY;
+				minitSG.reset(p);
 			}
 		}
 	}
