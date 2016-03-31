@@ -43,9 +43,9 @@ package vo
 			return false;
 		}
 		
-		public function addPayload(g:IGenerationStrategy):Payload
+		public function addPayload():Payload
 		{
-			var p:Payload = PayloadPool.getInstance().createPayload(g);
+			var p:Payload = PayloadPool.getInstance().createPayload();
 			plist.push(p);
 			return p;
 		}
@@ -56,6 +56,16 @@ package vo
 			while(len < plist.length)
 			{
 				plist[len].update(duration);
+				len++;
+			}
+		}
+		//用简单粒子试试
+		public function updateSimple():void
+		{
+			var len:uint;
+			while(len < plist.length)
+			{
+				plist[len].update();
 				len++;
 			}
 		}

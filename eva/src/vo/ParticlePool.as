@@ -17,7 +17,7 @@ package vo
 		{
 			return instance ||= new ParticlePool(new O());
 		}
-		
+		private var count:uint = 0;
 		public function createParticle():Particle
 		{
 			var p:Particle;
@@ -25,6 +25,7 @@ package vo
 			{
 				p = new Particle();
 				p.init();
+				trace(count++);
 //				mPool.push(p);
 			}else
 			{

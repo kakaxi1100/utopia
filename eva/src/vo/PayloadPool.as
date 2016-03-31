@@ -17,12 +17,12 @@ package vo
 			return instance ||= new PayloadPool(new O());
 		}
 		
-		public function createPayload(g:IGenerationStrategy):Payload
+		public function createPayload():Payload
 		{
 			var p:Payload;
 			if(mPool.length == 0)
 			{
-				p = new Payload(g);
+				p = new Payload();
 //				mPool.push(p);
 			}else
 			{

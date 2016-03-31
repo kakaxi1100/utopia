@@ -93,7 +93,7 @@ package vo
 			var stepSize:Number = mSizeDiff*duration/lifespan;
 			mCurSize += stepSize;
 		}
-		
+
 		/**
 		 * 积分器物理运算
 		 * 这里需要越简单越好，否则会非常非常卡
