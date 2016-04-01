@@ -1,5 +1,7 @@
 package vo
 {
+	import flash.display.BitmapData;
+
 	/**
 	 *简单粒子
 	 * 去除复杂的物理运算 
@@ -15,9 +17,9 @@ package vo
 		private var mVelY:Number;
 		private var mAccX:Number;
 		private var mAccY:Number;
-		private var mLifeSpan:uint;
+		private var mLifeSpan:int;//可以设置为非正表示永久存在
 		private var mColor:uint;
-		
+		public var img:BitmapData;
 		public function ParticleSimple()
 		{
 		}
@@ -37,8 +39,12 @@ package vo
 		
 		public function lifeTime():Boolean
 		{
-			mLifeSpan--;
 			if(mLifeSpan > 0)
+			{
+				mLifeSpan--;
+				return true;
+				
+			}else if(mLifeSpan == -1)
 			{
 				return true;
 			}
@@ -55,6 +61,10 @@ package vo
 			mAccY = 0;
 			mLifeSpan = 0;
 			mColor = 0;
+			if(img){
+				img.dispose();
+				img = null;
+			}
 		}
 		
 		public function init():void

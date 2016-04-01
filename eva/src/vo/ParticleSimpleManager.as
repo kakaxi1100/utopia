@@ -2,6 +2,7 @@ package vo
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.geom.Point;
 	
 	/**
 	 *粒子的管理器
@@ -15,6 +16,7 @@ package vo
 		private var mPool:ParticleSimplePool;
 		
 		private static var instance:ParticleSimpleManager;
+		private var backupPoint:Point = new Point();
 		public function ParticleSimpleManager(obj:O)
 		{
 			if(obj == null)
@@ -70,18 +72,26 @@ package vo
 			}
 		}
 		
-		public function render(bmd:BitmapData):void
+		public function render(srcbmd:BitmapData,dest:BitmapData):void
 		{
-			bmd.lock();
+			srcbmd.lock();
 			//			bmd.fillRect(bmd.rect, 0);
 			var p:ParticleSimple;
 			for(var i:uint = 0; i < plist.length; i++)
 			{
 				p = plist[i];
-				bmd.setPixel32(p.posX, p.posY, p.color);
+				if(dest == null)
+				{
+					srcbmd.setPixel32(p.posX, p.posY, p.color);
+				}else
+				{
+					backupPoint.x = p.posX;
+					backupPoint.y = p.posY;
+					srcbmd.copyPixels(dest,dest.rect,backupPoint,null,null,true);
+				}
 			}
 			
-			bmd.unlock();
+			srcbmd.unlock();
 		}
 		
 	}

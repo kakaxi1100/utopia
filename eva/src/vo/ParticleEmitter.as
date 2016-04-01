@@ -18,6 +18,8 @@ package vo
 	{
 		public var posX:Number;
 		public var posY:Number;
+		private var mTargetX:Number;
+		private var mTargetY:Number;
 		//初始化策略
 		private var minitSGList:Vector.<IInitStrategy>;
 		//产生粒子策略
@@ -56,5 +58,27 @@ package vo
 			minitSGList.push(isg);
 			mGenerSGList.push(gsg);
 		}
+
+		public function get targetX():Number
+		{
+			return mTargetX;
+		}
+
+		public function set targetX(value:Number):void
+		{
+			mTargetX = value;
+		}
+
+		public function get targetY():Number
+		{
+			return mTargetY;
+		}
+
+		public function set targetY(value:Number):void
+		{
+			mTargetY = value;
+		}
+
+
 	}
 }

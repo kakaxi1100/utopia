@@ -91,6 +91,9 @@ package vo
 		//emitter 的X, Y
 		private var mBaseX:Number;
 		private var mBaseY:Number;
+		//target 的X, Y
+		private var mTargetX:Number;
+		private var mTargetY:Number;
 		//每帧产生的粒子数
 		public var count:uint;
 		//每帧需更新的抽象粒子数据
