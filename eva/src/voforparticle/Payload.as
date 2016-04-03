@@ -77,7 +77,7 @@
 //	}
 //}
 //----------------用简单粒子试试-------------
-package vo
+package voforparticle
 {
 	/**
 	 *承载器
@@ -88,25 +88,19 @@ package vo
 	 */	
 	public class Payload
 	{	
-		//emitter 的X, Y
-		private var mBaseX:Number;
-		private var mBaseY:Number;
-		//target 的X, Y
-		private var mTargetX:Number;
-		private var mTargetY:Number;
-		//每帧产生的粒子数
-		public var count:uint;
 		//每帧需更新的抽象粒子数据
 		private var mHead:ParticleSimple;
 		//初始化策略
 		private var mInitSGList:Vector.<IInitStrategy>;//这里可以考虑改为链表更方便
 		//产生粒子的策略
-		private var mGenerSGList:Vector.<IGenerationStrategy>;//这里可以考虑改为链表更方便
+		private var mGenerSG:IGenerationStrategy;//这里可以考虑改为链表更方便
 		//当前的策略
 		private var mCur:uint;
 		public function Payload()
 		{
 			mHead = ParticleSimplePool.getInstance().createParticle();
+			mInitSGList = new Vector.<IInitStrategy>;
+			mCur = 0;
 		}
 		
 		public function update():void
@@ -114,8 +108,6 @@ package vo
 			//假如生命周期结束,如果没有策略可以用了则回到池中,否则应用下一个策略
 			if(mHead.lifeTime() == false)
 			{
-				//当前索引+1
-				mCur++;
 				if(mCur == mInitSGList.length)
 				{
 					this.destory();
@@ -123,18 +115,22 @@ package vo
 					return;
 				}
 				mInitSGList[mCur].reset(this);
+				mCur++;
 			}
 			//如果生命周期未结束则每帧产生粒子
 			//注意产生的粒子要添加到粒子管理器中即ParticleManager
-			mGenerSGList[mCur].generation(this);
+			mGenerSG.generation(this);
 			
 			mHead.update();
 		}
 		
 		public function destory():void
 		{
-			mInitSGList = null;
-			mGenerSGList = null;
+			while(mInitSGList.length > 0)
+			{
+				mInitSGList.pop();
+			}
+			mGenerSG = null;
 			mCur = 0;
 		}
 		
@@ -147,42 +143,21 @@ package vo
 		{
 			mInitSGList = value;
 			mCur = 0;
-			mInitSGList[mCur].reset(this);
 		}
 		
-		public function get generSGList():Vector.<IGenerationStrategy>
+		public function get initSGList():Vector.<IInitStrategy>
 		{
-			return mGenerSGList;
+			return mInitSGList;
 		}
 		
-		public function set generSGList(value:Vector.<IGenerationStrategy>):void
+		public function get generSG():IGenerationStrategy
 		{
-			mGenerSGList = value;
-			mCur = 0;
+			return mGenerSG;
 		}
-
-		public function get baseX():Number
-		{
-			return mBaseX;
-		}
-
-		public function set baseX(value:Number):void
-		{
-			mBaseX = value;
-			mHead.posX = mBaseX;
-		}
-
-		public function get baseY():Number
-		{
-			return mBaseY;
-		}
-
-		public function set baseY(value:Number):void
-		{
-			mBaseY = value;
-			mHead.posY = mBaseY;
-		}
-
 		
+		public function set generSG(value:IGenerationStrategy):void
+		{
+			mGenerSG = value;
+		}
 	}
 }

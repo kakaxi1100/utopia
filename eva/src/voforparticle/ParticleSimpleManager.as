@@ -1,4 +1,4 @@
-package vo
+package voforparticle
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;

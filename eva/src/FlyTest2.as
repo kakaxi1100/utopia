@@ -30,7 +30,7 @@ package
 		private var bmp:Bitmap = new Bitmap(bmd);
 		private var uisg:IInitStrategy = new UpwardISG;
 		private var gisg:IGenerationStrategy = new ScatterGSG;
-		private var emitter:ParticleEmitter = new ParticleEmitter(5, uisg, gisg);
+		private var emitter:ParticleEmitter = new ParticleEmitter(1, uisg, gisg);
 		public function FlyTest2()
 		{
 			super();
@@ -51,8 +51,8 @@ package
 //			var fps:uint =1000/(getTimer() - a); 
 //			if(fps > stage.frameRate) fps = stage.frameRate;
 //			trace(fps);
-			emitter.posX = stage.mouseX;
-			emitter.posY = stage.mouseY;
+//			emitter.posX = stage.mouseX;
+//			emitter.posY = stage.mouseY;
 			
 			var d:Number = (getTimer() - a)/1000;
 			
@@ -69,7 +69,7 @@ package
 			bmd.applyFilter(bmd, bmd.rect, origin, blur);
 			bmd.colorTransform(bmd.rect, darken);
 //			ParticleManager.getInstance().render(bmd);
-//			ParticleSimpleManager.getInstance().render(bmd);
+			ParticleSimpleManager.getInstance().render(bmd);
 			//update the data
 //			ParticleManager.getInstance().update(d);
 			ParticleSimpleManager.getInstance().update();

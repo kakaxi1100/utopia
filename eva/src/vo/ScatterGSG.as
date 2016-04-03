@@ -17,7 +17,7 @@ package vo
 				p.posX = pl.head.posX;
 				p.posY = pl.head.posY;
 				p.velX = Math.random()*0.6-0.3;
-				p.velY = Math.random()*0.5;
+				p.velY = 0//Math.random()*0.5;
 				p.color = pl.head.color;
 //				p = ParticleManager.getInstance().addParticle();
 //				p.lifespan = Math.random()*2 + 1;
