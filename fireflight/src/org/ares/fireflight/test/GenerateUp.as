@@ -18,12 +18,12 @@ package org.ares.fireflight.test
 		
 		public function generate(pl:FFPayload):void
 		{
-			for(var i:int = 0; i < 2; i++)
+			for(var i:int = 0; i < 1; i++)
 			{
 				var p:FFParticle = FFParticleManager.getInstance().addParticle();
 				p.color = 0xFFFFFF00;
 				//注意假如设置lifespan = 0 由于render 再 update 前面，所有也会形成粒子
-				p.lifespan = 5;
+				p.lifespan = 10;
 				p.position.setTo(pl.head.position.x+Math.random()*100, pl.head.position.y-Math.random()*100);
 				p.velocity.setTo(Math.random()*50-20, Math.random()*50-20);
 			}

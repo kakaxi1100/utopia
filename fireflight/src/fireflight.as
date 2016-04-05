@@ -52,7 +52,7 @@ package
 			
 			FFPayloadManager.getInstance().update(d);//这里已经产生了粒子
 			
-//			bmd.applyFilter(bmd, bmd.rect, origin, blur);
+			bmd.applyFilter(bmd, bmd.rect, origin, blur);
 			bmd.colorTransform(bmd.rect, darken);
 			//由于render在前面，还没有计算 粒子的 生命值，所以即使粒子的生命值是0,也会有图形渲染上去
 			//可以得到意想不到的效果
