@@ -28,12 +28,15 @@ package org.ares.fireflight
 		 * @return 
 		 * 
 		 */		
-		public static function add(topPixel:uint, bottomPixel:uint):uint
+		public static function add(topPixel:uint, bottomPixel:uint):FFColor
 		{
-			var a:uint = alpha(topPixel) + alpha(bottomPixel);
-			var r:uint = red(topPixel) + red(bottomPixel);
-			var g:uint = green(topPixel) + green(bottomPixel);
-			var b:uint = blue(topPixel) + blue(bottomPixel);
+			var tp:FFColor = getPixel(topPixel);
+			var bp:FFColor = getPixel(bottomPixel);
+			
+			var a:uint = tp.alpha + bp.alpha;
+			var r:uint = tp.red + bp.red;
+			var g:uint = tp.green + bp.green;
+			var b:uint = tp.blue + bp.blue;
 			
 			return setPixel(a<0xFF?a:0xFF, r<0xFF?r:0xFF, g<0xFF?g:0xFF, b<0xFF?b:0xFF);
 		}

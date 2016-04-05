@@ -39,7 +39,8 @@ package org.ares.fireflight
 		//stepSize = (endsize - startsize)*time/lifespan
 		//然后在用  CurSize + stepSize = CurSize
 		private var mCurSize:Number;
-		
+		//粒子的颜色
+		private var mColor:uint;
 		public function FFParticle()
 		{
 
@@ -107,16 +108,16 @@ package org.ares.fireflight
 			//更新位置 采用简化公式 s = vt
 			mPosition.plusScaledVector(mVelocity, duration);
 			//计算加速度 f = ma a = f/m 所以当前的加速度等于初始设定的加速度加上a
-			var tempAcc:FFVector = mAcceleration.clone();
-			tempAcc.plusScaledVector(mForceAccum,mInverseMass);
+//			var tempAcc:FFVector = mAcceleration.clone();
+//			tempAcc.plusScaledVector(mForceAccum,mInverseMass);
 			//更新速度 v = at
-			mVelocity.plusScaledVector(tempAcc, duration);
+//			mVelocity.plusScaledVector(tempAcc, duration);
 			//速度受阻尼影响逐渐减小 v*=d
-			mVelocity.multEquals(Math.pow(mDamping, duration));
+//			mVelocity.multEquals(Math.pow(mDamping, duration));
 			//清除力, 因为力有可能只作用一个瞬间
 			//所以力要怎么施加在物体上，需要每帧都进行计算
 			//因为力要在粒子运行之前先运算
-			mForceAccum.clear();
+//			mForceAccum.clear();
 		}
 		
 		/**
@@ -131,23 +132,31 @@ package org.ares.fireflight
 		
 		public function init():void
 		{
-//			mPosition = new FFVector(380+40*Math.random(), 580);
-			mPosition = new FFVector(400, 500);
-			mVelocity = new FFVector(Math.random()*4-2, -(Math.random()*60+70));
+			mPosition = new FFVector();
+			mVelocity = new FFVector();
 			mAcceleration = new FFVector();
 			mForceAccum = new FFVector();
 			mDamping = 1;
 			mInverseMass = 1;
-			mStartSize = 10+90*Math.random();
-			mEndSize = 10*Math.random();
-			mLifespan = 1+2*Math.random();
-
-			//记得当上面某些值改变时需要重新计算下面的值
-			//这里是计算出的初值
-			mCurSize = mStartSize;
-			mSizeDiff = mEndSize - mStartSize;
-			mCurLife = mLifespan;
-
+			mStartSize = 0;
+			mEndSize = 0;
+			mLifespan = 0;
+			mCurLife = 0;
+		}
+		
+		public function destory():void
+		{
+			mPosition.setTo(0,0);
+			mVelocity.setTo(0,0);
+			mAcceleration.setTo(0,0);
+			mForceAccum.setTo(0,0);
+			mDamping = 1;
+			mInverseMass = 1;
+			mStartSize = 0;
+			mEndSize = 0;
+			mLifespan = 0;
+			mCurLife = 0;
+			mColor = 0;
 		}
 		
 		//--粒子位置属性
@@ -231,17 +240,24 @@ package org.ares.fireflight
 		public function set lifespan(value:Number):void
 		{
 			mLifespan = value;
+			mCurLife = mLifespan;
 		}
 
 		public function get curSize():Number
 		{
 			return mCurSize;
 		}
-		
-		public function toString():String
+
+		public function get color():uint
 		{
-			return "[Position::] "+mPosition;
+			return mColor;
 		}
+
+		public function set color(value:uint):void
+		{
+			mColor = value;
+		}
+
 
 	}
 }
