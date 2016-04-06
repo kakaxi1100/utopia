@@ -12,6 +12,10 @@ fireflight/bin/
 fireflight/bin-debug/
 fireflight/bin-release/
 
+silverbolt/bin/
+silverbolt/bin-debug/
+silverbolt/bin-release/
+
 # Other files and folders
 vernalbreeze/.settings/
 vernalbreeze.~ml
@@ -21,6 +25,9 @@ eva.~ml
 
 fireflight/.settings/
 firtflight.~ml
+
+silverbolt/.settings/
+silverbolt.~ml
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
