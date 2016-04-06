@@ -18,7 +18,7 @@ package
 	import org.ares.fireflight.port.IRule;
 	import org.ares.fireflight.test.RuleUp;
 	
-	[SWF(frameRate="60", backgroundColor="0",width="800",height="600")]
+	[SWF(frameRate="30", backgroundColor="0",width="800",height="600")]
 	public class fireflight extends Sprite
 	{
 		[Embed(source="./assets/dot.png")]
@@ -40,20 +40,25 @@ package
 			addChild(bmp);
 			
 			e.rule = r;
-			e.emit(1, 400,580);
+//			e.emit(1, 400,580);
 			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			a = getTimer();
 		}
-		
+		private var count:uint = 100;
 		protected function onEnterFrame(event:Event):void
 		{
 			var d:Number = (getTimer() - a)/1000;
-			
+			if(count > 100 )
+			{
+				count = 0;
+				e.emit(1, 400,580);
+			}
+			count++;
 			FFPayloadManager.getInstance().update(d);//这里已经产生了粒子
 			
 			bmd.applyFilter(bmd, bmd.rect, origin, blur);
-			bmd.colorTransform(bmd.rect, darken);
+//			bmd.colorTransform(bmd.rect, darken);
 			//由于render在前面，还没有计算 粒子的 生命值，所以即使粒子的生命值是0,也会有图形渲染上去
 			//可以得到意想不到的效果
 			FFParticleManager.getInstance().render(bmd,dotBmp.bitmapData);

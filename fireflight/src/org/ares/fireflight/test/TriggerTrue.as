@@ -5,13 +5,8 @@ package org.ares.fireflight.test
 	public class TriggerTrue implements ITrigger
 	{
 		private var count:uint = 0;
-		private static var instance:TriggerTrue;
 		public function TriggerTrue()
 		{
-		}
-		public static function getInstance():TriggerTrue
-		{
-			return instance ||= new TriggerTrue();
 		}
 		
 		public function trigger():Boolean

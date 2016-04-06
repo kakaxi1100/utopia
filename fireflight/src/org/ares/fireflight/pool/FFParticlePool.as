@@ -27,7 +27,8 @@ package org.ares.fireflight.pool
 			{
 				p = new FFParticle();
 				p.init();
-				trace(++count);
+				++count;
+				trace("[Particle::] "+ count);
 			}else
 			{
 				p = mPool.pop();

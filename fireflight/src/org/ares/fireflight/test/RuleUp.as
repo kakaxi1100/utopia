@@ -32,7 +32,7 @@ package org.ares.fireflight.test
 				p.pattern = PatternUp.getInstance();
 				p.generator = GenerateUp.getInstance();
 				g = new FFGate();
-				g.trigger = TriggerTrue.getInstance();
+				g.trigger = new TriggerTrue();//TriggerTrue.getInstance();
 				RuleLeft.getInstance().args[0] = p;
 				g.content = RuleLeft.getInstance();
 				p.addGate(g);

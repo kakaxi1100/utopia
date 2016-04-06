@@ -19,12 +19,15 @@ package org.ares.fireflight.pool
 			return instance ||= new FFPayloadPool(new O());
 		}
 		
+		private var count:int = 0;
 		public function createPayload():FFPayload
 		{
 			var p:FFPayload;
 			if(mPool.length == 0)
 			{
 				p = new FFPayload();
+				++count;
+				trace("[Payload::] "+ count);
 			}else
 			{
 				p = mPool.pop();
