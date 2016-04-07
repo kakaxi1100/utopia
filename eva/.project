@@ -14,4 +14,11 @@
 	<natures>
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] com</name>
+			<type>2</type>
+			<location>C:/Users/juli/Desktop/AdvancEDActionScriptAnimation/Chapter02/com</location>
+		</link>
+	</linkedResources>
 </projectDescription>

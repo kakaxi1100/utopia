@@ -2,43 +2,48 @@ package voforai
 {
 	import flash.display.Sprite;
 	
-	import base.MotiveVector;
+	import base.EVector;
 	
 	public class Vehicle extends Sprite
 	{
 		//粒子的位置		
-		private var mPosition:MotiveVector;
+		private var mPosition:EVector;
 		//粒子的速度
-		private var mVelocity:MotiveVector;
+		private var mVelocity:EVector;
 		//粒子的加速度
-		private var mAcceleration:MotiveVector;
+		private var mAcceleration:EVector;
 		//用在粒子上的力的合集
-		private var mForceAccum:MotiveVector;
+		private var mForceAccum:EVector;
 		//粒子的质量,实际程序中用到的都是粒子的逆质量
 		//private var mMass:Number;
 		//逆质量可以解决 0 和 无穷大 质量的问题，0质量的物体逆质量是无穷大，无穷大的物体逆质量是0
 		private var mInverseMass:Number;
 		//物体的最大速度
 		private var mMaxSpeed:Number;
+		//物体所受的最大的力
+		private var mMaxForce:Number;
 		
 		private const Degree:Number = 180/Math.PI;
 		public function Vehicle()
 		{
 			super();
 			
-			mPosition = new MotiveVector();
-			mVelocity = new MotiveVector();
-			mAcceleration = new MotiveVector();
-			mForceAccum = new MotiveVector();
+			mPosition = new EVector();
+			mVelocity = new EVector();
+			mAcceleration = new EVector();
+			mForceAccum = new EVector();
 			mInverseMass = 1;
-			mMaxSpeed = 0;
-			
+			mMaxSpeed = 500;
+			mMaxForce = 500;
 			draw();
 		}
 		
 		public function update(duration:Number):void
-		{
+		{		
 			if(duration <= 0) return;
+
+			//速度不能超过mMaxSpeed
+			mVelocity.truncate(mMaxSpeed);
 			
 			mPosition.plusScaledVector(mVelocity, duration);
 			
@@ -46,13 +51,13 @@ package voforai
 			
 			mAcceleration.setTo(mForceAccum.x*mInverseMass, mForceAccum.y*mInverseMass);
 			
-			mVelocity.plusScaledVector(mAcceleration, duration);
-			//速度不能超过mMaxSpeed
-			mVelocity.truncate(mMaxSpeed);
+			mVelocity.plusScaledVector(mAcceleration, duration); 
+			//清除力
+			mForceAccum.clear();
 			//更新位置
 			this.x = mPosition.x;
 			this.y = mPosition.y;
-			trace(this.x, this.y);
+			
 			//更新朝向
 			this.rotation = mVelocity.angle*Degree;
 		}
@@ -72,12 +77,13 @@ package voforai
 		 * @param v
 		 * 
 		 */		
-		public function addForce(v:MotiveVector):void
+		public function addForce(v:EVector):void
 		{
 			mForceAccum.plusEquals(v);
+			mForceAccum.truncate(maxForce);
 		}
 		
-		private function draw():void
+		public function draw():void
 		{
 			this.graphics.clear();
 			this.graphics.lineStyle(1);
@@ -85,29 +91,39 @@ package voforai
 			this.graphics.lineTo(-10,5);
 			this.graphics.lineTo(-10,-5);
 			this.graphics.lineTo(10,0);
+			
 		}
 		
 		//--粒子位置属性
-		public function get position():MotiveVector
+		public function get position():EVector
 		{
 			return mPosition;
 		}
 		
-		public function set position(value:MotiveVector):void
+		public function set position(value:EVector):void
 		{
 			mPosition = value;
 		}
 		//--粒子速度属性
-		public function get velocity():MotiveVector
+		public function get velocity():EVector
 		{
 			return mVelocity;
 		}
 		
-		public function set velocity(value:MotiveVector):void
+		public function set velocity(value:EVector):void
 		{
 			mVelocity = value;
 		}
+		//--粒子所受到的力
+		public function get forceAccum():EVector
+		{
+			return mForceAccum;
+		}
 		
+		public function set forceAccum(value:EVector):void
+		{
+			mForceAccum = value;
+		}
 		//--粒子质量
 		public function get mass():Number
 		{
@@ -131,7 +147,7 @@ package voforai
 			mInverseMass = value;
 		}
 
-		public function get axSpeed():Number
+		public function get maxSpeed():Number
 		{
 			return mMaxSpeed;
 		}
@@ -140,6 +156,17 @@ package voforai
 		{
 			mMaxSpeed = value;
 		}
+
+		public function get maxForce():Number
+		{
+			return mMaxForce;
+		}
+
+		public function set maxForce(value:Number):void
+		{
+			mMaxForce = value;
+		}
+
 
 	}
 }

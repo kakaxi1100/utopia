@@ -183,6 +183,52 @@ package base
 			y = py;
 		}
 		
+		
+		/**
+		 *截断 
+		 * @param value
+		 * 
+		 */		
+		public function truncate(value:Number):void
+		{
+			length = Math.min(length, value);
+		}
+		
+		/**
+		 *设置长度 
+		 * @return 
+		 * 
+		 */		
+		public function get length():Number
+		{
+			return magnitude();
+		}
+		
+		public function set length(value:Number):void
+		{
+			var a:Number = angle;
+			
+			x = Math.cos(a)*value;
+			y = Math.sin(a)*value;	
+		}
+		
+		/**
+		 *角度 
+		 * @return 
+		 * 
+		 */		
+		public function get angle():Number
+		{
+			return Math.atan2(y, x);
+		}
+		
+		public function set angle(value:Number):void
+		{
+			var len:Number = magnitude();
+			x = Math.cos(value)*len;
+			y = Math.sin(value)*len;
+		}
+		
 		public function clear():void
 		{
 			x = y = 0;
