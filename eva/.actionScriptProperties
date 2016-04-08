@@ -34,6 +34,7 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
+    <application path="ArriveTest.as"/>
     <application path="SeekTest.as"/>
     <application path="AutoTest.as"/>
     <application path="FlyTest4.as"/>

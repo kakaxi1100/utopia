@@ -183,7 +183,6 @@ package base
 			y = py;
 		}
 		
-		
 		/**
 		 *截断 
 		 * @param value

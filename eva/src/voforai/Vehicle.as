@@ -33,8 +33,8 @@ package voforai
 			mAcceleration = new EVector();
 			mForceAccum = new EVector();
 			mInverseMass = 1;
-			mMaxSpeed = 500;
-			mMaxForce = 500;
+			mMaxSpeed = 10;
+			mMaxForce = 1;
 			draw();
 		}
 		
@@ -44,22 +44,45 @@ package voforai
 
 			//速度不能超过mMaxSpeed
 			mVelocity.truncate(mMaxSpeed);
-			
 			mPosition.plusScaledVector(mVelocity, duration);
 			
 			wrap();
+//			bounce();
 			
 			mAcceleration.setTo(mForceAccum.x*mInverseMass, mForceAccum.y*mInverseMass);
 			
 			mVelocity.plusScaledVector(mAcceleration, duration); 
 			//清除力
 			mForceAccum.clear();
+			
 			//更新位置
 			this.x = mPosition.x;
 			this.y = mPosition.y;
 			
 			//更新朝向
 			this.rotation = mVelocity.angle*Degree;
+		}
+		
+		private function bounce():void
+		{
+			if(stage == null) return;
+			if(mPosition.x > stage.stageWidth)
+			{
+				mPosition.x = stage.stageWidth;
+				mVelocity.x *= -1;
+			}else if(mPosition.x < 0){
+				mPosition.x = 0;
+				mVelocity.x *= -1;
+			}
+			
+			if(mPosition.y > stage.stageHeight)
+			{
+				mPosition.y = stage.stageHeight;
+				mVelocity.y *= -1;
+			}else if(mPosition.y < 0){
+				mPosition.y = 0;
+				mVelocity.y *= -1;
+			}
 		}
 		
 		private function wrap():void
@@ -83,10 +106,10 @@ package voforai
 			mForceAccum.truncate(maxForce);
 		}
 		
-		public function draw():void
+		public function draw(c:uint = 0):void
 		{
 			this.graphics.clear();
-			this.graphics.lineStyle(1);
+			this.graphics.lineStyle(1,c);
 			this.graphics.moveTo(10,0);
 			this.graphics.lineTo(-10,5);
 			this.graphics.lineTo(-10,-5);
