@@ -149,7 +149,7 @@ package base
 		public function normalize():EVector 
 		{
 			var m:Number = magnitude();
-			if (m == 0) return null;
+			if (m == 0) return new EVector();
 			return mult(1 / m);
 		}
 		

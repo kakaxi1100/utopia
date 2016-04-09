@@ -48,13 +48,16 @@ package
 			v.velocity.angle = 0;
 			v.maxSpeed = 6;
 			v.maxForce = 1;
+			v.wanderRange = Math.PI/2;
+			v.wanderDistance = 100;
+			v.wanderRadius = 20;
 			v.draw();
 			addChild(v);
 			
 			v2.position.setTo(100,100);
 			v2.velocity.length = 100;
 			v2.velocity.angle = Math.PI/4;
-			v2.maxSpeed = 6;
+			v2.maxSpeed = 8;
 			v2.maxForce = 1;
 			v2.draw(0xff0000);
 			addChild(v2);
@@ -98,7 +101,7 @@ package
 			this.graphics.drawCircle(this.mouseX,this.mouseY,2);
 			this.graphics.endFill();
 			this.graphics.lineStyle(1, 0x00ff00);
-			this.graphics.drawCircle(this.mouseX,this.mouseY,200);
+			this.graphics.drawCircle(this.mouseX,this.mouseY,100);
 			
 			empty.setTo(this.mouseX, this.mouseY);
 		}
@@ -116,14 +119,17 @@ package
 //			SteeringBehaviors.flee(v, hold1);
 //			v.update(d);
 
-			SteeringBehaviors.arrive(v, empty);
+//			SteeringBehaviors.arrive(v, empty);
 //			SteeringBehaviors.seek(v, empty);
 //			SteeringBehaviors.flee(v, empty);
+//			SteeringBehaviors.pursue(v, v2);
+			SteeringBehaviors.wander(v);
 			v.update(1);
 			
 //			SteeringBehaviors.pursue(v2, v);
-			SteeringBehaviors.evade(v2,v);
-			v2.update(1);
+//			SteeringBehaviors.evade(v2,v);
+//			SteeringBehaviors.flee(v2,v.position);
+//			v2.update(1);
 			
 			a = getTimer();
 		}

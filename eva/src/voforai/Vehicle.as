@@ -22,6 +22,13 @@ package voforai
 		private var mMaxSpeed:Number;
 		//物体所受的最大的力
 		private var mMaxForce:Number;
+		//----wonder 属性-----------------
+		private var mWanderAngle:Number;
+		private var mWanderDistance:Number;
+		private var mWanderRadius:Number;
+		private var mWanderRange:Number;
+		//------------------------------
+		
 		
 		private const Degree:Number = 180/Math.PI;
 		public function Vehicle()
@@ -35,6 +42,12 @@ package voforai
 			mInverseMass = 1;
 			mMaxSpeed = 10;
 			mMaxForce = 1;
+			//---wonder---
+			mWanderAngle = 0;
+			mWanderDistance = 0;
+			mWanderRadius = 10;
+			mWanderRange = 0;
+			//------------
 			draw();
 		}
 		
@@ -188,6 +201,46 @@ package voforai
 		public function set maxForce(value:Number):void
 		{
 			mMaxForce = value;
+		}
+
+		public function get wanderAngle():Number
+		{
+			return mWanderAngle;
+		}
+
+		public function set wanderAngle(value:Number):void
+		{
+			mWanderAngle = value;
+		}
+
+		public function get wanderDistance():Number
+		{
+			return mWanderDistance;
+		}
+
+		public function set wanderDistance(value:Number):void
+		{
+			mWanderDistance = value;
+		}
+
+		public function get wanderRadius():Number
+		{
+			return mWanderRadius;
+		}
+
+		public function set wanderRadius(value:Number):void
+		{
+			mWanderRadius = value;
+		}
+
+		public function get wanderRange():Number
+		{
+			return mWanderRange;
+		}
+
+		public function set wanderRange(value:Number):void
+		{
+			mWanderRange = value;
 		}
 
 
