@@ -129,7 +129,15 @@ package base
 		{
 			return Math.sqrt(x * x + y * y);
 		}
-		
+		/**
+		 *大小平方 其实就是点击
+		 * @return 
+		 * 
+		 */		
+		public function magnitudeSq():Number 
+		{
+			return x * x + y * y;
+		}
 		/**
 		 *计算两点之间的距离 
 		 * @param v
@@ -139,6 +147,16 @@ package base
 		public function distance(v:EVector):Number
 		{
 			return this.minus(v).magnitude();
+		}
+		/**
+		 *距离平方 
+		 * @param v
+		 * @return 
+		 * 
+		 */		
+		public function distanceSq(v:EVector):Number
+		{
+			return this.minus(v).magnitudeSq();
 		}
 		/**
 		 *标准化矢量 

@@ -20,6 +20,7 @@ package
 	{
 		private var v:Vehicle = new Vehicle();
 		private var v2:Vehicle = new Vehicle();
+		private var v3:Vehicle = new Vehicle();
 		private var a:Number;
 		private var empty:EVector = new EVector(0,0);
 		private var hold0:EVector = new EVector();
@@ -51,16 +52,35 @@ package
 			v.wanderRange = Math.PI/2;
 			v.wanderDistance = 100;
 			v.wanderRadius = 20;
+			v.path.push(new EVector(100,100),new EVector(200,300),new EVector(150, 320),new EVector(140,400),new EVector(20,360));
 			v.draw();
 			addChild(v);
+			this.graphics.lineStyle(1, 0x68217A);
+			this.graphics.moveTo(v.path[0].x, v.path[0].y);
+			for(var i:int = 1; i < v.path.length; i++)
+			{
+				this.graphics.lineTo(v.path[i].x, v.path[i].y);
+			}
+			this.graphics.lineTo(v.path[0].x, v.path[0].y);
 			
 			v2.position.setTo(100,100);
 			v2.velocity.length = 100;
 			v2.velocity.angle = Math.PI/4;
-			v2.maxSpeed = 8;
+			v2.maxSpeed = 4;
 			v2.maxForce = 1;
+			v2.wanderDistance = 60;
+			v2.wanderRange = Math.PI/2;
 			v2.draw(0xff0000);
 			addChild(v2);
+			
+			v3.position.setTo(100,100);
+			v3.velocity.length = 100;
+			v3.velocity.angle = Math.PI/4;
+			v3.maxSpeed = 5;
+			v3.maxForce = 1;
+			v3.draw(0x00ff00);
+			addChild(v3);
+			
 			
 			spTxt.text = "Speed: " + v.maxSpeed;
 			forceTxt.text = "Force: " + v.maxForce;
@@ -123,13 +143,18 @@ package
 //			SteeringBehaviors.seek(v, empty);
 //			SteeringBehaviors.flee(v, empty);
 //			SteeringBehaviors.pursue(v, v2);
-			SteeringBehaviors.wander(v);
+//			SteeringBehaviors.wander(v);
+			SteeringBehaviors.followPath(v);
 			v.update(1);
 			
 //			SteeringBehaviors.pursue(v2, v);
 //			SteeringBehaviors.evade(v2,v);
 //			SteeringBehaviors.flee(v2,v.position);
+//			SteeringBehaviors.wander(v2);
 //			v2.update(1);
+			
+//			SteeringBehaviors.interpose(v, v2, v3);
+//			v3.update(1);
 			
 			a = getTimer();
 		}

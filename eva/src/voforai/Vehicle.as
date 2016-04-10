@@ -28,7 +28,12 @@ package voforai
 		private var mWanderRadius:Number;
 		private var mWanderRange:Number;
 		//------------------------------
-		
+		//---path------------------------
+		public var path:Vector.<EVector>;
+		public var wayPointSeekDistSq:Number;//如果离当前点足够近，就去下一个点
+		public var cursor:uint;
+		public var type:uint;//0--循环 1--单程 2--往返
+		//-----------------------------------
 		
 		private const Degree:Number = 180/Math.PI;
 		public function Vehicle()
@@ -48,6 +53,12 @@ package voforai
 			mWanderRadius = 10;
 			mWanderRange = 0;
 			//------------
+			//path
+			path = new Vector.<EVector>();
+			wayPointSeekDistSq = 10;
+			cursor = 0;
+			type = 0;
+			
 			draw();
 		}
 		

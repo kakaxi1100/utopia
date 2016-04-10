@@ -120,7 +120,7 @@ package voforai
 		//用闭包这样可以把offset封装到里面
 		public static var wander:Function = function():Function
 		{
-			var offset:EVector = new EVector();
+			var offset:EVector = new EVector();//注意这里是多辆小车同时共用这个变量, 但是这个变量只是用来过渡,所以没有问题, 所以才能够安心的使用闭包
 			return function(p:Vehicle):void{
 				//确定圆得位置, 这个圆是在速度方向得正前方
 				//这里所说得位置并不是圆实际得位置，而是圆计算位置
@@ -140,5 +140,74 @@ package voforai
 			
 		}();
 		
+		/**
+		 *pi 插入到  p1 和 p2 之间 
+		 * @param p1
+		 * @param p2
+		 * @param pi
+		 */		
+		public static function interpose(p1:Vehicle, p2:Vehicle, pi:Vehicle):void
+		{
+			//先算出两个智能体的中间位置
+			var midPoint:EVector = p1.position.plus(p2.position).multEquals(0.5);
+			//然后计算当前pi到达这个点所需要得最少的时间，即拥有最大速度
+			var timeToReachMidPoint:Number = pi.position.distance( midPoint)/pi.maxSpeed;
+			//用这个时间来预测 p1和p2 将要到达得位置
+			//先计算出速度于这个时间乘积然后再加上现有的位置
+			//分成两步些主要是为了节省变量
+			var p1Arriving:EVector = p1.velocity.mult(timeToReachMidPoint);
+			var p1Pos:EVector = p1Arriving.plusEquals(p1.position);
+			
+			var p2Arriving:EVector = p2.velocity.mult(timeToReachMidPoint);
+			var p2Pos:EVector = p2Arriving.plusEquals(p2.position);
+			
+			//计算它们未来时间两个小车位置的中间点
+			var temp:EVector = p1Pos.plusEquals(p2Pos).multEquals(0.5);
+			midPoint.setTo(temp.x, temp.y);
+			//然后小车 pi 抵达那个点
+			arrive(pi, midPoint);
+		}
+		
+		/**
+		 *跟随路径 
+		 * @param p
+		 * 
+		 */		
+		public static function followPath(p:Vehicle):void
+		{
+			//注意这里请将path封装成一个类！！！
+			//由于这个只是实验性质的测试，所以就写在这里
+			//妈的我懒行了吧, 别唧唧歪歪的了.
+			var dist:Number = p.position.distanceSq(p.path[p.cursor]);
+			if(dist < p.wayPointSeekDistSq)
+			{
+				p.cursor++;
+				if(p.cursor >= p.path.length)
+				{
+					p.cursor = 0;
+				}
+			}
+			
+			seek(p, p.path[p.cursor]);
+		}
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
