@@ -1,5 +1,6 @@
 package voforai
 {
+	import flash.display.Graphics;
 	import flash.display.Sprite;
 	
 	import base.EVector;
@@ -22,6 +23,11 @@ package voforai
 		private var mMaxSpeed:Number;
 		//物体所受的最大的力
 		private var mMaxForce:Number;
+		//小车得局部坐标
+		private var mXAxis:EVector;
+		private var mYAxis:EVector;
+		//0矢量用来做运算用
+		private var mZero:EVector;
 		//----wonder 属性-----------------
 		private var mWanderAngle:Number;
 		private var mWanderDistance:Number;
@@ -44,6 +50,10 @@ package voforai
 			mVelocity = new EVector();
 			mAcceleration = new EVector();
 			mForceAccum = new EVector();
+			mXAxis = new EVector(1,0);
+			mYAxis = new EVector(0,1);
+			mZero = new EVector();
+			
 			mInverseMass = 1;
 			mMaxSpeed = 10;
 			mMaxForce = 1;
@@ -138,7 +148,18 @@ package voforai
 			this.graphics.lineTo(-10,5);
 			this.graphics.lineTo(-10,-5);
 			this.graphics.lineTo(10,0);
-			
+
+		}
+		
+		public function globalDraw(g:Graphics):void
+		{
+			g.clear();
+			g.lineStyle(1, 0xFF0000);
+			g.moveTo(position.x, position.y);
+			g.lineTo(xAxis.x*50 + position.x, xAxis.y*50 + position.y);
+			g.lineStyle(1, 0x0000FF);
+			g.moveTo(position.x,position.y);
+			g.lineTo(yAxis.x*50 + position.x, yAxis.y*50 + position.y);
 		}
 		
 		//--粒子位置属性
@@ -254,6 +275,18 @@ package voforai
 			mWanderRange = value;
 		}
 
+		public function get xAxis():EVector
+		{
+			var temp:EVector = mVelocity.normalize();
+			mXAxis.setTo(temp.x, temp.y);
+			return mXAxis;
+		}
+
+		public function get yAxis():EVector
+		{
+			mYAxis.setTo(-mXAxis.y, mXAxis.x);
+			return mYAxis;
+		}
 
 	}
 }

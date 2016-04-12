@@ -1,5 +1,7 @@
 package voforai
 {
+	import flash.display.Graphics;
+	
 	import base.EVector;
 
 	public class SteeringBehaviors
@@ -190,6 +192,78 @@ package voforai
 			
 			seek(p, p.path[p.cursor]);
 		}
+		
+		/*public static function offsetPursuit(p:Vehicle, leader:Vehicle, offset:EVector, pred:Boolean = false):void
+		{
+			//求出offset得局部坐标在leader上的投影
+			var tempX:Number = leader.xAxis.scalarMult(offset);
+			var tempY:Number = leader.yAxis.scalarMult(offset);
+			offset.setTo(tempX, tempY);
+			//先求出offset 对应的世界坐标得点
+			var worldOffset:EVector = leader.position.plus(offset);
+			//求出这一点到小车得距离
+			var lenOffset:EVector = worldOffset.minus(p.position);
+			//预测这个偏移点将要到达得位置
+			//正比于距离，反比于速度
+			var lookAheadTime:Number = lenOffset.magnitude()/(p.maxSpeed + leader.velocity.length);
+			//计算此时得预测点
+			var futurePostion:EVector = worldOffset.plusEquals(leader.velocity.mult(lookAheadTime));
+			//让小车到达起点
+			if(pred == false)
+			{
+				arrive(p, worldOffset);
+			}else{
+				arrive(p, futurePostion);
+			}
+		}*/
+		/**
+		 *闭包重用localOffset
+		 * 
+		 * p 表示被偏移的对象
+		 * leader表示相对于它进行偏移
+		 * 																					   			
+		 * offset 表示的是leader的局部坐标的偏移量
+		 *  																				   
+		 * pattern 代表模式 0--直接arrive到偏移位置  1--就算预期点通过追逐的方式到偏移位置
+		 * 
+		 */		
+		public static var offsetPursuit:Function = function():Function
+		{
+			var globalOffset:EVector = new EVector();
+			return function (p:Vehicle, leader:Vehicle, offset:EVector, pattern:uint = 0, g:Graphics = null):void
+			{
+				//求出offset的世界坐标
+				//在e0轴上的坐标(x轴) 方向*它的局部x坐标
+				var e0length:EVector = leader.xAxis.mult(offset.x);
+				//在e1轴上的坐标(y轴) 方向*它的局部y坐标
+				var e1length:EVector = leader.yAxis.mult(offset.y);
+				//它们的和即为offset相对于原点的世界坐标
+				var world:EVector = e0length.plusEquals(e1length);
+				globalOffset.setTo(world.x, world.y);				
+				//求出要到达得点
+				var target:EVector = leader.position.plus(globalOffset);
+				g.beginFill(0xff0000);
+				g.drawCircle(target.x,target.y,10);
+				g.endFill();
+				//让小车到达起点的方式
+				//0  代表直接arrive
+				//1 代表计算预期点，然后再到达指定点
+				// 实际表现中没有看出太大区别
+				if(pattern == 0)
+				{
+					arrive(p, target);
+				}else if(pattern == 1){
+					//求出这一点到小车得距离
+					var lenOffset:EVector = target.minus(p.position);
+					//预测这个偏移点将要到达得位置
+					//正比于距离，反比于速度
+					var lookAheadTime:Number = lenOffset.magnitude()/(p.maxSpeed + leader.velocity.length);
+					//计算此时得预测点
+					var futurePostion:EVector = target.plusEquals(leader.velocity.mult(lookAheadTime));
+					arrive(p, futurePostion);
+				}
+			};
+		}();
 	}
 }
 
