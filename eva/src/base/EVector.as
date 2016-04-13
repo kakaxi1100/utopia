@@ -177,11 +177,11 @@ package base
 		 * @return 
 		 * 
 		 */		
-		public function normalizeEquals():void 
+		public function normalizeEquals():EVector 
 		{
 			var m:Number = magnitude();
-			if (m == 0) return ;
-			multEquals(1 / m);
+			if (m == 0) return new EVector();
+			return multEquals(1 / m);
 		}
 		
 		/**

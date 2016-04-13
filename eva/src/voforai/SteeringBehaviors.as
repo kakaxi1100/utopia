@@ -264,6 +264,95 @@ package voforai
 				}
 			};
 		}();
+		
+//-----------------------------组行为--------------------------------------------------------------
+		public static function tagNeighbors(p:Vehicle, radius:Number, plist:Vector.<Vehicle>):void
+		{
+			var cursor:uint = 0;
+			while(cursor < plist.length)
+			{
+				var curP:Vehicle = plist[cursor];
+				if(curP == p){
+					cursor++;
+					continue;
+				}
+				//先将当前的tag取消
+				curP.unTag();
+				//计算到当前p的距离
+				var distSq:Number = curP.position.distanceSq(p.position);
+				//看这个距离是否在范围之内
+				if(distSq < radius*radius)
+				{
+					curP.tag();
+				}
+				cursor++;
+			}
+		}
+		
+		public static function separation(p:Vehicle, plist:Vector.<Vehicle>):void
+		{
+			for (var i:int = 0; i < plist.length; i++) 
+			{
+				var curP:Vehicle = plist[i];
+				if(curP == p) continue;
+				if(curP.isTagged())
+				{
+//					//不能只用逃离函数
+//					flee(curP, p.position);
+					//还需要其它计算，应该是距离越近力越大，距离越远力越小
+					
+					//计算到p的距离
+					var toAgent:EVector = p.position.minus(curP.position);//方向是 p指向它，也就是逃离的方向
+					var len:Number = toAgent.length;
+					//逃离的大小应该跟距离成反比
+					var force:EVector = toAgent.normalizeEquals().multEquals(len);
+					//添加力
+					curP.addForce(force);
+				}
+			}
+		}
+
+		public static function alignment(p:Vehicle, plist:Vector.<Vehicle>):void
+		{
+			var averageHeading:EVector = new EVector();//又要用闭包，请问你是不是用闭包用上瘾了？？嗯，是的，啦啦啦，你来打我啊！
+			for (var i:int = 0; i < plist.length; i++) 
+			{
+				var curP:Vehicle = plist[i];
+				if(curP == p) continue;
+				if(curP.isTagged())
+				{
+					averageHeading.plusEquals(curP.xAxis);//计算朝向的总和
+				}
+			}
+			//求平均值
+			if(plist.length > 0){
+				averageHeading.multEquals(1/plist.length);
+				//然后计算转向力
+				var force:EVector = averageHeading.minusEquals(p.xAxis);
+				//添加力
+				curP.addForce(force);
+			}
+		}
+		
+		public static function cohesion(p:Vehicle, plist:Vector.<Vehicle>):void
+		{
+			var centerOfMass:EVector = new EVector();
+			for (var i:int = 0; i < plist.length; i++) 
+			{
+				var curP:Vehicle = plist[i];
+				if(curP == p) continue;
+				if(curP.isTagged())
+				{
+					centerOfMass.plusEquals(curP.position);
+				}
+			}
+			//求平均值
+			if(plist.length > 0){
+				centerOfMass.multEquals(1/plist.length);
+				seek(curP, centerOfMass);
+			}
+		}
+		
 	}
 }
 

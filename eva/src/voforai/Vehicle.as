@@ -40,6 +40,9 @@ package voforai
 		public var cursor:uint;
 		public var type:uint;//0--循环 1--单程 2--往返
 		//-----------------------------------
+		//----群落-------------------------------
+		public var groupList:Vector.<Vehicle>;
+		public var mTag:Boolean;
 		
 		private const Degree:Number = 180/Math.PI;
 		public function Vehicle()
@@ -68,6 +71,9 @@ package voforai
 			wayPointSeekDistSq = 10;
 			cursor = 0;
 			type = 0;
+			//------------
+			groupList = new Vector.<Vehicle>();
+			mTag = false;
 			
 			draw();
 		}
@@ -160,6 +166,21 @@ package voforai
 			g.lineStyle(1, 0x0000FF);
 			g.moveTo(position.x,position.y);
 			g.lineTo(yAxis.x*50 + position.x, yAxis.y*50 + position.y);
+		}
+		
+		public function unTag():void
+		{
+			mTag = false;
+		}
+		
+		public function tag():void
+		{
+			mTag = true;
+		}
+		
+		public function isTagged():Boolean
+		{
+			return mTag;
 		}
 		
 		//--粒子位置属性
@@ -277,8 +298,14 @@ package voforai
 
 		public function get xAxis():EVector
 		{
-			var temp:EVector = mVelocity.normalize();
-			mXAxis.setTo(temp.x, temp.y);
+			if(mVelocity.equal(mZero) == true)
+			{
+				mXAxis.setTo(1, 0);
+			}else
+			{
+				var temp:EVector = mVelocity.normalize();//这里又问题,应该用角度来计算
+				mXAxis.setTo(temp.x, temp.y);
+			}
 			return mXAxis;
 		}
 
