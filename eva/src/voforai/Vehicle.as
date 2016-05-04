@@ -41,8 +41,11 @@ package voforai
 		public var type:uint;//0--循环 1--单程 2--往返
 		//-----------------------------------
 		//----群落-------------------------------
-		public var groupList:Vector.<Vehicle>;
-		public var mTag:Boolean;
+		//public var groupList:Vector.<Vehicle>;
+		private var mTag:Boolean;
+		//------------------------------------
+		//开启行为的标志位
+		private var mFlags:int;
 		
 		private const Degree:Number = 180/Math.PI;
 		public function Vehicle()
@@ -58,7 +61,7 @@ package voforai
 			mZero = new EVector();
 			
 			mInverseMass = 1;
-			mMaxSpeed = 10;
+			mMaxSpeed = 6;
 			mMaxForce = 1;
 			//---wonder---
 			mWanderAngle = 0;
@@ -72,7 +75,7 @@ package voforai
 			cursor = 0;
 			type = 0;
 			//------------
-			groupList = new Vector.<Vehicle>();
+			//groupList = new Vector.<Vehicle>();
 			mTag = false;
 			
 			draw();
@@ -313,6 +316,16 @@ package voforai
 		{
 			mYAxis.setTo(-mXAxis.y, mXAxis.x);
 			return mYAxis;
+		}
+
+		public function get flags():int
+		{
+			return mFlags;
+		}
+
+		public function set flags(value:int):void
+		{
+			mFlags = value;
 		}
 
 	}

@@ -10,6 +10,29 @@ package voforai
 		public function SteeringBehaviors()
 		{
 		}
+		
+		//-------开启力以及检测力是否开启----------------------------
+		public static function on(v:Vehicle, f:int):Boolean
+		{
+			return Boolean((v.flags & f) == f);
+		}
+		
+		public static function separationOn(v:Vehicle):void
+		{
+			v.flags |= BehaviorType.separation;
+		}
+		
+		public static function alignmentOn(v:Vehicle):void
+		{
+			v.flags |= BehaviorType.alignment;
+		}
+		
+		public static function cohesionOn(v:Vehicle):void
+		{
+			v.flags |= BehaviorType.cohesion;
+		}
+		//----------------------------------------------------
+		
 		public static function seek(v:Vehicle, t:EVector):void
 		{
 			var direct:EVector = t.minus(v.position);
@@ -266,6 +289,16 @@ package voforai
 		}();
 		
 //-----------------------------组行为--------------------------------------------------------------
+		//标记邻居
+		/**
+		 *p 参考的小车
+		 * radius p小车的半径范围
+		 * plist 所有小车集合 
+		 * @param p
+		 * @param radius
+		 * @param plist
+		 * 
+		 */		
 		public static function tagNeighbors(p:Vehicle, radius:Number, plist:Vector.<Vehicle>):void
 		{
 			var cursor:uint = 0;
@@ -289,8 +322,20 @@ package voforai
 			}
 		}
 		
+		//分离
+		/**
+		 * p 参考的小车
+		 * plist 所有小车集合 
+		 * 这里的分离说的是当前小车于周围邻居的分离而不是
+		 * 小车得邻居和当前小车得分离
+		 * @param p
+		 * @param plist
+		 * 
+		 */		
 		public static function separation(p:Vehicle, plist:Vector.<Vehicle>):void
 		{
+			//所有邻居给这个小车逃离的总和力
+			var totalForce:EVector = new EVector();
 			for (var i:int = 0; i < plist.length; i++) 
 			{
 				var curP:Vehicle = plist[i];
@@ -305,16 +350,27 @@ package voforai
 					var toAgent:EVector = p.position.minus(curP.position);//方向是 p指向它，也就是逃离的方向
 					var len:Number = toAgent.length;
 					//逃离的大小应该跟距离成反比
-					var force:EVector = toAgent.normalizeEquals().multEquals(len);
-					//添加力
-					curP.addForce(force);
+					totalForce.plusEquals(toAgent.normalizeEquals().multEquals(1/len));
+					//添加力	
+					p.addForce(totalForce);
 				}
 			}
 		}
-
+		
+		//对齐
+		/**
+		 * p 参考的小车
+		 * plist 所有小车集合 
+		 * 同样这里的对齐也是只得当前小车和所有小车得对齐
+		 * 
+		 * @param p
+		 * @param plist
+		 * 
+		 */	
 		public static function alignment(p:Vehicle, plist:Vector.<Vehicle>):void
 		{
 			var averageHeading:EVector = new EVector();//又要用闭包，请问你是不是用闭包用上瘾了？？嗯，是的，啦啦啦，你来打我啊！
+			var count:int;
 			for (var i:int = 0; i < plist.length; i++) 
 			{
 				var curP:Vehicle = plist[i];
@@ -322,21 +378,33 @@ package voforai
 				if(curP.isTagged())
 				{
 					averageHeading.plusEquals(curP.xAxis);//计算朝向的总和
+					count++;
 				}
 			}
 			//求平均值
-			if(plist.length > 0){
-				averageHeading.multEquals(1/plist.length);
+			if(count > 0){
+				averageHeading.multEquals(1/count);
 				//然后计算转向力
 				var force:EVector = averageHeading.minusEquals(p.xAxis);
 				//添加力
-				curP.addForce(force);
+				p.addForce(force);
 			}
 		}
 		
+		//聚集
+		/**
+		 * p 参考的小车
+		 * plist 所有小车集合 
+		 * 聚集是当前小车聚集到所有小车得平均点
+		 * 
+		 * @param p
+		 * @param plist
+		 * 
+		 */	
 		public static function cohesion(p:Vehicle, plist:Vector.<Vehicle>):void
 		{
 			var centerOfMass:EVector = new EVector();
+			var count:int = 0;
 			for (var i:int = 0; i < plist.length; i++) 
 			{
 				var curP:Vehicle = plist[i];
@@ -344,17 +412,60 @@ package voforai
 				if(curP.isTagged())
 				{
 					centerOfMass.plusEquals(curP.position);
+					count++;
 				}
 			}
 			//求平均值
-			if(plist.length > 0){
-				centerOfMass.multEquals(1/plist.length);
-				seek(curP, centerOfMass);
+			if(count > 0){
+				centerOfMass.multEquals(1/count);
+				seek(p, centerOfMass);
 			}
+		}
+		
+		/**
+		 *以上产生的力必须要通过权值来判断更倾向于哪些力
+		 * 否则它会在某处截断而不进行后面的力的行为
+		 * 比如：
+		 * ↑
+		 * |
+		 * |
+		 * |
+		 * |
+		 * |
+		 * ————>
+		 * 这两个力的合力就更倾向于向上方向
+		 * 
+		 * 
+		 * ↑
+		 * |
+		 * ——————————————————>
+		 * 而这两个力的合力就更倾向于向右方向
+		 */		
+		public static function calculateWeightedSum(v:Vehicle):void
+		{
+			
 		}
 		
 	}
 }
+
+class BehaviorType
+{
+	public static const separation:int = 1;
+	public static const alignment:int = 2;
+	public static const cohesion:int = 4;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

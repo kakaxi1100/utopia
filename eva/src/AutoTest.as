@@ -18,12 +18,59 @@ package
 	[SWF(frameRate="60", backgroundColor="#FFFFFF",width="800",height="600")]
 	public class AutoTest extends Sprite
 	{
-//---------------测试组行为--------------------------------------------		
+//---------------测试组行为--------------------------------------------	
+		private var plist:Vector.<Vehicle> = new Vector.<Vehicle>();
+//		private var leader:Vehicle;
+		private var empty:EVector = new EVector(0,0);
 		public function AutoTest()
 		{
+			for(var i:int = 0; i <20; i++)
+			{
+				var v:Vehicle = new Vehicle();
+				v.velocity.length = 1;
+				v.velocity.angle = Math.random()*3;
+//				trace(v.velocity.angle);
+//				v.maxSpeed = 6;
+//				v.maxForce = 1;
+				v.position.setTo(Math.random()*100 + 50, Math.random()*100+50);
+				plist.push(v);
+				addChild(v);
+			}
 			
+//			leader = plist[0];
+			//leader.position.setTo(100, 100);
+			
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			stage.addEventListener(MouseEvent.CLICK, onClickHd)
 		}
-//---------------测试单个行为-------------------------------------------		
+		
+		protected function onClickHd(event:MouseEvent):void
+		{
+			empty.setTo(this.mouseX, this.mouseY);
+		}
+		
+		private function update():void
+		{
+			for(var i:int = 0; i < plist.length; i++)
+			{
+				SteeringBehaviors.tagNeighbors(plist[i], 100, plist);
+				SteeringBehaviors.cohesion(plist[i], plist);
+//				SteeringBehaviors.alignment(plist[i], plist);
+				SteeringBehaviors.separation(plist[i], plist);
+				plist[i].update(1);
+			}
+		}
+		
+		protected function onEnterFrame(event:Event):void
+		{
+			//SteeringBehaviors.tagNeighbors(leader, 100, plist);
+//			SteeringBehaviors.separation(leader, plist);
+			//SteeringBehaviors.alignment(leader, plist);
+//			SteeringBehaviors.cohesion(leader, plist);
+//			SteeringBehaviors.arrive(leader, empty);
+			update();
+		}
+		//---------------测试单个行为-------------------------------------------		
 //		private var v:Vehicle = new Vehicle();
 //		private var v2:Vehicle = new Vehicle();
 //		private var v3:Vehicle = new Vehicle();

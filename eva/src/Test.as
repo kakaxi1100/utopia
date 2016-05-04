@@ -1,5 +1,6 @@
 package
 {
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	
@@ -17,6 +18,11 @@ package
 			spr.x = 10;
 			spr.y = 10;
 			addChild(spr);
+			
+//			var a:Object = JSON.parse()
+			
+//			var m:MovieClip = new MovieClip();
+//			m.isPlaying
 			
 //			var p0:Point = new Point(100,100);
 //			var m0:Matrix = MatrixUtil.Matrix_init_1x3(p0);
