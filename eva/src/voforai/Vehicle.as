@@ -42,16 +42,21 @@ package voforai
 		//-----------------------------------
 		//----群落-------------------------------
 		//public var groupList:Vector.<Vehicle>;
+		private var mScope:Number;
 		private var mTag:Boolean;
 		//------------------------------------
 		//开启行为的标志位
 		private var mFlags:int;
-		
+		//-------------------------------------
+		//--------------test-------------------
+		public var color:uint;
 		private const Degree:Number = 180/Math.PI;
-		public function Vehicle()
+		public function Vehicle(c:uint = 0)
 		{
 			super();
-			
+			//----test--------
+			color = c;
+			//----------------
 			mPosition = new EVector();
 			mVelocity = new EVector();
 			mAcceleration = new EVector();
@@ -77,6 +82,7 @@ package voforai
 			//------------
 			//groupList = new Vector.<Vehicle>();
 			mTag = false;
+			scope = 100;
 			
 			draw();
 		}
@@ -149,15 +155,15 @@ package voforai
 			mForceAccum.truncate(maxForce);
 		}
 		
-		public function draw(c:uint = 0):void
+		public function draw():void
 		{
 			this.graphics.clear();
-			this.graphics.lineStyle(1,c);
+			this.graphics.lineStyle(1,color);
 			this.graphics.moveTo(10,0);
 			this.graphics.lineTo(-10,5);
 			this.graphics.lineTo(-10,-5);
 			this.graphics.lineTo(10,0);
-
+			this.graphics.drawCircle(0,0,scope);
 		}
 		
 		public function globalDraw(g:Graphics):void
@@ -327,6 +333,17 @@ package voforai
 		{
 			mFlags = value;
 		}
+
+		public function get scope():Number
+		{
+			return mScope;
+		}
+
+		public function set scope(value:Number):void
+		{
+			mScope = value;
+		}
+
 
 	}
 }

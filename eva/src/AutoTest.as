@@ -8,69 +8,123 @@ package
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.ui.Keyboard;
+	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 	
 	import base.EVector;
 	
+	import voforai.BehaviorType;
 	import voforai.SteeringBehaviors;
 	import voforai.Vehicle;
 	
 	[SWF(frameRate="60", backgroundColor="#FFFFFF",width="800",height="600")]
 	public class AutoTest extends Sprite
 	{
-//---------------测试组行为--------------------------------------------	
+//---------------测试组行为逐帧分析--------------------------------------------	
 		private var plist:Vector.<Vehicle> = new Vector.<Vehicle>();
-//		private var leader:Vehicle;
-		private var empty:EVector = new EVector(0,0);
 		public function AutoTest()
 		{
 			for(var i:int = 0; i <20; i++)
 			{
-				var v:Vehicle = new Vehicle();
-				v.velocity.length = 1;
-				v.velocity.angle = Math.random()*3;
-//				trace(v.velocity.angle);
-//				v.maxSpeed = 6;
-//				v.maxForce = 1;
-				v.position.setTo(Math.random()*100 + 50, Math.random()*100+50);
+				var v:Vehicle = new Vehicle(i*0x00ff00);
+//				var v:Vehicle = new Vehicle(i*0xFF0000);//第一个是黑色,第二个是红色
+				v.maxForce = 1;
+				v.maxSpeed = 6;
+				v.position.setTo(Math.random()*800 , Math.random()*600);
+//				v.position.setTo(400+i*50 , 300);
+				v.x = v.position.x;
+				v.y = v.position.y;
+				
+				SteeringBehaviors.separationOn(v);
+				SteeringBehaviors.cohesionOn(v);
+				SteeringBehaviors.alignmentOn(v);
+				
 				plist.push(v);
 				addChild(v);
 			}
 			
-//			leader = plist[0];
-			//leader.position.setTo(100, 100);
-			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(MouseEvent.CLICK, onClickHd)
-		}
-		
-		protected function onClickHd(event:MouseEvent):void
-		{
-			empty.setTo(this.mouseX, this.mouseY);
 		}
 		
 		private function update():void
 		{
 			for(var i:int = 0; i < plist.length; i++)
 			{
-				SteeringBehaviors.tagNeighbors(plist[i], 100, plist);
-				SteeringBehaviors.cohesion(plist[i], plist);
-//				SteeringBehaviors.alignment(plist[i], plist);
-				SteeringBehaviors.separation(plist[i], plist);
+//				SteeringBehaviors.CalculatePrioritized(plist[i], plist);
+				SteeringBehaviors.calculate(plist[i], plist);//这里算法没错但是会产生抖动,需要优化
 				plist[i].update(1);
 			}
 		}
 		
-		protected function onEnterFrame(event:Event):void
+		protected function onClickHd(event:MouseEvent):void
 		{
-			//SteeringBehaviors.tagNeighbors(leader, 100, plist);
-//			SteeringBehaviors.separation(leader, plist);
-			//SteeringBehaviors.alignment(leader, plist);
-//			SteeringBehaviors.cohesion(leader, plist);
-//			SteeringBehaviors.arrive(leader, empty);
 			update();
 		}
-		//---------------测试单个行为-------------------------------------------		
+		
+		protected function onEnterFrame(event:Event):void
+		{
+			update();
+		}
+//---------------测试组行为--------------------------------------------	
+//		private var plist:Vector.<Vehicle> = new Vector.<Vehicle>();
+////		private var leader:Vehicle;
+//		private var empty:EVector = new EVector(0,0);
+//		public function AutoTest()
+//		{
+//			for(var i:int = 0; i <20; i++)
+//			{
+//				var v:Vehicle = new Vehicle();
+////				v.velocity.length = 1;
+////				v.velocity.angle = Math.random()*3;
+//				SteeringBehaviors.separationOn(v);
+////				SteeringBehaviors.cohesionOn(v);
+//				SteeringBehaviors.alignmentOn(v);
+////				trace(v.velocity.angle);
+////				v.maxSpeed = 6;
+//				v.maxForce = 1;
+//				v.position.setTo(Math.random()*800 , Math.random()*600);
+////				v.position.setTo(400 , 300);
+//				plist.push(v);
+//				addChild(v);
+//			}
+//			
+////			leader = plist[0];
+//			//leader.position.setTo(100, 100);
+//			
+//			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+//			stage.addEventListener(MouseEvent.CLICK, onClickHd)
+//		}
+//		
+//		protected function onClickHd(event:MouseEvent):void
+//		{
+//			empty.setTo(this.mouseX, this.mouseY);
+//		}
+//		
+//		private function update():void
+//		{
+//			for(var i:int = 0; i < plist.length; i++)
+//			{
+////				SteeringBehaviors.tagNeighbors(plist[i], 100, plist);
+////				SteeringBehaviors.cohesion(plist[i], plist);
+//////				SteeringBehaviors.alignment(plist[i], plist);
+////				SteeringBehaviors.separation(plist[i], plist);
+////				SteeringBehaviors.calculateWeightedSum(plist[i], plist);
+//				SteeringBehaviors.CalculatePrioritized(plist[i], plist);
+//				plist[i].update(1);
+//			}
+//		}
+//		
+//		protected function onEnterFrame(event:Event):void
+//		{
+//			//SteeringBehaviors.tagNeighbors(leader, 100, plist);
+////			SteeringBehaviors.separation(leader, plist);
+//			//SteeringBehaviors.alignment(leader, plist);
+////			SteeringBehaviors.cohesion(leader, plist);
+////			SteeringBehaviors.arrive(leader, empty);
+//			update();
+//		}
+//---------------测试单个行为-------------------------------------------		
 //		private var v:Vehicle = new Vehicle();
 //		private var v2:Vehicle = new Vehicle();
 //		private var v3:Vehicle = new Vehicle();

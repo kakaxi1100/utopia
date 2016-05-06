@@ -15,9 +15,39 @@ package
 		private var spr:Sprite = new Sprite();
 		public function Test()
 		{
-			spr.x = 10;
-			spr.y = 10;
-			addChild(spr);
+			
+			var arr:Array = new Array();
+			for(var i:int = 0; i < 2; i++)
+			{
+				var temp:Object = {};
+				temp.lens_type_option_id = 8;
+				arr.push(temp);
+			}
+			
+			function test ():Boolean{
+				var tp:int = -1;
+				if(arr.length == 0) return false;
+				if(arr.length >= 1) {
+					if(arr[0]["lens_type_option_id"]){
+						if(arr.length == 1) return true;
+						tp = arr[0]["lens_type_option_id"];
+					}else{
+						return false;
+					}
+				}
+				
+				for(var i:int = 1; i < arr.length; i++){
+					if(tp != arr[i]["lens_type_option_id"]){
+						return false;
+					}
+				}
+				return true;
+			}
+			
+			
+//			spr.x = 10;
+//			spr.y = 10;
+//			addChild(spr);
 			
 //			var a:Object = JSON.parse()
 			

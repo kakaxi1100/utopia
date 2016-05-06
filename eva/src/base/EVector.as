@@ -202,6 +202,16 @@ package base
 		}
 		
 		/**
+		 *置零 
+		 * 
+		 */		
+		public function zero():void
+		{
+			x = 0;
+			y = 0;
+		}
+		
+		/**
 		 *截断 
 		 * @param value
 		 * 
