@@ -7,9 +7,10 @@ package voforai
 	public class SteeringBehaviors
 	{
 		public static var panicDistanceSq:Number = 100*100;
-		public static var separationWeight:Number = 10;
-		public static var alignmentWeight:Number = 1;
-		public static var cohesionWeight:Number = 1;
+		//权值很难调 aliment 和 cohesion 会冲突
+		public static var separationWeight:Number = 30;
+		public static var alignmentWeight:Number = 0.1;
+		public static var cohesionWeight:Number = 0.5;
 		
 		public function SteeringBehaviors()
 		{
@@ -537,7 +538,7 @@ package voforai
 			if(on(v, BehaviorType.separation))
 			{
 				force = separation(v, plist).multEquals(separationWeight);
-//				trace("separation:", (force.x < 0 )?'-':'', force.length);
+				trace("separation:", (force.x < 0 )?'-':'', force.length);
 				if(accumulateForce(v, force, curForce) == false)
 				{
 					//v.addForce(curForce);
@@ -548,7 +549,7 @@ package voforai
 			if(on(v, BehaviorType.cohesion))
 			{
 				force = cohesion(v, plist).multEquals(cohesionWeight);
-//				trace("cohesion:", (force.x < 0 )?'-':'', force.length);
+				trace("cohesion:", (force.x < 0 )?'-':'', force.length);
 				if(accumulateForce(v, force, curForce) == false)
 				{
 					//v.addForce(curForce);
@@ -559,7 +560,7 @@ package voforai
 			if(on(v, BehaviorType.alignment))
 			{
 				force = alignment(v, plist).multEquals(alignmentWeight);
-//				trace("alignment:", (force.x < 0 )?'-':'', force.length);
+				trace("alignment:", (force.x < 0 )?'-':'', force.length);
 				if(accumulateForce(v, force, curForce) == false)
 				{
 					//v.addForce(curForce);
@@ -666,7 +667,13 @@ package voforai
 //				cohesion(v, plist);
 //			}
 //		}
-//-------------------------------------------------------------------------------------------------------------		
+		//----------还有一个带优先级和抖动的加权截断方案,这个自己看书去吧,听到抖动就烦----------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
+//--------------------重叠检测部分跳过, 现在暂时不需要, 不过原理非常简单,看书就懂了.----------------------------------------------
+//-------------------------------------------------------------------------------------------------------------
+//--------------------空间划分------------------------------------------------------------------------------------
+		
+		
 	}
 }
 
