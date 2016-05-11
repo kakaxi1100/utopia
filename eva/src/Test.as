@@ -15,34 +15,57 @@ package
 		private var spr:Sprite = new Sprite();
 		public function Test()
 		{
+			var olist:Vector.<Object> = new Vector.<Object>;
 			
-			var arr:Array = new Array();
-			for(var i:int = 0; i < 2; i++)
+			for(var i:int = 0; i < 10; i++)
 			{
-				var temp:Object = {};
-				temp.lens_type_option_id = 8;
-				arr.push(temp);
+				var o:Object = {};
+				o.index = i;
+				
+				o.toString = function():String{
+					return this.index;
+				};
+				
+				olist.push(o);
 			}
 			
-			function test ():Boolean{
-				var tp:int = -1;
-				if(arr.length == 0) return false;
-				if(arr.length >= 1) {
-					if(arr[0]["lens_type_option_id"]){
-						if(arr.length == 1) return true;
-						tp = arr[0]["lens_type_option_id"];
-					}else{
-						return false;
-					}
-				}
-				
-				for(var i:int = 1; i < arr.length; i++){
-					if(tp != arr[i]["lens_type_option_id"]){
-						return false;
-					}
-				}
-				return true;
+			olist.splice(5, 1);
+			
+			trace(olist);
+			for(var j:int = 5; j < olist.length; j++)
+			{
+				olist[j].index -= 1;
 			}
+			trace(olist);
+			
+			
+//			var arr:Array = new Array();
+//			for(var i:int = 0; i < 2; i++)
+//			{
+//				var temp:Object = {};
+//				temp.lens_type_option_id = 8;
+//				arr.push(temp);
+//			}
+//			
+//			function test ():Boolean{
+//				var tp:int = -1;
+//				if(arr.length == 0) return false;
+//				if(arr.length >= 1) {
+//					if(arr[0]["lens_type_option_id"]){
+//						if(arr.length == 1) return true;
+//						tp = arr[0]["lens_type_option_id"];
+//					}else{
+//						return false;
+//					}
+//				}
+//				
+//				for(var i:int = 1; i < arr.length; i++){
+//					if(tp != arr[i]["lens_type_option_id"]){
+//						return false;
+//					}
+//				}
+//				return true;
+//			}
 			
 			
 //			spr.x = 10;

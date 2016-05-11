@@ -55,7 +55,7 @@ package voforparticle
 			var len:uint;
 			while(len < plist.length)
 			{
-				plist[len].update(duration);
+				plist[len].update(/*duration*/);
 				len++;
 			}
 		}

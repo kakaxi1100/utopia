@@ -47,6 +47,12 @@ package voforai
 		//------------------------------------
 		//开启行为的标志位
 		private var mFlags:int;
+		//------------------------------------
+		//-------cell space-------------------
+		//当前的在哪块cell里面
+		public var cellIndex:int = -1;
+		//在当前的cell里面的索引是多少(避免删除的时候需要循环)
+		public var cellPlaceIndex:int = -1;
 		//-------------------------------------
 		//--------------test-------------------
 		public var color:uint;

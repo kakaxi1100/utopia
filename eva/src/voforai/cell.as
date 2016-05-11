@@ -2,12 +2,14 @@ package voforai
 {
 	import flash.geom.Rectangle;
 
-	public class cell
+	public class Cell
 	{
 		public var plist:Vector.<Vehicle>;
 		public var aabb:Rectangle;
-		public function cell()
+		public function Cell(x:Number, y:Number, w:Number, h:Number)
 		{
+			plist = new Vector.<Vehicle>();
+			aabb = new Rectangle(x, y, w, h);
 		}
 	}
 }

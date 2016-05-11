@@ -20,52 +20,61 @@ package
 	[SWF(frameRate="60", backgroundColor="#FFFFFF",width="800",height="600")]
 	public class AutoTest extends Sprite
 	{
-//---------------测试组行为逐帧分析--------------------------------------------	
+//-----------------空间分割测试---------------------------------------------		
+		
 		private var plist:Vector.<Vehicle> = new Vector.<Vehicle>();
 		public function AutoTest()
 		{
-			for(var i:int = 0; i <20; i++)
-			{
-				var v:Vehicle = new Vehicle(i*0x00ff00);
-//				var v:Vehicle = new Vehicle(i*0xFF0000);//第一个是黑色,第二个是红色
-				v.maxForce = 1;
-				v.maxSpeed = 6;
-				v.position.setTo(Math.random()*800 , Math.random()*600);
-//				v.position.setTo(400+i*50 , 300);
-				v.x = v.position.x;
-				v.y = v.position.y;
-				
-				SteeringBehaviors.separationOn(v);
-				SteeringBehaviors.cohesionOn(v);
-				SteeringBehaviors.alignmentOn(v);
-				
-				plist.push(v);
-				addChild(v);
-			}
 			
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			stage.addEventListener(MouseEvent.CLICK, onClickHd)
 		}
 		
-		private function update():void
-		{
-			for(var i:int = 0; i < plist.length; i++)
-			{
-//				SteeringBehaviors.CalculatePrioritized(plist[i], plist);
-				SteeringBehaviors.calculate(plist[i], plist);//这里算法没错但是会产生抖动,需要优化
-				plist[i].update(1);
-			}
-		}
 		
-		protected function onClickHd(event:MouseEvent):void
-		{
-			update();
-		}
-		
-		protected function onEnterFrame(event:Event):void
-		{
-			update();
-		}
+//---------------测试组行为逐帧分析--------------------------------------------	
+//		private var plist:Vector.<Vehicle> = new Vector.<Vehicle>();
+//		public function AutoTest()
+//		{
+//			for(var i:int = 0; i <20; i++)
+//			{
+//				var v:Vehicle = new Vehicle(i*0x00ff00);
+////				var v:Vehicle = new Vehicle(i*0xFF0000);//第一个是黑色,第二个是红色
+//				v.maxForce = 1;
+//				v.maxSpeed = 6;
+//				v.position.setTo(Math.random()*800 , Math.random()*600);
+////				v.position.setTo(400+i*50 , 300);
+//				v.x = v.position.x;
+//				v.y = v.position.y;
+//				
+//				SteeringBehaviors.separationOn(v);
+//				SteeringBehaviors.cohesionOn(v);
+//				SteeringBehaviors.alignmentOn(v);
+//				
+//				plist.push(v);
+//				addChild(v);
+//			}
+//			
+//			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+//			stage.addEventListener(MouseEvent.CLICK, onClickHd)
+//		}
+//		
+//		private function update():void
+//		{
+//			for(var i:int = 0; i < plist.length; i++)
+//			{
+////				SteeringBehaviors.CalculatePrioritized(plist[i], plist);
+//				SteeringBehaviors.calculate(plist[i], plist);//这里算法没错但是会产生抖动,需要优化
+//				plist[i].update(1);
+//			}
+//		}
+//		
+//		protected function onClickHd(event:MouseEvent):void
+//		{
+//			update();
+//		}
+//		
+//		protected function onEnterFrame(event:Event):void
+//		{
+//			update();
+//		}
 //---------------测试组行为--------------------------------------------	
 //		private var plist:Vector.<Vehicle> = new Vector.<Vehicle>();
 ////		private var leader:Vehicle;
