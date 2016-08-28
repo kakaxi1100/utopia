@@ -16,6 +16,10 @@ silverbolt/bin/
 silverbolt/bin-debug/
 silverbolt/bin-release/
 
+experiment/bin/
+experiment/bin-debug/
+experiment/bin-release/
+
 # Other files and folders
 vernalbreeze/.settings/
 vernalbreeze.~ml

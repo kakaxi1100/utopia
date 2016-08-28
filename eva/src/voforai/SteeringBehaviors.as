@@ -6,17 +6,38 @@ package voforai
 
 	public class SteeringBehaviors
 	{
+		//群聚算法策略
+		//权值累加带优先级的算法
+		public static const Weighted_Prioritized:int = 0;
+		//权值累加算法
+		public static const Weighted_Sum:int = 1;
+		
 		public static var panicDistanceSq:Number = 100*100;
 		//权值很难调 aliment 和 cohesion 会冲突
-		public static var separationWeight:Number = 30;
+		public static var separationWeight:Number = 4;
 		public static var alignmentWeight:Number = 0.1;
-		public static var cohesionWeight:Number = 0.5;
+		public static var cohesionWeight:Number = 0.1;
 		
+		private static var mIsSpacePartition:Boolean = false;
 		public function SteeringBehaviors()
 		{
 		}
+//-------------------是否开启空间分割检测------------------------------
+		public static function openSpacePartition():void
+		{
+			mIsSpacePartition = true;
+		}
 		
-		//-------开启力以及检测力是否开启----------------------------
+		public static function closeSpacePartition():void
+		{
+			mIsSpacePartition = false;
+		}
+		
+		public static function isSpacePartition():Boolean
+		{
+			return mIsSpacePartition;
+		}
+//------------------开启力以及检测力是否开启----------------------------
 		public static function on(v:Vehicle, f:int):Boolean
 		{
 			return Boolean((v.flags & f) == f);
@@ -36,8 +57,8 @@ package voforai
 		{
 			v.flags |= BehaviorType.cohesion;
 		}
-		//----------------------------------------------------
-		
+//---------------------------------------------------------------
+//------------------------单体行为----------------------------------		
 		public static function seek(v:Vehicle, t:EVector):EVector
 		{
 			var direct:EVector = t.minus(v.position);
@@ -454,13 +475,112 @@ package voforai
 			
 			return force;
 		}
-//------------总方法,应用力只需要调用这个方法即可--------------------------------------------------------------------------------
+//-----------------开启了空间分割的计算方法-----------------------------------------------------
+		/**
+		 *总体和 separation 方法是一样的, 就是列表变成了提前算出来的邻居列表 
+		 * @param p
+		 * @param neighbors
+		 * 
+		 */		
+		public static function separationPartition(p:Vehicle, neighbors:Vector.<Vehicle>):EVector
+		{
+			//所有邻居给这个小车逃离的总和力
+			var totalForce:EVector = new EVector();
+			for	each(var v:Vehicle in neighbors)
+			{
+				var curP:Vehicle = v;
+				//计算到p的距离
+				var toAgent:EVector = p.position.minus(curP.position);//方向是 p指向它，也就是逃离的方向
+				var len:Number = (toAgent.length == 0) ? p.maxForce : 1/toAgent.length;//如果位置重合就让它产生最大的力
+				//逃离的大小应该跟距离成反比
+				totalForce.plusEquals(toAgent.normalizeEquals().multEquals(len));
+			}
+			return totalForce;
+		}
+		
+		/**
+		 * 
+		 * @param p
+		 * @param neighbors
+		 * @return 
+		 * 
+		 */		
+		public static function alignmentPartition(p:Vehicle, neighbors:Vector.<Vehicle>):EVector
+		{
+			var averageHeading:EVector = new EVector();//又要用闭包，请问你是不是用闭包用上瘾了？？嗯，是的，啦啦啦，你来打我啊！
+			var force:EVector = averageHeading;
+			var count:int;
+			for	each(var v:Vehicle in neighbors)
+			{
+				var curP:Vehicle = v;
+				averageHeading.plusEquals(curP.xAxis);//计算朝向的总和
+				count++;
+			}
+			//求平均值
+			if(count > 0){
+				averageHeading.multEquals(1/count);
+				force = averageHeading.minusEquals(p.xAxis);
+			}
+			
+			return force;
+		}
+		
+		/**
+		 * 
+		 * @param p
+		 * @param neighbors
+		 * @return 
+		 * 
+		 */		
+		public static function cohesionPartition(p:Vehicle, neighbors:Vector.<Vehicle>):EVector
+		{
+			var centerOfMass:EVector = new EVector();
+			var force:EVector = centerOfMass;
+			var count:int = 0;
+			for	each(var v:Vehicle in neighbors)
+			{
+				var curP:Vehicle = v;
+				centerOfMass.plusEquals(curP.position);
+				count++;
+			}
+			//求平均值
+			if(count > 0){
+				//找到中心点
+				centerOfMass.multEquals(1/count);
+				force = seek(p, centerOfMass);
+			}
+			
+			return force;
+		}
+//----------------------------------------------------------------------------------------------------------------		
+//------------总方法,应用力只需要调用这个方法即可----------------------------------------------------------------------------
 		public static function calculate(v:Vehicle, plist:Vector.<Vehicle>, method:int = 0):void
 		{
-			var force:EVector = CalculatePrioritized(v, plist);
+			//如果开启了flocking行为 则计算邻居
+			if(on(v, BehaviorType.separation) || on(v, BehaviorType.alignment) || on(v, BehaviorType.cohesion))
+			{
+				if(!isSpacePartition())//假如没有开启分割就用普通算法
+				{
+					tagNeighbors(v, v.scope, plist);
+				}else{//假如开启了分割就用分割算法
+					CellSpacePartition.getInstance().updateEntity(v);
+					CellSpacePartition.getInstance().calculateNeighbors(v.position, 100, v);//暂时写成100
+				}
+			}
+			
+			var force:EVector;
+			switch(method)
+			{
+				case Weighted_Prioritized:
+					force = calculatePrioritized(v, plist);
+					break;
+				case Weighted_Sum:
+					force = calculateWeightedSum(v, plist);
+					break;
+			}
 			v.addForce(force);
 		}
-//-------------计算力的各种方法---------------------------------------------------------------------------		
+//-------------计算力的各种方法--------------------------------------------------------------------------------------		
 		/**
 		 *以上产生的力必须要通过权值来判断更倾向于哪些力
 		 * 否则它会在某处截断而不进行后面的力的行为
@@ -480,15 +600,15 @@ package voforai
 		 * ——————————————————>
 		 * 而这两个力的合力就更倾向于向右方向
 		 */		
-		public static function calculateWeightedSum(v:Vehicle, plist:Vector.<Vehicle>):void
+		public static function calculateWeightedSum(v:Vehicle, plist:Vector.<Vehicle>):EVector
 		{
 			//先将力置0
 			var force:EVector = new EVector();
-			//如果开启了flocking行为 则计算邻居
-			if(on(v, BehaviorType.separation) || on(v, BehaviorType.alignment) || on(v, BehaviorType.cohesion))
-			{
-				tagNeighbors(v, v.scope, plist);
-			}
+			//如果开启了flocking行为 则计算邻居 (统一移动至 calculate 方法中)
+//			if(on(v, BehaviorType.separation) || on(v, BehaviorType.alignment) || on(v, BehaviorType.cohesion))
+//			{
+//				tagNeighbors(v, v.scope, plist);
+//			}
 			//累加各个行为所受的力
 			if(on(v, BehaviorType.separation))
 			{
@@ -505,7 +625,8 @@ package voforai
 				force.plusEquals(cohesion(v, plist).multEquals(cohesionWeight));
 			}
 			//最后的合力加到小车上
-			v.addForce(force);
+			//v.addForce(force);
+			return force;
 		}
 //-------------------------------带优先级的 加权截断累计---------------------------------------------------------------
 		//下面是书上的写法, 用到了大量的计算公式,个人感觉不是很高效
@@ -523,33 +644,27 @@ package voforai
 		 * @param plist
 		 * 
 		 */		
-		public static function CalculatePrioritized(v:Vehicle, plist:Vector.<Vehicle>):EVector
+		public static function calculatePrioritized(v:Vehicle, plist:Vector.<Vehicle>):EVector
 		{
 			//当前的力
 			var curForce:EVector = new EVector();
 			//将要加上的力
 			var force:EVector = new EVector();
-			//如果开启了flocking行为 则计算邻居
-			if(on(v, BehaviorType.separation) || on(v, BehaviorType.alignment) || on(v, BehaviorType.cohesion))
-			{
-				tagNeighbors(v, v.scope, plist);
-			}
+			//如果开启了flocking行为 则计算邻居 (统一移动至 calculate 方法中)
+//			if(on(v, BehaviorType.separation) || on(v, BehaviorType.alignment) || on(v, BehaviorType.cohesion))
+//			{
+//				tagNeighbors(v, v.scope, plist);
+//			}
 			//累加各个行为所受的力
 			if(on(v, BehaviorType.separation))
 			{
-				force = separation(v, plist).multEquals(separationWeight);
-				trace("separation:", (force.x < 0 )?'-':'', force.length);
-				if(accumulateForce(v, force, curForce) == false)
+				if(!isSpacePartition())
 				{
-					//v.addForce(curForce);
-					return curForce;
+					force = separation(v, plist).multEquals(separationWeight);
+				}else{
+					force = separationPartition(v, CellSpacePartition.getInstance().neighbors).multEquals(separationWeight);
 				}
-			}
-			
-			if(on(v, BehaviorType.cohesion))
-			{
-				force = cohesion(v, plist).multEquals(cohesionWeight);
-				trace("cohesion:", (force.x < 0 )?'-':'', force.length);
+//				trace("separation:", (force.x < 0 )?'-':'', force.length);
 				if(accumulateForce(v, force, curForce) == false)
 				{
 					//v.addForce(curForce);
@@ -559,8 +674,29 @@ package voforai
 			
 			if(on(v, BehaviorType.alignment))
 			{
-				force = alignment(v, plist).multEquals(alignmentWeight);
-				trace("alignment:", (force.x < 0 )?'-':'', force.length);
+				if(!isSpacePartition())
+				{
+					force = alignment(v, plist).multEquals(alignmentWeight);
+				}else{
+					force = alignmentPartition(v, CellSpacePartition.getInstance().neighbors).multEquals(alignmentWeight);
+				}
+//				trace("alignment:", (force.x < 0 )?'-':'', force.length);
+				if(accumulateForce(v, force, curForce) == false)
+				{
+					//v.addForce(curForce);
+					return curForce;
+				}
+			}
+			
+			if(on(v, BehaviorType.cohesion))
+			{
+				if(!isSpacePartition())
+				{
+					force = cohesion(v, plist).multEquals(cohesionWeight);
+				}else{
+					force = cohesionPartition(v, CellSpacePartition.getInstance().neighbors).multEquals(cohesionWeight);
+				}
+//				trace("cohesion:", (force.x < 0 )?'-':'', force.length);
 				if(accumulateForce(v, force, curForce) == false)
 				{
 					//v.addForce(curForce);
@@ -603,41 +739,41 @@ package voforai
 			
 			return true;
 		}
-		//----------------------------------------------------------------------------------------------
-		//-------------------------------------自己的写法--------------------------------------------------
-		public static function calculatePrioritized(v:Vehicle, plist:Vector.<Vehicle>):void
-		{
-			var temp:EVector;
-			if(on(v, BehaviorType.separation) || on(v, BehaviorType.alignment) || on(v, BehaviorType.cohesion))
-			{
-				tagNeighbors(v, v.scope, plist);
-			}
-			//累加各个行为所受的力
-			if(on(v, BehaviorType.separation))
-			{
-				//这里不用再额外调用截断了,因为addForce里面有截断操作
-				temp = separation(v, plist).multEquals(separationWeight);
-				v.addForce(temp);
-				trace("separation:", temp.length);
-				if(v.maxForce*10 == Math.round(v.forceAccum.length*10)) return;
-			}
-			
-			if(on(v, BehaviorType.alignment))
-			{
-				v.addForce(alignment(v, plist).multEquals(alignmentWeight));
-//				trace("alignment:",v.forceAccum.length);
-				if(v.maxForce*10 == Math.round(v.forceAccum.length*10)) return;
-
-			}
-			
-			if(on(v, BehaviorType.cohesion))
-			{
-				temp = cohesion(v, plist).multEquals(cohesionWeight);
-				v.addForce(temp);
-				trace("cohesion:",temp.length);
-				if(v.maxForce*10 == Math.round(v.forceAccum.length*10)) return;
-			}
-		}
+//----------------------------------------------------------------------------------------------
+//-------------------------------------自己的写法--------------------------------------------------
+//		public static function calculatePrioritized(v:Vehicle, plist:Vector.<Vehicle>):void
+//		{
+//			var temp:EVector;
+////			if(on(v, BehaviorType.separation) || on(v, BehaviorType.alignment) || on(v, BehaviorType.cohesion))
+////			{
+////				tagNeighbors(v, v.scope, plist);
+////			}
+//			//累加各个行为所受的力
+//			if(on(v, BehaviorType.separation))
+//			{
+//				//这里不用再额外调用截断了,因为addForce里面有截断操作
+//				temp = separation(v, plist).multEquals(separationWeight);
+//				v.addForce(temp);
+//				trace("separation:", temp.length);
+//				if(v.maxForce*10 == Math.round(v.forceAccum.length*10)) return;
+//			}
+//			
+//			if(on(v, BehaviorType.alignment))
+//			{
+//				v.addForce(alignment(v, plist).multEquals(alignmentWeight));
+////				trace("alignment:",v.forceAccum.length);
+//				if(v.maxForce*10 == Math.round(v.forceAccum.length*10)) return;
+//
+//			}
+//			
+//			if(on(v, BehaviorType.cohesion))
+//			{
+//				temp = cohesion(v, plist).multEquals(cohesionWeight);
+//				v.addForce(temp);
+//				trace("cohesion:",temp.length);
+//				if(v.maxForce*10 == Math.round(v.forceAccum.length*10)) return;
+//			}
+//		}
 		
 //		/**
 //		 *直接就在 每个转向行为那里加上力而不是把力返回 
@@ -667,7 +803,7 @@ package voforai
 //				cohesion(v, plist);
 //			}
 //		}
-		//----------还有一个带优先级和抖动的加权截断方案,这个自己看书去吧,听到抖动就烦----------------------------------------------
+//----------还有一个带优先级和抖动的加权截断方案,这个自己看书去吧,听到抖动就烦------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------
 //--------------------重叠检测部分跳过, 现在暂时不需要, 不过原理非常简单,看书就懂了.----------------------------------------------
 //-------------------------------------------------------------------------------------------------------------

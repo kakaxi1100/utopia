@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties analytics="false" mainApplicationPath="AutoTest.as" projectUUID="8a958913-91c8-4ef0-9215-40ff7dc439ce" version="11">
+<actionScriptProperties analytics="false" mainApplicationPath="Test2.as" projectUUID="8a958913-91c8-4ef0-9215-40ff7dc439ce" version="11">
   <compiler additionalCompilerArguments="-locale en_US" advancedTelemetry="true" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" useFlashSDK="false" verifyDigests="true" warn="true">
     <compilerSourcePath>
       <compilerSourcePathEntry kind="1" linkType="1" path="C:/Users/juli/Desktop/AdvancEDActionScriptAnimation/Chapter02/com"/>

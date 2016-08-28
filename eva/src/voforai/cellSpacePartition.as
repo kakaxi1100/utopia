@@ -21,10 +21,20 @@ package voforai
 		private var mCellW:Number;
 		private var mCellH:Number;
 		
-		public function CellSpacePartition(PW:Number, PH:Number, pCols:int, pRows:int)
+		private static var instance:CellSpacePartition = null;
+		public function CellSpacePartition()
 		{
-			mWorldWidth = PW;
-			mWorldHeight = PH;
+			
+		}
+		public static function getInstance():CellSpacePartition
+		{
+			return instance ||= new CellSpacePartition();
+		}
+		
+		public function init(pW:Number, pH:Number, pCols:int, pRows:int):void
+		{
+			mWorldWidth = pW;
+			mWorldHeight = pH;
 			
 			mRows = pRows;
 			mCols = pCols;
@@ -61,34 +71,51 @@ package voforai
 		{
 			var row:int = Math.floor(pos.y / mCellH);//先计算出在哪行
 			var col:int = Math.floor(pos.x / mCellW);//再计算处在哪列
+			//边界处理
+			//比如 pos.y = 800, mCellH = 80 mRows = 10 mCols = 10
+			//就是刚好压上右边界 或者 下边界的情况
+			if(row > mRows - 1){
+				row = mRows - 1;
+			}
+			if(col > mCols - 1){
+				col = mCols - 1;
+			}
 			
-			var index:int = row + col*mRows;//计算出在cell的index
+			var index:int = row*mCols + col;//计算出在cell的index
 			
-			return index;
+			return index;//那个cell
 		}
 		
 		public function addEntity(v:Vehicle):void
 		{
 			var index:int = postionToIndex(v.position);
 			mCells[index].plist.push(v);
-			v.cellIndex = index;
-			v.cellPlaceIndex = mCells[index].plist.length - 1;
+			v.cellIndex = index;//哪个cell
+			v.cellPlaceIndex = mCells[index].plist.length - 1;//cell的哪个位置
 		}
 		
+		/**
+		 *先要调用 addEntity 
+		 * @param v
+		 * 
+		 */		
 		public function updateEntity(v:Vehicle):void
 		{
-			var newIndex:int = postionToIndex(v.position);
-			if(newIndex == v.cellIndex) return;
-			mCells[v.cellIndex].plist.splice(v.cellPlaceIndex);
-			//移除了一个之后,后面的所有索引应该都减去1
-			for(var i:int = v.cellPlaceIndex; i < mCells.length; i++)
+			var newIndex:int = postionToIndex(v.position);//计算小车得新位置
+			if(newIndex == v.cellIndex) return;//假如是在同一个cell, 就直接返回
+			
+			//假如不是同一个cell, 就先从当前cell中删除掉
+			mCells[v.cellIndex].plist.splice(v.cellPlaceIndex,1);
+			
+			//移除了一个之后,当前cell后面的所有索引应该都减去1
+			for(var i:int = v.cellPlaceIndex; i < mCells[v.cellIndex].plist.length; i++)
 			{
 				mCells[v.cellIndex].plist[i].cellPlaceIndex -= 1;
 			}
-			
+			//将小车添加近新cell中去
 			mCells[newIndex].plist.push(v);
-			v.cellIndex = newIndex;
-			v.cellPlaceIndex = mCells[newIndex].plist.length - 1;
+			v.cellIndex = newIndex;//新的cell索引
+			v.cellPlaceIndex = mCells[newIndex].plist.length - 1;//在新cell中的位置
 		}
 		
 		/**
@@ -97,14 +124,14 @@ package voforai
 		 * @param queryRadius
 		 * 
 		 */		
-		public function calculateNeighbors(targetPos:EVector, queryRadius:Number):void
+		public function calculateNeighbors(targetPos:EVector, queryRadius:Number, v:Vehicle):void
 		{
 			//清空邻居列表
 			while(mNeighbors.length > 0){
 				mNeighbors.pop();
 			}
 			//先构造查询盒
-			var queryBox:Rectangle = new Rectangle(targetPos.x - queryRadius, targetPos.y - queryRadius, queryRadius, queryRadius);
+			var queryBox:Rectangle = new Rectangle(targetPos.x - queryRadius, targetPos.y - queryRadius, queryRadius*2, queryRadius*2);
 			for(var i:int = 0; i < mCells.length; i++)
 			{
 				var tempCell:Cell = mCells[i];
@@ -115,6 +142,7 @@ package voforai
 				for(var j:int = 0; j < tempCell.plist.length; j++)
 				{
 					var tempVehicle:Vehicle = tempCell.plist[j];
+					if(tempVehicle == v) continue;//如果是自己就跳过
 					//算出目标点到当前实体的距离
 					//为了避免new 就不用 EVector 来计算了
 					var minusX:Number = tempVehicle.x - targetPos.x;
@@ -134,10 +162,15 @@ package voforai
 			for(var i:int = 0; i < mCells.length; i++)
 			{
 				var temp:Cell = mCells[i];
-				g.clear();
 				g.lineStyle(1);
-				g.drawRect(temp.aabb.x, temp.aabb.y, temp.aabb.width, temp.aabb.height;
+				g.drawRect(temp.aabb.x, temp.aabb.y, temp.aabb.width, temp.aabb.height);
 			}
 		}
+
+		public function get neighbors():Vector.<Vehicle>
+		{
+			return mNeighbors;
+		}
+
 	}
 }

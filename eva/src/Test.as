@@ -3,6 +3,7 @@ package
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.geom.Point;
+	import flash.utils.getTimer;
 	
 	import utils.MatrixUtil;
 	
@@ -15,28 +16,52 @@ package
 		private var spr:Sprite = new Sprite();
 		public function Test()
 		{
-			var olist:Vector.<Object> = new Vector.<Object>;
+			spr.graphics.beginFill(0);
+			spr.graphics.drawRect(0,0,100,100);
+			spr.graphics.endFill();
+			addChild(spr);
 			
-			for(var i:int = 0; i < 10; i++)
-			{
-				var o:Object = {};
-				o.index = i;
-				
-				o.toString = function():String{
-					return this.index;
-				};
-				
-				olist.push(o);
-			}
+			spr.buttonMode = true;
 			
-			olist.splice(5, 1);
+//			var o :Object = new A();
+//			o.a = 10;
+//			var m:Array = [];
+//			m.push(a);
+//			for each(var t:Object in m){
+//				trace(t.a);
+//			}
+//			trace(t.a);
 			
-			trace(olist);
-			for(var j:int = 5; j < olist.length; j++)
-			{
-				olist[j].index -= 1;
-			}
-			trace(olist);
+//			for each(var t:test in m){
+//				trace(t.a);
+//			}
+			
+//			var s:String = "|tpsolitairegardens|tppokerland|";
+//			var a = s.indexOf("|tppokerland|") != -1
+//			trace(a);
+//			
+//			var olist:Vector.<Object> = new Vector.<Object>;
+//			
+//			for(var i:int = 0; i < 10; i++)
+//			{
+//				var o:Object = {};
+//				o.index = i;
+//				
+//				o.toString = function():String{
+//					return this.index;
+//				};
+//				
+//				olist.push(o);
+//			}
+//			
+//			olist.splice(5, 1);
+//			
+//			trace(olist);
+//			for(var j:int = 5; j < olist.length; j++)
+//			{
+//				olist[j].index -= 1;
+//			}
+//			trace(olist);
 			
 			
 //			var arr:Array = new Array();
@@ -112,4 +137,12 @@ package
 			
 		}
 	}
+}
+
+class A{
+	public var a:int;
+}
+
+class B{
+	public var a:int;
 }

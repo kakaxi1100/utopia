@@ -169,7 +169,7 @@ package voforai
 			this.graphics.lineTo(-10,5);
 			this.graphics.lineTo(-10,-5);
 			this.graphics.lineTo(10,0);
-			this.graphics.drawCircle(0,0,scope);
+//			this.graphics.drawCircle(0,0,scope);
 		}
 		
 		public function globalDraw(g:Graphics):void

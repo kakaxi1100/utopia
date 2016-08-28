@@ -27,8 +27,15 @@ package
 			this.graphics.lineStyle(1,0xff0000);
 			this.graphics.moveTo(o.sx, o.sy);
 			this.graphics.lineTo(1000, o.sy);
-				
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			try {
+				// sorry this operation is not supported yet
+				throw new Error("This is not yet supported");
+			} catch (bizError:InvalidRequest) {
+				trace("bizError");
+			} catch (th:Error) {
+				trace("th");
+			}
+			//stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
 		private var a:Number = 90;
@@ -43,4 +50,8 @@ package
 			sp.graphics.lineTo(o.x, o.y);
 		}
 	}
+}
+
+class InvalidRequest extends Error{
+	
 }
