@@ -13,7 +13,7 @@ package
 		public function ColorTest()
 		{
 			super();
-			
+//------------图像反转---------------------------------------------			
 			var b:Bitmap = new Surge();
 			addChild(b);
 			var a:Bitmap = new Surge();
@@ -31,7 +31,6 @@ package
 					a.bitmapData.setPixel(j, i, color);
 				}
 			}
-//			b.bitmapData.get
 			
 //			var temp:ColorTransform = new ColorTransform();
 //			trace(a.transform.colorTransform);

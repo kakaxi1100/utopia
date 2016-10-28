@@ -3,6 +3,9 @@
  * 任意四边行扭曲
  * 
  * 由于插值方法原因 只能缩小图片扭曲，而不能放大，放大的时候会出现空点，主要是由于缩放时的插值方法没有弄对
+ * 因为采用的是原图图像映射到目标图像上,如果采用目标图像查找原图图像则可以解决这个问题
+ * 
+ * 这种方法被我放弃了,要做到完美太费效率, 几乎再实际中不能使用, 考虑使用三角形法
  * 
  * 其实不止是四边形
  * 只要知道任意形状都可以用这个思路，思路具体见笔记
@@ -14,18 +17,16 @@ package
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
+	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
 	
 	import graphics.Circle;
 	
-	import vo.CMatrix;
 	import vo.CVector;
 	
-	[SWF(width="640", height="480", frameRate="30")]
+	[SWF(width="1280", height="800", frameRate="30")]
 	public class EffectTest extends Sprite
 	{
 		[Embed(source="assets/2.png")]
@@ -35,18 +36,19 @@ package
 		private var Arena:Class;
 //----------更普遍的扭曲--------------------------------------------------------------		
 		private var b:Bitmap = new Background();
-		private var empty:Bitmap = new Bitmap(new BitmapData(640, 480,false));
+		private var empty:Bitmap = new Bitmap(new BitmapData(1280, 960,false));
 		private var empty2:Bitmap = new Bitmap(new BitmapData(640,480));
 		private var vertexs:Vector.<CVector> = new Vector.<CVector>();
-		private var c1:Circle = new Circle(0xff00, 10);
+		private var c1:Circle = new Circle(0xff0000, 10);
 		private var c2:Circle = new Circle(0xff00, 10);
-		private var c3:Circle = new Circle(0xff00, 10);
-		private var c4:Circle = new Circle(0xff00, 10);
+		private var c3:Circle = new Circle(0xff, 10);
+		private var c4:Circle = new Circle(0xffff, 10);
 		private var isMouseDown:Boolean =false;
 		private var target:Object;
 		public function EffectTest()
 		{
 			super();
+//			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			addChild(empty);
 //			addChild(empty2);
@@ -76,15 +78,15 @@ package
 			//第二, 根据每行左右两边的点, 可以算出这行的斜率, 这样我只要知道原图中每一行, 怎么映射到一个斜线行就行了
 			//一行直线怎么映射到一段斜线上也很简单
 			//分成xy两个份量来求, y值改变了多少求比率, x改变了多少求比率
-//			vertexs.push(new CVector(320, 160), new CVector(480, 240), new CVector(160, 320), new CVector(640, 480));
-//			random_quadrangle(vertexs, b.bitmapData, empty.bitmapData);
+//			vertexs.push(new CVector(0, 0), new CVector(640, 0), new CVector(0, 480), new CVector(640, 480));
+//			random_quadrangle_dest_to_source(vertexs, b.bitmapData, empty.bitmapData);
 			
 			//控制4个点
 			addChild(c1);
 			addChild(c2);
 			addChild(c3);
 			addChild(c4);
-			vertexs.push(new CVector(0, 0), new CVector(640, 0), new CVector(0, 480), new CVector(640, 480));
+			vertexs.push(new CVector(0, 0), new CVector(0, 480), new CVector(640, 0), new CVector(640, 480));
 			c1.x = vertexs[0].x;
 			c1.y = vertexs[0].y;
 			c2.x = vertexs[1].x;
@@ -93,23 +95,24 @@ package
 			c3.y = vertexs[2].y;
 			c4.x = vertexs[3].x;
 			c4.y = vertexs[3].y;
-			random_quadrangle(vertexs, b.bitmapData, empty.bitmapData);
+//			random_quadrangle(vertexs, b.bitmapData, empty.bitmapData);
+			random_quadrangle_dest_to_source(vertexs, b.bitmapData, empty.bitmapData);
 			
 			c1.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 			c2.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 			c3.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 			c4.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-			
-//			c1.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-//			c2.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-//			c3.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-//			c4.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-			
-//			c1.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-//			c2.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-//			c3.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-//			c4.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
-			
+//			
+////			c1.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+////			c2.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+////			c3.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+////			c4.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+//			
+////			c1.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+////			c2.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+////			c3.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+////			c4.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+//			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 		}
@@ -135,8 +138,8 @@ package
 					vertexs[3].reset(stage.mouseX, stage.mouseY);
 					break;
 			}
-			empty.bitmapData.fillRect(empty.bitmapData.rect, 0);
-			random_quadrangle(vertexs, b.bitmapData, empty.bitmapData);
+			empty.bitmapData.fillRect(empty.bitmapData.rect, 0xffffff);
+			random_quadrangle_dest_to_source(vertexs, b.bitmapData, empty.bitmapData);
 		}
 		
 		protected function onMouseUp(event:MouseEvent):void
@@ -164,7 +167,7 @@ package
 						break;
 				}
 				empty.bitmapData.fillRect(empty.bitmapData.rect, 0);
-				random_quadrangle(vertexs, b.bitmapData, empty.bitmapData);
+				random_quadrangle_source_to_dest(vertexs, b.bitmapData, empty.bitmapData);
 			}
 		}
 		
@@ -174,7 +177,92 @@ package
 			target = event.target;
 		}
 		
-		private function random_quadrangle(vertexs:Vector.<CVector>,source:BitmapData, dest:BitmapData):void
+		private function random_quadrangle_dest_to_source(vertexs:Vector.<CVector>,source:BitmapData, dest:BitmapData):void
+		{
+			//偏移量
+			var offsetLeftX:Number, offsetLeftY:Number;
+			var offsetRightX:Number, offsetRightY:Number;	
+			var leftPointX:Number, leftPointY:Number;
+			var rightPointX:Number, rightPointY:Number;
+			
+			var verticalLength:Number;
+			var horizontalLength:Number;
+			
+			//查找扭曲图左边和右边哪个Y最长
+			//要根据最长的这个行数来求出,每走一步最短的边走多少
+			
+			var leftLength:Number = vertexs[2].minusNew(vertexs[0]).getLength();//Math.abs(vertexs[2].y - vertexs[0].y);
+			var rightLength:Number = vertexs[3].minusNew(vertexs[1]).getLength();//Math.abs(vertexs[3].y - vertexs[1].y);
+			var upLength:Number = vertexs[1].minusNew(vertexs[0]).getLength();//Math.abs(vertexs[1].x - vertexs[0].x);
+			var downLength:Number = vertexs[3].minusNew(vertexs[2]).getLength();//Math.abs(vertexs[3].x - vertexs[2].x);
+			if(leftLength >= rightLength)//左边比右边长
+			{
+				verticalLength = leftLength;//必须是正的
+			}
+			else //右边比左边长
+			{
+				verticalLength = rightLength;
+			}
+			
+			if(upLength >= downLength)//上边边比下边长
+			{
+				horizontalLength = upLength;
+			}
+			else //下边比上边长
+			{
+				horizontalLength = downLength;
+			}
+			//为了去除空点这里每次步近0.5
+			//假如右四个点, 正好变为斜45°那么如果按照每次步进1来计算那么中间会有一个点计算不上
+			//      
+			// ■ ■        ■       
+			// ■ ■      ■ □ ■
+			//            ■
+			verticalLength *= 2;
+			horizontalLength *= 2;
+			
+			offsetLeftX = (vertexs[2].x - vertexs[0].x)/verticalLength; //平均每行左边X要走多少步
+			offsetLeftY = (vertexs[2].y - vertexs[0].y)/verticalLength; //平均每行左边Y要走多少步
+			offsetRightX = (vertexs[3].x - vertexs[1].x)/verticalLength;//平均每行右边X要走多少步
+			offsetRightY = (vertexs[3].y - vertexs[1].y)/verticalLength;//平均每行右边X要走多少步
+			
+			leftPointX = vertexs[0].x;
+			leftPointY = vertexs[0].y;
+			rightPointX = vertexs[1].x;
+			rightPointY = vertexs[1].y;
+			
+			//当前斜线段的X,Y的比例
+			var hDX:Number, hDY:Number;
+			
+			//颜色分量, 要放的点
+			var color:uint;
+			var tx:Number, ty:Number;
+			for(var i:int = 0; i < verticalLength; i++)
+			{
+				hDX = (rightPointX - leftPointX) / horizontalLength;
+				hDY = (rightPointY - leftPointY) / horizontalLength;
+				
+				tx = leftPointX;
+				ty = leftPointY;
+				for(var j:int = 0; j < horizontalLength; j++)
+				{
+					var tempX:int = Math.round(j * (640 / horizontalLength));
+					var tempY:int = Math.round(i * (480 / verticalLength));
+					color = source.getPixel32(tempX, tempY);
+					dest.setPixel32(Math.round(tx), Math.round(ty), color);
+					tx += hDX;
+					ty += hDY;
+				}
+				
+				leftPointX += offsetLeftX;
+				leftPointY += offsetLeftY;
+				rightPointX += offsetRightX;
+				rightPointY += offsetRightY;
+			}
+		}
+		
+		//原图映射目标图, 放大时会出现问题, 有些点不会被映射到目标图上
+		private function random_quadrangle_source_to_dest(vertexs:Vector.<CVector>,source:BitmapData, dest:BitmapData):void
 		{
 			//偏移量
 			var offsetLeftX:Number, offsetLeftY:Number;
@@ -225,9 +313,9 @@ package
 		//平行梯形和垂直梯形
 		private function random_quadrangle_two(vertexs:Vector.<CVector>,source:BitmapData, dest:BitmapData):void
 		{
-			
+			var i:int;
 			var tempVertexs:Vector.<CVector> = new Vector.<CVector>();
-			for(var i:int = 0; i < vertexs.length; ++i)
+			for(i = 0; i < vertexs.length; ++i)
 			{
 				tempVertexs[i] = vertexs[i];
 			}
@@ -280,7 +368,7 @@ package
 			
 			//垂直梯形
 			//要将已经平行梯形化的图像做为输入, 但是顶点还是原图的顶点
-			for(var i:int = 0; i < vertexs.length; ++i)
+			for(i = 0; i < vertexs.length; ++i)
 			{
 				tempVertexs[i] = vertexs[i];
 			}

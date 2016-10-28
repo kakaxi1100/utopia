@@ -57,6 +57,19 @@ package vo
 			return new CVector(this.mX * s, this.mY * s);
 		}
 		
+		public function abs():void
+		{
+			this.mX = this.mX > 0 ? this.mX : -this.mX;
+			this.mY = this.mY > 0 ? this.mY : -this.mY;
+		}
+		
+		public function absNew():CVector
+		{
+			var temX:Number = this.mX > 0 ? this.mX : -this.mX;
+			var temY:Number = this.mY > 0 ? this.mY : -this.mY;
+			return new CVector(temX, temY);
+		}
+		
 		public function getLength():Number
 		{
 			return Math.sqrt(this.mX * this.mX + this.mY * this.mY);
