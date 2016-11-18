@@ -125,7 +125,7 @@ package vo
 		public function persProjectNew():CVector3D
 		{
 			var p:Number = getPerspective();
-			return new CVector3D(mX * p, mY * p, mZ * p);
+			return new CVector3D(mX * p, mY * p, 0);
 		}
 		
 		public function rotateX(a:Number):void
