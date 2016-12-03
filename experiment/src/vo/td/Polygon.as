@@ -5,6 +5,8 @@ package vo.td
 
 	public class Polygon
 	{
+		//state
+		public var state:int;
 		//原始顶点里列表
 		public var vlist:Vector.<CPoint3D>;
 		//变换的顶点列表
@@ -19,6 +21,20 @@ package vo.td
 			vert[2] = v3;
 		}
 		
+		public function normal():CPoint3D
+		{
+			var u:CPoint3D;
+			var v:CPoint3D;
+			if(tvlist == null){
+				u = vlist[vert[1]].minusNew(vlist[vert[0]]);
+				v = vlist[vert[2]].minusNew(vlist[vert[0]]);
+			}else{
+				u = tvlist[vert[1]].minusNew(tvlist[vert[0]]);
+				v = tvlist[vert[2]].minusNew(tvlist[vert[0]]);
+			}
+			return u.cross(v);
+		}
+		
 		public function cloneVToTransV():void
 		{
 			tvlist = new Vector.<CPoint3D>();
@@ -30,6 +46,7 @@ package vo.td
 		
 		public function draw(g:Graphics):void
 		{
+			if((state & PolygonStates.BACKFACE) != 0) return;//此时多边形是背面
 			if(tvlist != null && tvlist.length > 0){
 				g.moveTo(tvlist[vert[0]].x, tvlist[vert[0]].y);
 				g.lineTo(tvlist[vert[1]].x, tvlist[vert[1]].y);

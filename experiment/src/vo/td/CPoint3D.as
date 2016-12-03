@@ -1,5 +1,7 @@
 package vo.td
 {
+	import vo.CVector3D;
+
 	public class CPoint3D
 	{
 		private var mX:Number;
@@ -14,6 +16,25 @@ package vo.td
 			mY = y;
 			mZ = z;
 		}
+		
+		public function dot(v:CPoint3D):Number
+		{
+			return this.mX * v.mX + this.mY * v.mY + this.mZ * v.mZ;
+		}
+		
+		public function cross(v:CPoint3D):CPoint3D
+		{
+			var cx:Number = this.mY * v.mZ - this.mZ * v.mY;
+			var cy:Number = this.mZ * v.mX - this.mX * v.mZ;
+			var cz:Number = this.mX * v.mY - this.mY * v.mX;
+			
+			return new CPoint3D(cx, cy, cz);
+		}
+		
+		public function minusNew(v:CPoint3D):CPoint3D
+		{
+			return new CPoint3D(this.mX - v.mX, this.mY - v.mY, this.mZ - v.mZ);
+		}	
 		
 		public function rotateXYZ(a:Number, b:Number, c:Number):void
 		{
@@ -106,6 +127,11 @@ package vo.td
 		public function set z(value:Number):void
 		{
 			mZ = value;
+		}
+		
+		public function toString():String
+		{
+			return "( " + mX + ", " + mY + ", " + mZ + " )";
 		}
 	}
 }

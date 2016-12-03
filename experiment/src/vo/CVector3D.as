@@ -97,7 +97,7 @@ package vo
 		public function cross(v:CVector3D):CVector3D
 		{
 			var cx:Number = this.mY * v.mZ - this.mZ * v.mY;
-			var cy:Number = this.mZ * v.mX - this.mZ * v.mZ;
+			var cy:Number = this.mZ * v.mX - this.mX * v.mZ;
 			var cz:Number = this.mX * v.mY - this.mY * v.mX;
 			
 			return new CVector3D(cx, cy, cz);

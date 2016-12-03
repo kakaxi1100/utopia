@@ -1,10 +1,13 @@
 package
 {
 	import flash.display.Sprite;
+	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
+	import flash.ui.Keyboard;
 	
 	import file.ParseString;
 	
@@ -12,6 +15,7 @@ package
 	import vo.td.EulerCamera;
 	import vo.td.Objective;
 	import vo.td.Polygon;
+	import vo.td.PolygonStates;
 	
 	[SWF(width="640", height="480", frameRate="60", backgroundColor="0x000000")]
 	public class Wireframe extends Sprite
@@ -22,12 +26,13 @@ package
 		//相机
 		private var camera:EulerCamera;
 		//世界坐标
-		private var worldPos:CPoint3D = new CPoint3D(300,200,200);
+		private var worldPos:CPoint3D = new CPoint3D(200,200,200);
 		public function Wireframe()
 		{
 			super();
 			
 			stage.scaleMode = StageScaleMode.NO_SCALE;
+			stage.align = StageAlign.BOTTOM_RIGHT;
 			this.graphics.lineStyle(1, 0xff000);
 			
 			var request:URLRequest = new URLRequest("configs/cube1.plg");
@@ -37,7 +42,7 @@ package
 			
 			//初始化
 			cube = new Objective();
-			camera = new EulerCamera(new CPoint3D(), new CPoint3D());
+			camera = new EulerCamera(new CPoint3D(200,200,0), new CPoint3D());
 		}
 		
 		protected function onLoaderComplete(event:Event):void
@@ -106,6 +111,43 @@ package
 			//			cube.draw(this.graphics);
 			//------------------------------------------
 			stage.addEventListener(Event.EXIT_FRAME, onEnterframe);
+//			onEnterframe(null);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+		}
+		
+		protected function onKeyDown(event:KeyboardEvent):void
+		{
+			this.graphics.clear();
+			this.graphics.lineStyle(2, 0xff000);
+			//start render
+			//local vertexs--> trans vertexs
+			cube.vertexLocalToTrans();
+			//moving
+			rotation();
+			//local-->global
+			transforToWorld();
+			//背面消除
+			hidingSide();
+			//global-->camera
+			transforToCamera();
+			//camera-->screen
+			persProject();
+			//render
+			cube.draw(this.graphics);
+			
+			switch(event.keyCode)
+			{
+				case Keyboard.UP:
+				{
+					camera.dir.y--;
+					break;
+				}
+					
+				default:
+				{
+					break;
+				}
+			}
 		}
 		
 		protected function onEnterframe(event:Event):void
@@ -119,12 +161,34 @@ package
 			rotation();
 			//local-->global
 			transforToWorld();
+			//背面消除
+			hidingSide();
 			//global-->camera
 			transforToCamera();
 			//camera-->screen
 			persProject();
 			//render
 			cube.draw(this.graphics);
+		}
+		
+		private function hidingSide():void
+		{
+			var view:CPoint3D;
+			for(var i:int = 0; i < cube.polysNum; i++)
+			{
+				var p:Polygon = cube.plist[i];
+				var n:CPoint3D = p.normal();
+				view = camera.pos.minusNew(p.vlist[p.vert[0]]);
+//				trace("Normal: ", n, "View: ", view);
+				var dot:Number = n.dot(view);
+//				trace(dot,"@@@",i);
+				if( dot <= 0)
+				{
+					p.state |= PolygonStates.BACKFACE;
+				}else{
+					p.state = PolygonStates.NORMAL;
+				}
+			}
 		}
 		
 		private function transforToWorld():void
@@ -164,13 +228,16 @@ package
 		
 		private function rotation():void
 		{
-			var rand1:Number = Math.random()*3;
-			var rand2:Number = Math.random()*3;
-			var rand3:Number = Math.random()*3;
+			var rand1:Number = 1;//Math.random()*3;
+			var rand2:Number = 1;//Math.random()*3;
+			var rand3:Number = 1;//Math.random()*3;
 			
 			for(var i:int = 0; i < cube.tvlist.length; i++)
 			{
-				cube.vlist[i].rotateXYZ(rand1,rand2,rand3);
+//				cube.vlist[i].rotateXYZ(rand1,rand2,rand3);
+				cube.vlist[i].rotateY(rand1);
+//				cube.vlist[i].rotateX(rand1);
+//				cube.vlist[i].rotateZ(rand1);
 			}
 		}
 	}
