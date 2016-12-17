@@ -22,7 +22,7 @@ package file
 			
 			return temp;
 		}
-		//去掉了: 空格 ,注释 和 空	
+		//去掉了: 空行 ,注释 和前后空格	
 		public static function getTrimLines(s:String):Array
 		{
 			var temp:Array = [];

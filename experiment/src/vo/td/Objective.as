@@ -1,5 +1,6 @@
 package vo.td
 {
+	import flash.display.BitmapData;
 	import flash.display.Graphics;
 
 	public class Objective
@@ -38,6 +39,14 @@ package vo.td
 			for(var i:int = 0; i < plist.length; i++)
 			{
 				plist[i].draw(g);
+			}
+		}
+		
+		public function drawBitmap(bmd:BitmapData):void
+		{
+			for(var i:int = 0; i < plist.length; i++)
+			{
+				plist[i].drawBitmap(bmd);
 			}
 		}
 	}

@@ -1,7 +1,10 @@
 package vo.td
 {
+	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.geom.Vector3D;
+	
+	import vo.Base;
 
 	public class Polygon
 	{
@@ -57,6 +60,20 @@ package vo.td
 				g.lineTo(vlist[vert[1]].x, vlist[vert[1]].y);
 				g.lineTo(vlist[vert[2]].x, vlist[vert[2]].y);
 				g.lineTo(vlist[vert[0]].x, vlist[vert[0]].y);
+			}
+		}
+		
+		public function drawBitmap(bmd:BitmapData):void
+		{
+			if((state & PolygonStates.BACKFACE) != 0) return;//此时多边形是背面
+			if(tvlist != null && tvlist.length > 0){
+				Base.drawLineXY(tvlist[vert[0]].x, tvlist[vert[0]].y, tvlist[vert[1]].x, tvlist[vert[1]].y, bmd);
+				Base.drawLineXY(tvlist[vert[1]].x, tvlist[vert[1]].y, tvlist[vert[2]].x, tvlist[vert[2]].y, bmd);
+				Base.drawLineXY(tvlist[vert[2]].x, tvlist[vert[2]].y, tvlist[vert[0]].x, tvlist[vert[0]].y, bmd);
+			}else{
+				Base.drawLineXY(vlist[vert[0]].x, vlist[vert[0]].y, vlist[vert[1]].x, vlist[vert[1]].y, bmd);
+				Base.drawLineXY(vlist[vert[1]].x, vlist[vert[1]].y, vlist[vert[2]].x, vlist[vert[2]].y, bmd);
+				Base.drawLineXY(vlist[vert[2]].x, vlist[vert[2]].y, vlist[vert[0]].x, vlist[vert[0]].y, bmd);
 			}
 		}
 	}
