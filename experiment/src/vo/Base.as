@@ -113,43 +113,39 @@ package vo
 			}  
 			
 			//比较值的时候，都是按照第一象限来比较，只不过，步进的时候，按照 xInc, yInc 来步进  
-			var k2dx:int = 2*dy;  
-			var error2dx:int = k2dx - 1;  
+			var k2dx:int = 2*dx;  
 			
-			var k2dy:int = 2*dx;  
-			var error2dy:int = k2dy - 1;  
+			var k2dy:int = 2*dy;  
+			var error:int;  
 			
 			if(dx >= dy)//近X轴线 ,注意判断条件！
 			{  
+				error = k2dy - dx;
 				for(i = 0; i <= dx ; i++)  
 				{  
 					bmd.setPixel32(x,y, color);  
-					if(error2dx > 0)  
+					if(error > 0)  
 					{  
+						error -= k2dx;//这里为什么要这么减呢？看笔记吧,化简到这步其实经历了很多过程
 						y += yInc;  
-						error2dx = error2dx + k2dx - 2*dx;//这里为什么要这么减呢？看笔记吧,化简到这步其实经历了很多过程error2dx = error2dx + k2dx - 2*dx;  
-					}else  
-					{  
-						error2dx = error2dx + k2dx;  
-					}  
+					}
+					error += k2dy;  
 					
 					x += xInc;  
 				}  
 			}else//近Y轴线  
 			{  
+				error = k2dx - dy;
 				for(i = 0; i <= dy ; i++)  
 				{  
 					bmd.setPixel32(x,y, color);  
-					if(error2dy > 0)  
+					if(error > 0)  
 					{  
+						error -= k2dy;  
 						x += xInc;  
-						error2dy = error2dy + k2dy - 2*dy;  
-					}else  
-					{  
-						error2dy = error2dy + k2dy;  
-					}  
+					}
+					error += k2dx;  
 					
-					error2dy = error2dy + k2dy;  
 					y += yInc;  
 				}  
 			}  

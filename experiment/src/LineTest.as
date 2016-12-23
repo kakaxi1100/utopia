@@ -8,6 +8,42 @@ package
 	import flash.geom.Point;  
 	
 	[SWF(frameRate="60", backgroundColor="0",height="600",width="800")]  
+	/**
+	 *
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 这里的直线算法是错的！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+	 * 正确的算法参考Base类里面的drawLine
+	 * 
+	 *
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 *  
+	 */	
 	public class LineTest extends Sprite  
 	{  
 		private var bmd:BitmapData = new BitmapData(800,600, false, 0);  

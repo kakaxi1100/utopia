@@ -2,9 +2,9 @@
 triangle 3 1
 
 #vertex list x-y-z
-100 100 0
-50 50 0
-150 50 0
+0 0 0
+-100 -100 0
+100 -100 0
 
 #polygon list
 #descriptor, number of polygon's vertex, vertex's index
