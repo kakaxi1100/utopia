@@ -1,3 +1,11 @@
+/***
+ * 
+ * 
+ * 基于左手坐标系
+ * 
+ * 
+ * ***/
+
 package vo.td
 {
 	import vo.CVector3D;
@@ -75,8 +83,8 @@ package vo.td
 			var cosa:Number = Math.cos(a * Radian);
 			var sina:Number = Math.sin(a * Radian);
 			
-			var rz:Number = cosa * mZ - sina * mX;
 			var rx:Number = sina * mZ + cosa * mX;
+			var rz:Number = cosa * mZ - sina * mX;
 			
 			mX = rx;
 			mZ = rz;

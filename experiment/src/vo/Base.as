@@ -5,17 +5,82 @@ package vo
 	
 	import file.ParseString;
 	
+	import vo.td.CObjective;
 	import vo.td.CPoint3D;
+	import vo.td.CPoint4D;
+	import vo.td.CPolygon;
 	import vo.td.Objective;
 	import vo.td.Polygon;
 
 	public class Base
 	{
+		public static var worldCenterX:Number = 0;
+		public static var worldCenterY:Number = 0;
+		
 		//将零点坐标转换为左下角, 方便做透视变换
 		public static function changeCoordinate(x:Number, y:Number, h:Number):Point
 		{
 			return new Point(x, h-y);
 		}
+		
+		//解析文件返回一个objective
+		//传入的是原始文件字符串
+		public static function parseObjective4D(raw:String):CObjective
+		{
+			var obj:CObjective = new CObjective();
+			//去掉了空行,注释和前后空格的行
+			var lines:Array = ParseString.getTrimLines(raw);
+			//开始解析
+			var i:int = 0, index:int = 0;
+			//1.解析物体信息
+			//将物品信息的每个参数存入数组
+			var line:Array = (lines[index++] as String).split(" ");
+			line[0] = ParseString.trim(line[0]);//trim后的物品名称
+			line[1] = ParseString.trim(line[1]);//trim后的顶点数
+			line[2] = ParseString.trim(line[2]);//trim后的多边形数
+			obj.name = line[0];
+			obj.vertexsNum = line[1];
+			obj.polysNum = line[2];
+			//2.添加顶点
+			var p:CPoint4D;
+			for(i = 0; i < obj.vertexsNum; i++)
+			{
+				line = lines[index++].split(" ");
+				line[0] = ParseString.trim(line[0]);//mx
+				line[1] = ParseString.trim(line[1]);//my
+				line[2] = ParseString.trim(line[2]);//mz
+				
+				p = new CPoint4D(parseInt(line[0]), parseInt(line[1]), parseInt(line[2]));
+				obj.vlist[i] = p;
+			}
+			//local vertexs--> trans vertexs
+			//因为polygon不需要tvertexs列表了,它的数据来自于object的trans vertexs 列表
+			obj.vertexLocalToTrans();
+			var polygon:CPolygon;
+			//3.polygon list 添加多边形列表
+			for(i = 0; i < obj.polysNum; i++)
+			{
+				line = lines[index++].split(" ");
+				line[0] = ParseString.trim(line[0]);//description (no use now)
+				line[1] = ParseString.trim(line[1]);//polygon vertexs
+				line[2] = ParseString.trim(line[2]);//polygon vertex indexs
+				line[3] = ParseString.trim(line[3]);//polygon vertex indexs
+				line[4] = ParseString.trim(line[4]);//polygon vertex indexs
+				
+				line[0] = parseInt(line[0], 16);
+				line[1] = parseInt(line[1]);
+				line[2] = parseInt(line[2]);
+				line[3] = parseInt(line[3]);
+				line[4] = parseInt(line[4]);
+				
+				polygon = new CPolygon(obj.tvlist, line[2], line[3], line[4]);
+				obj.plist[i] = polygon;
+			}
+			
+			return obj;
+		}
+		
+		
 		//解析文件返回一个objective
 		//传入的是原始文件字符串
 		public static function parseObjective(raw:String):Objective
@@ -83,7 +148,8 @@ package vo
 		//画直线算法
 		public static function drawLine(start:Point, end:Point, bmd:BitmapData, color:uint = 0xFF0000):void
 		{
-			bmd.lock();  
+			bmd.lock(); 
+			
 			var dx:int = end.x - start.x;  
 			var dy:int = end.y - start.y;  
 			

@@ -1,11 +1,14 @@
 #object name, total vertex's number, total polygon's number
-triangle 3 1
+#test2 4 2
+test2 3 1
 
 #vertex list x-y-z
-0 0 0
--100 -100 0
-100 -100 0
+-50 50 -50
+ 50 50 -50
+-50 -50 -50
+# 50 -50 -50
 
 #polygon list
 #descriptor, number of polygon's vertex, vertex's index
-0x0000 3 0 2 1
+0x0000 3 0 1 2
+#0x0000 3 1 3 2

@@ -25,13 +25,15 @@ package
 		private var back:Bitmap = new Bitmap(new BitmapData(stage.stageWidth, stage.stageHeight, false, 0));
 		private var object3D:Objective;
 		
-		private var worldPos:CPoint3D = new CPoint3D(200,200,0);
-		private var camera:EulerCamera = new EulerCamera(new CPoint3D(), new CPoint3D());
+		private var worldPos:CPoint3D = new CPoint3D(0,0,400);
+		private var camera:EulerCamera = new EulerCamera(new CPoint3D(0,200,0), new CPoint3D(0,0,0));
 		
 		public function WireframeNew()
 		{
 			super();
-			stage.scaleMode = StageScaleMode.NO_SCALE;
+			Base.worldCenterX = stage.stageWidth >> 1;
+			Base.worldCenterY = stage.stageHeight >> 1;
+//			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.BOTTOM_RIGHT;
 			
 			//将0点坐标变为左下角
@@ -48,6 +50,7 @@ package
 		protected function onLoaderComplete(event:Event):void
 		{
 			var s:String = uloader.data as String;
+			trace(s);
 			object3D = Base.parseObjective(s);
 			
 //			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -76,17 +79,26 @@ package
 				case Keyboard.PAGE_UP:
 					camera.dir.z += 1;
 					break;
+				case Keyboard.SPACE:
+					rotationSelf();
+					onEnterFrame(null);
+					return;
 			}
+			pipeline();
 		}
 		
 		protected function onEnterFrame(event:Event):void
 		{
-			rotationYSelf();
+//			rotationSelf();
 			pipeline();
+			Base.drawLineXY(camera.pos.x, camera.pos.y, 
+				object3D.plist[0].vlist[object3D.plist[0].vert[0]].x, 
+				object3D.plist[0].vlist[object3D.plist[0].vert[0]].y,
+				back.bitmapData, 0xFFFFFF);
 		}
 		
 		private var a:int = 1;
-		private function rotationYSelf():void
+		private function rotationSelf():void
 		{
 			for(var i:int = 0; i < object3D.vlist.length; i++)
 			{
@@ -102,11 +114,11 @@ package
 			//1.世界坐标变换
 			transforToWorld(object3D, worldPos);
 			//2.背面消除
-			hidingSide();
+//			hidingSide();
 			//3.相机坐标变换
-			//transforToCamera(object3D, camera);
+			transforToCamera(object3D, camera);
 			//4.透视投影
-			//persProject(object3D);
+			persProject(object3D);
 			
 			//绘图
 			object3D.drawBitmap(back.bitmapData);
@@ -134,6 +146,9 @@ package
 				o.tvlist[i].z -= c.pos.z;
 				//旋转
 				o.tvlist[i].rotateXYZ(c.dir.x, c.dir.y, c.dir.z);
+//				o.tvlist[i].rotateY(c.dir.y);
+//				o.tvlist[i].rotateX(c.dir.x);
+//				o.tvlist[i].rotateZ(c.dir.z);
 			}
 		}
 		
@@ -145,8 +160,11 @@ package
 			{
 				p = o.tvlist[i];
 				
-				p.x *= 320/(320 + p.z);
-				p.y *= 320/(320 + p.z);
+//				p.x *= 200/(200 + p.z);
+//				p.y *= 200/(200 + p.z);
+//				p.z = 0;
+				p.x *= 200/p.z;
+				p.y *= 200/p.z;
 				p.z = 0;
 			}
 		}
@@ -159,8 +177,11 @@ package
 			{
 				var p:Polygon = object3D.plist[i];
 				var n:CPoint3D = p.normal();
+//				trace("normal: ", n);
 				view = camera.pos.minusNew(p.vlist[p.vert[0]]);
+//				trace("view: ", view);
 				var dot:Number = n.dot(view);
+//				trace(dot);
 				if( dot <= 0)
 				{
 					p.state |= PolygonStates.BACKFACE;
