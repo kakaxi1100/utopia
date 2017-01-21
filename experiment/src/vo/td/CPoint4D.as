@@ -23,6 +23,23 @@ package vo.td
 			mMatrix.matrix[0][3] = mW;
 		}
 		
+		public function scalarMultip(n:Number):void
+		{
+			this.mX *= n;
+			this.mY *= n;
+			this.mZ *= n;
+		}
+		
+		public function length():Number
+		{
+			return Math.sqrt(this.mX*this.mX + this.mY*this.mY + this.mZ*this.mZ);
+		}
+		
+		public function normal():void
+		{
+			scalarMultip(1/length());
+		}
+		
 		public function dot(v:CPoint4D):Number
 		{
 			return this.mX * v.mX + this.mY * v.mY + this.mZ * v.mZ;

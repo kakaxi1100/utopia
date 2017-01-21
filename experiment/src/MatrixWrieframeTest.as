@@ -161,7 +161,7 @@ package
 			rotateMt.setToZero();
 //			var mrt:CMatrix = CUtils.buildRotationMatrix(-c.dir.x, -c.dir.y, -c.dir.z, rotateMt);
 			
-			CUtils.buildCameraMatrix(c, transMt, rotateMt);
+			CUtils.buildEulerCameraMatrix(c, transMt, rotateMt);
 			
 			for(var i:int = 0; i < o.tvlist.length; i++)
 			{

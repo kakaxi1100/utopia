@@ -14,6 +14,7 @@ package
 	import vo.Base;
 	import vo.CMatrix;
 	import vo.CUtils;
+	import vo.td.CCamera;
 	import vo.td.CEulerCamera;
 	import vo.td.CObjective;
 	import vo.td.CPoint3D;
@@ -22,7 +23,7 @@ package
 	import vo.td.PolygonStates;
 	
 	[SWF(width="640", height="480", frameRate="60", backgroundColor="0xcccccc")]
-	public class TankTest extends Sprite
+	public class TankUNVTest extends Sprite
 	{
 		private var uloader:URLLoader;
 		private var back:Bitmap = new Bitmap(new BitmapData(stage.stageWidth, stage.stageHeight, false, 0));
@@ -30,17 +31,16 @@ package
 		private var objectList:Vector.<CObjective> = new Vector.<CObjective>();
 		private var worldPosList:Vector.<CPoint4D> = new Vector.<CPoint4D>();
 		private var worldPos:CPoint4D = new CPoint4D(0,0,500);
-		private var camera:CEulerCamera = new CEulerCamera(new CPoint4D(0,200,0), new CPoint4D(0,0,0), 200);
+		private var camera:CCamera = new CCamera(new CPoint4D(0,200,0), new CPoint4D(0,0,0), 200);
 		
 		
 		private var rotateMt:CMatrix = new CMatrix(4, 4);
 		private var transMt:CMatrix = new CMatrix(4, 4);
 		private var projectMt:CMatrix = new CMatrix(4, 4);
-		
-		public function TankTest()
+		public function TankUNVTest()
 		{
 			super();
-			//			stage.scaleMode = StageScaleMode.NO_SCALE;
+//			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.BOTTOM_RIGHT;
 			
 			Base.worldCenterX = stage.stageWidth >> 1;
@@ -51,7 +51,7 @@ package
 			back.y += back.height;
 			addChild(back);
 			
-			var request:URLRequest = new URLRequest("configs/cube2.plg");
+			var request:URLRequest = new URLRequest("configs/tank1.plg");
 			uloader = new URLLoader();
 			uloader.addEventListener(Event.COMPLETE, onLoaderComplete);
 			uloader.load(request);
@@ -80,14 +80,14 @@ package
 			//先画坐标
 			drawAxis();
 			//多个
-			//			for(var i:int = 0; i < objectList.length; i++)
-			//			{
-			//				//				rotationSelf(objectList[i]);
-			//				pipeline(objectList[i], worldPosList[i]);
-			//				//绘图
-			//				objectList[i].drawBitmap(back.bitmapData);
-			//			}
-			//单个
+//			for(var i:int = 0; i < objectList.length; i++)
+//			{
+//				//				rotationSelf(objectList[i]);
+//				pipeline(objectList[i], worldPosList[i]);
+//				//绘图
+//				objectList[i].drawBitmap(back.bitmapData);
+//			}
+//			//单个
 			rotationSelf(object4D);
 			pipeline(object4D, worldPos);
 			//绘图
@@ -119,7 +119,7 @@ package
 					startTestFlow();
 					return;
 			}
-//			pipeline(object4D);
+			//			pipeline(object4D);
 		}
 		
 		protected function onEnterFrame(event:Event):void
@@ -128,7 +128,7 @@ package
 			back.bitmapData.fillRect(back.bitmapData.rect, 0);
 			//先画坐标
 			drawAxis();
-			//多个
+			//-------------多个-------------------------------
 			for(var i:int = 0; i < objectList.length; i++)
 			{
 				rotationSelf(objectList[i]);
@@ -136,11 +136,14 @@ package
 				//绘图
 				objectList[i].drawBitmap(back.bitmapData);
 			}
-			//一个
+			//----------------------------------------------
+			
+			//------------- 单个 -----------------------------
 //			rotationSelf(object4D);
 //			pipeline(object4D, worldPos);
 //			//绘图
 //			object4D.drawBitmap(back.bitmapData);
+			//----------------------------------------------
 		}
 		
 		private var a:int = 1;
@@ -162,7 +165,7 @@ package
 			//1.世界坐标变换
 			transforToWorld(o, wp);
 			//2.背面消除
-			hidingSide(o);
+//			hidingSide(o);
 			//3.相机坐标变换
 			transforToCamera(o, camera);
 			//4.透视投影
@@ -183,22 +186,14 @@ package
 		}
 		
 		//相机坐标变换, 包括了平移和旋转
-		private function transforToCamera(o:CObjective, c:CEulerCamera):void
+		private function transforToCamera(o:CObjective, c:CCamera):void
 		{
 			transMt.normal();
-			//			var mtt:CMatrix = CUtils.buildTranslationMatrix(c.pos, true, transMt);
 			rotateMt.setToZero();
-			//			var mrt:CMatrix = CUtils.buildRotationMatrix(-c.dir.x, -c.dir.y, -c.dir.z, rotateMt);
-			
-			CUtils.buildEulerCameraMatrix(c, transMt, rotateMt);
-			
+			CUtils.buildUVNCameraMatrix(c, transMt, rotateMt);
 			for(var i:int = 0; i < o.tvlist.length; i++)
 			{
 				c.matrix.multipPoint4D(o.tvlist[i]);
-				//				//平移
-				//				mtt.multipPoint4D(o.tvlist[i]);
-				//				//旋转
-				//				mrt.multipPoint4D(o.tvlist[i]);
 			}
 		}
 		
@@ -214,27 +209,6 @@ package
 				p.x = camera.viewDistance*p.x/p.z;
 				p.y = camera.viewDistance*p.y*camera.aspectRatio/p.z;
 			}
-			
-			
-			
-			//			projectMt.setToZero();
-			//			var mt:CMatrix = CUtils.buildPersProject(camera, projectMt);
-			//			for(var i:int = 0; i < o.tvlist.length; i++)
-			//			{
-			//				//投影
-			//				mt.multipPoint4D(o.tvlist[i]);
-			//			}
-			
-			
-			//			var p:CPoint4D;
-			//			for(var i:int = 0; i < o.tvlist.length; i++)
-			//			{
-			//				p = o.tvlist[i];
-			//				
-			//				p.x *= 200/(200 + p.z);
-			//				p.y *= 200/(200 + p.z);
-			//				p.z = 0;
-			//			}
 		}
 		
 		//视口变换
@@ -261,11 +235,8 @@ package
 			{
 				var p:CPolygon = o.plist[i];
 				p.normal(n);
-				//				trace("normal: ", n);
 				camera.pos.minusNew(p.vlist[p.vert[0]], view);
-				//				trace("view: ", view);
 				var dot:Number = n.dot(view);
-				//				trace(dot);
 				if( dot <= 0)
 				{
 					p.state |= PolygonStates.BACKFACE;
@@ -279,10 +250,10 @@ package
 		{
 			back.bitmapData.lock();
 			for(var i:int = 0; i < back.bitmapData.width; i++){
-				back.bitmapData.setPixel32(i,Base.worldCenterY, 0xFFFFFF);
+				back.bitmapData.setPixel32(i,Base.worldCenterY, 0xFF0000);
 			}
 			for(var j:int = 0; j < back.bitmapData.height; j++){
-				back.bitmapData.setPixel32(Base.worldCenterX,j, 0xFFFFFF);
+				back.bitmapData.setPixel32(Base.worldCenterX,j, 0xFF0000);
 			}
 			back.bitmapData.unlock();
 		}

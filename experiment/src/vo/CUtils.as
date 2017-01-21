@@ -3,12 +3,14 @@ package vo
 	import flash.display.BitmapData;
 	import flash.media.Camera;
 	
+	import vo.td.CCamera;
 	import vo.td.CEulerCamera;
 	import vo.td.CPoint4D;
 
 	public class CUtils
 	{
 		public static const EPSILON:Number = 1E-5;
+		public static const RADIAN:Number = Math.PI / 180;
 		
 		public static function buildPersProject(c:CEulerCamera, m:CMatrix = null):CMatrix
 		{
@@ -118,7 +120,91 @@ package vo
 			return m;
 		}
 
-		public static function buildCameraMatrix(c:CEulerCamera, mtt:CMatrix = null, mrt:CMatrix = null):CMatrix
+		/**
+		 *构建UVN相机矩阵 
+		 * @param c
+		 * @param mtt
+		 * @param mrt
+		 * @return 
+		 * 
+		 */		
+		public static function buildUVNCameraMatrix(c:CCamera, mtt:CMatrix = null, mrt:CMatrix = null):CMatrix
+		{
+			if(mtt == null)
+			{
+				mtt = new CMatrix(4,4);
+				mtt.normal();
+			}
+			if(mrt == null)
+			{
+				mrt = new CMatrix(4,4);
+			}
+			
+			buildTranslationMatrix(c.pos, true, mtt);//构建平移矩阵，记住是反向的
+			
+			//仰角转化为弧度
+			var phi:Number = c.dir.x * RADIAN;//仰角 绕X轴旋转
+			var theta:Number = c.dir.y * RADIAN;//方向角 绕Y轴旋转
+			var gamma:Number = c.dir.z * RADIAN;//倾侧角 绕Z轴旋转
+			
+			var sinPhi:Number = Math.sin(phi);
+			var cosPhi:Number = Math.cos(phi);
+			var sinTheta:Number = Math.sin(theta);
+			var cosTheta:Number = Math.cos(theta);
+			var sinGamma:Number = Math.sin(gamma);
+			var cosGamma:Number = Math.cos(gamma);
+			
+			//计算N
+			var r:Number = cosPhi;
+			var x:Number = r * sinTheta;
+			var y:Number = -sinPhi;
+			var z:Number = r * cosTheta;
+
+			c.target = new CPoint4D(x, y, z);
+			
+			var u:CPoint4D, v:CPoint4D, n:CPoint4D;
+			n = c.target;
+			//计算V
+			v = new CPoint4D(-cosPhi * sinGamma, cosPhi * cosGamma, sinPhi);
+			//计算U
+			u = new CPoint4D(cosTheta * cosGamma, sinGamma, -sinTheta * cosGamma);
+
+			//归一化
+//			v.normal();
+//			n.normal();
+//			u.normal();
+//			trace(n, v, u);
+			//构建旋转矩阵, 即将物体的坐标变为UNV坐标,以实现旋转
+			mrt.matrix[0][0] = u.x;
+			mrt.matrix[0][1] = v.x;
+			mrt.matrix[0][2] = n.x;
+			
+			mrt.matrix[1][0] = u.y;
+			mrt.matrix[1][1] = v.y;
+			mrt.matrix[1][2] = n.y;
+			
+			mrt.matrix[2][0] = u.z;
+			mrt.matrix[2][1] = v.z;
+			mrt.matrix[2][2] = n.z;
+			
+			mrt.matrix[3][3] = 1;
+			
+			//矩阵相乘
+			c.matrix.setToZero();
+			mtt.multip(mrt, c.matrix);
+
+			return c.matrix;
+		}
+		
+		/**
+		 *构建Euler相机矩阵 
+		 * @param c
+		 * @param mtt
+		 * @param mrt
+		 * @return 
+		 * 
+		 */		
+		public static function buildEulerCameraMatrix(c:CEulerCamera, mtt:CMatrix = null, mrt:CMatrix = null):CMatrix
 		{
 			if(mtt == null)
 			{
@@ -130,7 +216,7 @@ package vo
 			}
 			
 			buildTranslationMatrix(c.pos, true, mtt);
-			buildRotationMatrix(c.dir.x, c.dir.y, c.dir.z, mrt);
+			buildRotationMatrix(-c.dir.x, -c.dir.y, -c.dir.z, mrt);
 			
 			c.matrix.setToZero();
 			mtt.multip(mrt, c.matrix);
