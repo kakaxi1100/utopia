@@ -2,9 +2,14 @@ package vo.td
 {
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
+	
+	import vo.Base;
+	import vo.CUtils;
 
 	public class CObjective
 	{
+		public static const CULLED:int = 0x0001;
+		
 		public var ID:String;
 		public var name:String;
 		public var vertexsNum:uint;
@@ -18,6 +23,10 @@ package vo.td
 		public var tvlist:Vector.<CPoint4D>;
 		//多边形列表
 		public var plist:Vector.<CPolygon>;
+		//包围球
+		public var sphere:CSphere;
+		
+		public var state:int;//一些标志位
 		
 		public function CObjective()
 		{
@@ -37,6 +46,16 @@ package vo.td
 					tvlist[i].copy(vlist[i]);
 				}
 			}
+		}
+		
+		public function updateSphere():void
+		{
+			sphere = CUtils.calculateSphere(this.vlist);
+		}
+		
+		public function resetState():void
+		{
+			state = 0;
 		}
 		
 		public function clone():CObjective
@@ -72,6 +91,12 @@ package vo.td
 			{
 				plist[i].drawBitmap(bmd);
 			}
+		}
+		
+		public function drawBounding(bmd:BitmapData):void
+		{
+			Base.drawLineXY(sphere.c.x  + Base.worldCenterX, sphere.c.y + Base.worldCenterY, 
+							sphere.c.x + sphere.r  + Base.worldCenterX, sphere.c.y + Base.worldCenterY, bmd, 0x00FFFF);
 		}
 	}
 }

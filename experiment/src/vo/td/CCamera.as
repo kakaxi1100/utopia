@@ -9,6 +9,9 @@ package vo.td
 		private var mPos:CPoint4D;//相机位置
 		private var mDir:CPoint4D;//欧拉角度
 		
+		private var mNearClipZ:Number;//进裁面
+		private var mFarClipZ:Number;//远裁面
+		
 		private var mU:CPoint4D;
 		private var mV:CPoint4D;
 		private var mN:CPoint4D;
@@ -21,7 +24,7 @@ package vo.td
 		
 		private var mMatrix:CMatrix = new CMatrix(4,4);//相机矩阵,包括旋转和平移
 		
-		public function CCamera(pos:CPoint4D = null, dir:CPoint4D = null, vd:Number = 1, vpw:Number = 100, vph:Number = 100)
+		public function CCamera(pos:CPoint4D = null, dir:CPoint4D = null, vd:Number = 1, nearZ:Number = 50, farZ:Number = 8000, vpw:Number = 100, vph:Number = 100)
 		{
 			if(pos == null){
 				mPos = new CPoint4D();
@@ -34,6 +37,9 @@ package vo.td
 			}else{
 				mDir = dir;
 			}
+			
+			mNearClipZ = nearZ;
+			mFarClipZ = farZ;
 			
 			mViewPortHeight = vph;
 			mViewPortWdith = vpw;
@@ -125,6 +131,26 @@ package vo.td
 		public function set target(value:CPoint4D):void
 		{
 			mTarget = value;
+		}
+
+		public function get nearClipZ():Number
+		{
+			return mNearClipZ;
+		}
+
+		public function set nearClipZ(value:Number):void
+		{
+			mNearClipZ = value;
+		}
+
+		public function get farClipZ():Number
+		{
+			return mFarClipZ;
+		}
+
+		public function set farClipZ(value:Number):void
+		{
+			mFarClipZ = value;
 		}
 		
 		

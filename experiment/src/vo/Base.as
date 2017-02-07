@@ -53,9 +53,14 @@ package vo
 				p = new CPoint4D(parseInt(line[0]), parseInt(line[1]), parseInt(line[2]));
 				obj.vlist[i] = p;
 			}
+			
+			//计算包围球
+			obj.updateSphere();
+			
 			//local vertexs--> trans vertexs
 			//因为polygon不需要tvertexs列表了,它的数据来自于object的trans vertexs 列表
 			obj.vertexLocalToTrans();
+
 			var polygon:CPolygon;
 			//3.polygon list 添加多边形列表
 			for(i = 0; i < obj.polysNum; i++)

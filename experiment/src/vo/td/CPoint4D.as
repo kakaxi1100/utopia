@@ -62,6 +62,17 @@ package vo.td
 			return p;
 		}
 		
+		public function plusNew(v:CPoint4D, p:CPoint4D = null):CPoint4D
+		{
+			if(p == null){
+				p = new CPoint4D();
+			}
+			p.x = this.mX + v.mX;
+			p.y = this.mY + v.mY;
+			p.z = this.mZ + v.mZ;
+			return p;
+		}
+		
 		public function minusNew(v:CPoint4D, p:CPoint4D = null):CPoint4D
 		{
 			if(p == null){

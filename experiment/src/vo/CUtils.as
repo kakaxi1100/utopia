@@ -1,11 +1,11 @@
 package vo
 {
 	import flash.display.BitmapData;
-	import flash.media.Camera;
 	
 	import vo.td.CCamera;
 	import vo.td.CEulerCamera;
 	import vo.td.CPoint4D;
+	import vo.td.CSphere;
 
 	public class CUtils
 	{
@@ -142,38 +142,52 @@ package vo
 			
 			buildTranslationMatrix(c.pos, true, mtt);//构建平移矩阵，记住是反向的
 			
-			//仰角转化为弧度
-			var phi:Number = c.dir.x * RADIAN;//仰角 绕X轴旋转
-			var theta:Number = c.dir.y * RADIAN;//方向角 绕Y轴旋转
-			var gamma:Number = c.dir.z * RADIAN;//倾侧角 绕Z轴旋转
+			if(c.target == null)// 假如没有target 就根据欧拉角构造一个 target
+			{
+				//仰角转化为弧度
+				var phi:Number = c.dir.x * RADIAN;//仰角 绕X轴旋转
+				var theta:Number = c.dir.y * RADIAN;//方向角 绕Y轴旋转
+				var gamma:Number = c.dir.z * RADIAN;//倾侧角 绕Z轴旋转
+				
+				var sinPhi:Number = Math.sin(phi);
+				var cosPhi:Number = Math.cos(phi);
+				var sinTheta:Number = Math.sin(theta);
+				var cosTheta:Number = Math.cos(theta);
+				var sinGamma:Number = Math.sin(gamma);
+				var cosGamma:Number = Math.cos(gamma);
+				
+				//计算N
+				var r:Number = cosPhi;
+				var x:Number = r * sinTheta;
+				var y:Number = -sinPhi;
+				var z:Number = r * cosTheta;
+	
+				c.target = new CPoint4D(x, y, z);
+				
+				var u:CPoint4D, v:CPoint4D, n:CPoint4D;
+				n = c.target;//因为这个就是在camera在原点的时候计算的, 所有n就是target
+				//计算V
+				v = new CPoint4D(-cosPhi * sinGamma, cosPhi * cosGamma, sinPhi);
+				//计算U
+				u = new CPoint4D(cosTheta * cosGamma, sinGamma, -sinTheta * cosGamma);
+	
+				//归一化
+				//都是归一化过的,所以无须再归一化
+	//			v.normal();
+	//			n.normal();
+	//			u.normal();
+			}else{
+				n = c.target.minusNew(c.pos);//这个需要计算差值
+				v = new CPoint4D(0, n.z, -n.y);//注意这个方向,这里并没有区分向上和向下, 统一用一个方向
+//				v = new CPoint4D(0, 1, 0);//注意这个方向,这里并没有区分向上和向下, 统一用一个方向
+				u = v.cross(n);//向右, 注意叉乘方向
+				v = n.cross(u, v);// 计算出u的方向后,在反过来计算v的方向
+				//规范化
+				n.normal();
+				v.normal();
+				u.normal();
+			}
 			
-			var sinPhi:Number = Math.sin(phi);
-			var cosPhi:Number = Math.cos(phi);
-			var sinTheta:Number = Math.sin(theta);
-			var cosTheta:Number = Math.cos(theta);
-			var sinGamma:Number = Math.sin(gamma);
-			var cosGamma:Number = Math.cos(gamma);
-			
-			//计算N
-			var r:Number = cosPhi;
-			var x:Number = r * sinTheta;
-			var y:Number = -sinPhi;
-			var z:Number = r * cosTheta;
-
-			c.target = new CPoint4D(x, y, z);
-			
-			var u:CPoint4D, v:CPoint4D, n:CPoint4D;
-			n = c.target;
-			//计算V
-			v = new CPoint4D(-cosPhi * sinGamma, cosPhi * cosGamma, sinPhi);
-			//计算U
-			u = new CPoint4D(cosTheta * cosGamma, sinGamma, -sinTheta * cosGamma);
-
-			//归一化
-//			v.normal();
-//			n.normal();
-//			u.normal();
-//			trace(n, v, u);
 			//构建旋转矩阵, 即将物体的坐标变为UNV坐标,以实现旋转
 			mrt.matrix[0][0] = u.x;
 			mrt.matrix[0][1] = v.x;
@@ -222,7 +236,55 @@ package vo
 			mtt.multip(mrt, c.matrix);
 			return c.matrix;
 		}
-		
+//-----------------------------------------------------------------------------------------------
+	
+		public static function calculateSphere(vertexs:Vector.<CPoint4D>):CSphere
+		{
+			var max:Number = 0;
+			var first:CPoint4D;
+			var second:CPoint4D;
+			var c:CPoint4D;
+			var r:Number;
+			var temp:Number;
+			var i:int, j:int;
+			//第一步
+			//找到间隔最大的两个顶点
+			//算出这两个顶点的中点作为包围圆的圆心
+			//这两个顶点距离的一半即是半径
+			for(i = 0; i < vertexs.length; i++)
+			{
+				for(j = i+1; j < vertexs.length; j++)
+				{
+					temp = vertexs[j].minusNew(vertexs[i]).length();
+					if(max < temp)
+					{
+						max = temp;
+						first = vertexs[i];
+						second = vertexs[j];
+					}
+				}
+			}
+			if(first == null || second == null) return null;
+			
+			c = first.plusNew(second);
+			c.scalarMultip(0.5);
+			r = max*0.5;
+
+			//第二步
+			//计算所有点到中心点的距离，如果比 第一步 算出的 半径大，则将半径赋值为此点到圆心的距离 		
+			for(i = 0; i<vertexs.length; i++)
+			{
+				temp = vertexs[i].minusNew(c).length();
+				if(temp > r)
+				{
+					r = temp;
+				}
+			}
+			
+			return new CSphere(c, r);
+		}
+
+//-------------------------------------------------------------------------------------------	
 		/**
 		 *貌似是任意四边形画法
 		 * 但是肯定是有问题的 不要使用 
