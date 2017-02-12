@@ -32,6 +32,9 @@ package vo.td
 			mR = value;
 		}
 
-
+		public function clone():CSphere
+		{
+			return new CSphere(mC.clone(), mR);
+		}
 	}
 }

@@ -28,12 +28,16 @@ package
 		private var objectList:Vector.<CObjective> = new Vector.<CObjective>();
 		private var worldPosList:Vector.<CPoint4D> = new Vector.<CPoint4D>();
 		private var worldPos:CPoint4D = new CPoint4D(0,0,500);
-		private var camera:CCamera = new CCamera(new CPoint4D(0,0, 1750), new CPoint4D(0,0,0), 200);
+		private var camera:CCamera = new CCamera(new CPoint4D(0,0, 1750), new CPoint4D(0,0,0), 400);
 		
 		
 		private var rotateMt:CMatrix = new CMatrix(4, 4);
 		private var transMt:CMatrix = new CMatrix(4, 4);
 		private var projectMt:CMatrix = new CMatrix(4, 4);
+		private var tempMt1:CMatrix = new CMatrix(4, 4);
+		private var tempMt2:CMatrix = new CMatrix(4, 4);
+		private var tempMt3:CMatrix = new CMatrix(4, 4);
+		private var tempMt4:CMatrix = new CMatrix(4, 4);
 		
 		private var cameraDistance:Number = 1750;
 		private var ObjectSpace:Number = 250;
@@ -67,19 +71,13 @@ package
 			var s:String = uloader.data as String;
 			trace("#####--Object Info--#####\n", s,"\n#####################\n");
 			object4D = Base.parseObjective4D(s);
-			for(var i:int = 0; i < 16; i++)
+			var wx:int,wz:int; 
+			for(var i:int = 0; i < 36; i++)
 			{
 				objectList.push(object4D.clone());
-			}
-			var wx:Number,wz:Number; 
-			for(var x:int = -ObjectNum/4; x < ObjectNum/4; x++)
-			{
-				wx  = x*ObjectSpace + ObjectSpace/2;
-				for(var z:int = -ObjectNum/4; z < ObjectNum/4; z++)
-				{
-					wz  = z*ObjectSpace + ObjectSpace/2;
-					worldPosList.push(new CPoint4D(wx,0,wz));
-				}
+				wx = i % 6 * ObjectSpace;
+				wz = (i / 6 >> 0) * ObjectSpace;
+				worldPosList.push(new CPoint4D(wx,0,wz));
 			}
 			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -97,10 +95,13 @@ package
 //------------------------------------------------------------------			
 			for(var i:int = 0; i < objectList.length; i++)
 			{
-				rotationSelf(objectList[i]);
+//				rotationSelf(objectList[i]);
 				pipeline(objectList[i], worldPosList[i]);
 				//绘图
-				objectList[i].drawBitmap(back.bitmapData);
+				if((objectList[i].state & CObjective.CULLED) == 0)
+				{
+					objectList[i].drawBitmap(back.bitmapData);
+				}
 			}
 //-----------------------------------------------------------------			
 			//单个
@@ -210,14 +211,15 @@ package
 			//将本地坐标复制给变换坐标
 			o.vertexLocalToTrans();
 			//计算包围球
-			o.updateSphere();
+			//如果局部坐标不改变那么只需计算一次
+//			o.updateSphere();
 			//重置物体状态
 			o.resetState();
 			
 			//1.世界坐标变换
 			transforToWorld(o, wp);
 			//2.物体剔除
-			cullObjective(o, camera, wp);
+//			cullObjective(o, camera, wp);
 			//3.背面消除
 //			hidingSide(o);
 			//4.相机坐标变换
@@ -234,9 +236,11 @@ package
 		{
 			transMt.normal();
 			var mt:CMatrix = CUtils.buildTranslationMatrix(w, false, transMt);
+			
 			for(var i:int = 0; i < o.tvlist.length; i++)
 			{
-				mt.multipPoint4D(o.tvlist[i]);
+				tempMt1.setToZero();
+				mt.multipPoint4D(o.tvlist[i], tempMt1);
 			}
 //			mt.multipPoint4D(o.sphere.c);
 		}
@@ -249,12 +253,14 @@ package
 			//转成世界坐标
 			transMt.normal();
 			var mt:CMatrix = CUtils.buildTranslationMatrix(w, false, transMt);
+			tempMt3.setToZero();
 			mt.multipPoint4D(o.sphere.c);
 			
 			//转成相机坐标
 			transMt.normal();
 			rotateMt.setToZero();
 			CUtils.buildUVNCameraMatrix(c, transMt, rotateMt);
+			tempMt4.setToZero();
 			c.matrix.multipPoint4D(o.sphere.c);
 			
 			//计算远近裁面
@@ -293,7 +299,8 @@ package
 			CUtils.buildUVNCameraMatrix(c, transMt, rotateMt);
 			for(var i:int = 0; i < o.tvlist.length; i++)
 			{
-				c.matrix.multipPoint4D(o.tvlist[i]);
+				tempMt1.setToZero();
+				c.matrix.multipPoint4D(o.tvlist[i], tempMt1);
 			}
 //			c.matrix.multipPoint4D(o.sphere.c);
 		}

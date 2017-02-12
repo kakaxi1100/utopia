@@ -9,6 +9,9 @@ package vo.td
 	{
 		//state
 		public var state:int;
+		//颜色
+		public var color:uint;
+		
 		//原始顶点里列表
 		public var vlist:Vector.<CPoint4D>;
 		//变换的顶点列表
@@ -17,13 +20,15 @@ package vo.td
 		
 		private var mU:CPoint4D = new CPoint4D();
 		private var mV:CPoint4D = new CPoint4D();
-		public function CPolygon(list:Vector.<CPoint4D>, v1:int, v2:int, v3:int)
+		public function CPolygon(list:Vector.<CPoint4D>, v1:int, v2:int, v3:int, c:uint = 0)
 		{
 			vlist = list;	
 			
 			vert[0] = v1;
 			vert[1] = v2;
 			vert[2] = v3;
+			
+			color = c;
 		}
 		
 		public function normal(p:CPoint4D = null):CPoint4D
@@ -96,6 +101,24 @@ package vo.td
 								vlist[vert[2]].x + Base.worldCenterX, vlist[vert[2]].y + Base.worldCenterY, bmd, 0x00FF00);
 				Base.drawLineXY(vlist[vert[2]].x + Base.worldCenterX, vlist[vert[2]].y + Base.worldCenterY, 
 								vlist[vert[0]].x + Base.worldCenterX, vlist[vert[0]].y + Base.worldCenterY, bmd, 0xFFFF00);
+			}
+		}
+		
+		public function drawBitmapFill(bmd:BitmapData):void
+		{
+			if((state & PolygonStates.BACKFACE) != 0) return;//此时多边形是背面
+			if(tvlist != null && tvlist.length > 0){
+				
+				Base.drawTriangle(tvlist[vert[0]].x + Base.worldCenterX, tvlist[vert[0]].y + Base.worldCenterY, 
+								  tvlist[vert[1]].x + Base.worldCenterX, tvlist[vert[1]].y + Base.worldCenterY, 
+								  tvlist[vert[2]].x + Base.worldCenterX, tvlist[vert[2]].y + Base.worldCenterY, 
+								  bmd, this.color);
+			}else{
+				
+				Base.drawTriangle(vlist[vert[0]].x + Base.worldCenterX, vlist[vert[0]].y + Base.worldCenterY, 
+								  vlist[vert[1]].x + Base.worldCenterX, vlist[vert[1]].y + Base.worldCenterY, 
+								  vlist[vert[2]].x + Base.worldCenterX, vlist[vert[2]].y + Base.worldCenterY, 
+								  bmd, this.color);
 			}
 		}
 	}

@@ -22,7 +22,7 @@ package
 		
 		private var n:Bitmap = new Bitmap(new BitmapData(m.width, m.height, false));
 		
-		private var alpha:Number = 0.5;
+		private var alpha:Number = 0.3;
 		public function LightTest(){
 			super();
 			

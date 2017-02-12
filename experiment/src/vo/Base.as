@@ -78,7 +78,7 @@ package vo
 				line[3] = parseInt(line[3]);
 				line[4] = parseInt(line[4]);
 				
-				polygon = new CPolygon(obj.tvlist, line[2], line[3], line[4]);
+				polygon = new CPolygon(obj.tvlist, line[2], line[3], line[4], line[0]);
 				obj.plist[i] = polygon;
 			}
 			
@@ -141,6 +141,104 @@ package vo
 			}
 			
 			return obj;
+		}
+		
+		//填充光栅化三角形
+		public static function drawTriangle(x1:Number, y1:Number, x2:Number, y2:Number, x3:Number, y3:Number, bmd:BitmapData, color:uint = 0xFF0000):void
+		{
+			x1 = Math.round(x1);
+			y1 = Math.round(y1);
+			x2 = Math.round(x2);
+			y2 = Math.round(y2);
+			x3 = Math.round(x3);
+			y3 = Math.round(y3);
+			
+			
+			//一条线
+			if((x1 == x2 && x2 == x3) || (y1 == y2 && y2 == y3))
+			{
+				return;
+			}
+			
+			var tempX:Number, tempY:Number, newX:Number, longK:Number;
+			//按升序排列y值 p1, p2, p3
+			if(y2 < y1)
+			{
+				tempX = x2;
+				tempY = y2;
+				x2 = x1;
+				y2 = y1;
+				x1 =tempX;
+				y1 = tempY;
+			}
+			if(y3 < y1)
+			{
+				tempX = x3;
+				tempY = y3;
+				x3 = x1;
+				y3 = y1;
+				x1 =tempX;
+				y1 = tempY;
+			}
+			if(y3 < y2)
+			{
+				tempX = x3;
+				tempY = y3;
+				x3 = x2;
+				y3 = y2;
+				x2 =tempX;
+				y2 = tempY;
+			}
+			
+			if(y1 == y2)//平底
+			{
+				bottomTriangle(x1,y1,x2,y2,x3,y3, bmd, color);
+			}else if(y2 == y3){//平顶
+				upTriangle(x1,y1,x2,y2,x3,y3, bmd, color);
+			}else{//任意
+				tempY = y2 - y1;//p2的Y值相对于p1点的坐标, 因为现在的计算相当于p1点是原点了
+				longK = (x3 - x1)/(y3 - y1);//求最长边斜率的倒数
+				newX = x1 + (tempY * longK);//分离上下三角形的最长斜边上的点的X值, Y值就是P2咯, 当然要转化为 世界坐标还需要加上 p1的 x 值
+				
+				bottomTriangle(x2, y2, newX, y2, x3, y3, bmd, color);
+				upTriangle(x1, y1, x2, y2, newX, y2, bmd, color);
+			}
+		}
+		
+		//平顶三角形
+		//y1<y2<y3
+		private static function upTriangle(x1:Number, y1:Number, x2:Number, y2:Number, x3:Number, y3:Number, bmd:BitmapData, color:uint = 0xFF0000):void
+		{
+			var kLeft:Number = (x2 - x1) / (y2 - y1);
+			var kRight:Number = (x3 - x1) / (y3 - y1);
+			
+			var xs:Number = x1, xe:Number = x1;
+			for(var y:Number = y1; y <= y2; y++)
+			{
+				//画图
+				drawLineXY(xs, y, xe, y, bmd, color);
+			
+				xs += kLeft;
+				xe += kRight;
+			}
+		}
+		
+		//平底三角形
+		//y1<y2<y3
+		private static function bottomTriangle(x1:Number, y1:Number, x2:Number, y2:Number, x3:Number, y3:Number, bmd:BitmapData, color:uint = 0xFF0000):void
+		{
+			var kLeft:Number = (x3 - x1) / (y3 - y1);
+			var kRight:Number = (x3 - x2) / (y3 - y2);
+			
+			var xs:Number = x1, xe:Number = x2;
+			for(var y:Number = y1; y <= y3; y++)
+			{
+				//画图
+				drawLineXY(xs, y, xe, y, bmd, color);
+				
+				xs += kLeft;
+				xe += kRight;
+			}
 		}
 		
 		public static function drawLineXY(sx:Number, sy:Number, ex:Number, ey:Number, bmd:BitmapData, color:uint = 0xFF0000):void

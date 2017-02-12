@@ -73,7 +73,7 @@ package vo.td
 			{
 				obj.plist[i] = new CPolygon(obj.tvlist, this.plist[i].vert[0], this.plist[i].vert[1], this.plist[i].vert[2]);
 			}
-			
+			obj.sphere = this.sphere.clone();
 			return obj;
 		}
 		
@@ -85,11 +85,15 @@ package vo.td
 			}
 		}
 		
-		public function drawBitmap(bmd:BitmapData):void
+		public function drawBitmap(bmd:BitmapData, fill:Boolean = false):void
 		{
 			for(var i:int = 0; i < plist.length; i++)
 			{
-				plist[i].drawBitmap(bmd);
+				if(!fill){
+					plist[i].drawBitmap(bmd);
+				}else{
+					plist[i].drawBitmapFill(bmd);
+				}
 			}
 		}
 		

@@ -92,6 +92,15 @@ package vo.td
 			this.w = p.w;
 		}
 		
+		public function setTo(x:Number, y:Number, z:Number, w:Number = 1):CPoint4D
+		{
+			this.mX = x;
+			this.mY = y;
+			this.mZ = z;
+			this.mW = w;
+			return this;
+		}
+		
 		public function clone():CPoint4D
 		{
 			return new CPoint4D(mX, mY, mZ);
