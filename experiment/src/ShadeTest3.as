@@ -5,7 +5,6 @@ package
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.events.Event;
-	import flash.events.KeyboardEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
@@ -13,6 +12,8 @@ package
 	import vo.CMatrix;
 	import vo.CUtils;
 	import vo.td.CCamera;
+	import vo.td.CColor;
+	import vo.td.CLight;
 	import vo.td.CObjective;
 	import vo.td.CPoint4D;
 	import vo.td.CPolygon;
@@ -20,19 +21,24 @@ package
 	import vo.td.PolygonStates;
 	
 	[SWF(width="800", height="600", frameRate="30", backgroundColor="0xcccccc")]
-	public class ShadeTest extends Sprite
+	public class ShadeTest3 extends Sprite
 	{
 		private var uloader:URLLoader;
 		private var back:Bitmap = new Bitmap(new BitmapData(stage.stageWidth, stage.stageHeight, false, 0));
 		private var object4D:CObjective;
 		private var worldPos:CPoint4D = new CPoint4D(0,0,500);
-		private var camera:CCamera = new CCamera(new CPoint4D(0,0,0), new CPoint4D(0,0,0), 200);
+		private var camera:CCamera = new CCamera(new CPoint4D(0,0,0), new CPoint4D(0,0,0), 400);
+		private var light:CLight = new CLight();
+		private var light1:CLight = new CLight();
+		private var light2:CLight = new CLight();
 		
+		private var lightInfinity:CLight = new CLight();
 		
 		private var rotateMt:CMatrix = new CMatrix(4, 4);
 		private var transMt:CMatrix = new CMatrix(4, 4);
 		private var projectMt:CMatrix = new CMatrix(4, 4);
-		public function ShadeTest()
+		
+		public function ShadeTest3()
 		{
 			super();
 //			stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -45,6 +51,9 @@ package
 			back.scaleY = -1;
 			back.y += back.height;
 			addChild(back);
+			
+			//init
+			initLight();
 			
 			var request:URLRequest = new URLRequest("configs/cube3.plg");
 			uloader = new URLLoader();
@@ -60,6 +69,23 @@ package
 			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 //			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+//			step();
+		}
+		
+		private function step():void
+		{
+			//清空图片
+			back.bitmapData.fillRect(back.bitmapData.rect, 0);
+			//先画坐标
+			drawAxis();
+			
+//			rotationSelf(object4D);
+			pipeline(object4D, worldPos);
+			//绘图
+			if((object4D.state & CObjective.CULLED) == 0)
+			{
+				object4D.drawBitmap(back.bitmapData, true);
+			}
 		}
 		
 		protected function onEnterFrame(event:Event):void
@@ -106,7 +132,7 @@ package
 			//3.背面消除
 			hidingSide(o);
 			//4.光照
-			
+			lightenWorld(o,camera);
 			//5.相机坐标变换
 //			transforToCamera(o, camera);
 			//6.透视投影
@@ -231,5 +257,119 @@ package
 			}
 			back.bitmapData.unlock();
 		}
+		
+		private function initLight():void
+		{
+			light.colorAmbient = new CColor(0x0000FF);
+			light.colorDiffuse = new CColor(0);
+			light.colorSpecular = new CColor(0);
+			
+			light1.colorAmbient = new CColor(0);
+			light1.colorDiffuse = new CColor(0xFF0000);
+			light1.colorSpecular = new CColor(0);
+			light1.dir = new CPoint4D(0, 0, -1);//要与法线保持一致
+			
+			light2.colorAmbient = new CColor(0);
+			light2.colorDiffuse = new CColor(0x00FF00);
+			light2.colorSpecular = new CColor(0);
+			light2.dir = new CPoint4D(0, 0, -1);
+			light2.pos = new CPoint4D(0, 0, 400);
+		}
+		
+		private function lightenWorld(o:CObjective, c:CCamera):void
+		{
+			var r:uint, g:uint, b:uint;
+			//处理每个多边形
+			for(var i:int = 0; i < o.plist.length; i++)
+			{
+				r = g = b = 0;
+				
+				var p:CPolygon = o.plist[i];
+				
+				//环境光
+				r += light.colorAmbient.red / 255 * p.colorBase.red;
+				g += light.colorAmbient.green / 255 * p.colorBase.green;
+				b += light.colorAmbient.blue / 255 * p.colorBase.blue;
+				
+				//无穷远光
+				var n:CPoint4D = p.normal();
+				var dp:Number = n.dot(light1.dir);
+				//光源与表面积所成的cos theta 成正比
+				//暂时值计算散射项
+//				trace("vert: ", p.vert);
+//				trace("dp: ", dp);
+				if(dp > 0)
+				{
+					var theta:Number = dp / (n.length());
+					r += light1.colorDiffuse.red / 255 * p.colorBase.red * theta;
+					g += light1.colorDiffuse.green / 255 * p.colorBase.green * theta;
+					b += light1.colorDiffuse.blue / 255 * p.colorBase.blue * theta;
+				}
+				
+				//点光源
+				var n:CPoint4D = p.normal();
+				var l:CPoint4D = light2.pos.minusNew(p.vlist[p.vert[0]]);
+				var dp:Number = n.dot(l);
+				var dist:Number = l.length();
+//				trace("vert: ", p.vert);
+//				trace("dp: ", dp);
+				//光源与表面积所成的cos theta 成正比
+				if(dp > 0)
+				{
+					var atten:Number = (light2.kc + light2.kl*dist);
+					var theta:Number = dp / (n.length() * dist * atten);
+					
+					r += light2.colorDiffuse.red / 255 * p.colorBase.red * theta;
+					g += light2.colorDiffuse.green / 255 * p.colorBase.green * theta;
+					b += light2.colorDiffuse.blue / 255 * p.colorBase.blue * theta;
+				}
+				
+				if(r > 255) r = 255;
+				if(g > 255) g = 255;
+				if(b > 255) b = 255;
+//				trace("(r: ", r, "g: ", g, "b: ",b,")");
+				p.colorBlend.setByRGB(r,g,b);
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 }

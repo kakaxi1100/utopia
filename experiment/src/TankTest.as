@@ -129,18 +129,18 @@ package
 			//先画坐标
 			drawAxis();
 			//多个
-			for(var i:int = 0; i < objectList.length; i++)
-			{
-				rotationSelf(objectList[i]);
-				pipeline(objectList[i], worldPosList[i]);
-				//绘图
-				objectList[i].drawBitmap(back.bitmapData);
-			}
+//			for(var i:int = 0; i < objectList.length; i++)
+//			{
+//				rotationSelf(objectList[i]);
+//				pipeline(objectList[i], worldPosList[i]);
+//				//绘图
+//				objectList[i].drawBitmap(back.bitmapData);
+//			}
 			//一个
-//			rotationSelf(object4D);
-//			pipeline(object4D, worldPos);
-//			//绘图
-//			object4D.drawBitmap(back.bitmapData);
+			rotationSelf(object4D);
+			pipeline(object4D, worldPos);
+			//绘图
+			object4D.drawBitmap(back.bitmapData);
 		}
 		
 		private var a:int = 1;

@@ -33,6 +33,12 @@ firtflight.~ml
 silverbolt/.settings/
 silverbolt.~ml
 
+mirage/.settings/
+mirage.~ml
+mirage/bin/
+mirage/bin-debug/
+mirage/bin-release/
+
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.

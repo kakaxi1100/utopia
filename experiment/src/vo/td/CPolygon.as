@@ -4,13 +4,16 @@ package vo.td
 	import flash.display.Graphics;
 	
 	import vo.Base;
+	import vo.Color;
 
 	public class CPolygon
 	{
 		//state
 		public var state:int;
-		//颜色
-		public var color:uint;
+		//基础颜色
+		public var colorBase:CColor;
+		//调制之后的颜色
+		public var colorBlend:CColor;
 		
 		//原始顶点里列表
 		public var vlist:Vector.<CPoint4D>;
@@ -20,6 +23,9 @@ package vo.td
 		
 		private var mU:CPoint4D = new CPoint4D();
 		private var mV:CPoint4D = new CPoint4D();
+		
+		//平均Z值
+		private var mAverageZ:Number;
 		public function CPolygon(list:Vector.<CPoint4D>, v1:int, v2:int, v3:int, c:uint = 0)
 		{
 			vlist = list;	
@@ -28,7 +34,8 @@ package vo.td
 			vert[1] = v2;
 			vert[2] = v3;
 			
-			color = c;
+			colorBase = new CColor(c);
+			colorBlend = new CColor(0);
 		}
 		
 		public function normal(p:CPoint4D = null):CPoint4D
@@ -54,7 +61,8 @@ package vo.td
 			{
 				list[i] = vlist[i].clone();
 			}
-			var p:CPolygon = new CPolygon(list, vert[0], vert[1], vert[2]);
+			var p:CPolygon = new CPolygon(list, vert[0], vert[1], vert[2], colorBase.color);
+			p.colorBlend = p.colorBlend.clone();
 			
 			return p;
 		}
@@ -112,14 +120,21 @@ package vo.td
 				Base.drawTriangle(tvlist[vert[0]].x + Base.worldCenterX, tvlist[vert[0]].y + Base.worldCenterY, 
 								  tvlist[vert[1]].x + Base.worldCenterX, tvlist[vert[1]].y + Base.worldCenterY, 
 								  tvlist[vert[2]].x + Base.worldCenterX, tvlist[vert[2]].y + Base.worldCenterY, 
-								  bmd, this.color);
+								  bmd, this.colorBlend.color);
 			}else{
 				
 				Base.drawTriangle(vlist[vert[0]].x + Base.worldCenterX, vlist[vert[0]].y + Base.worldCenterY, 
 								  vlist[vert[1]].x + Base.worldCenterX, vlist[vert[1]].y + Base.worldCenterY, 
 								  vlist[vert[2]].x + Base.worldCenterX, vlist[vert[2]].y + Base.worldCenterY, 
-								  bmd, this.color);
+								  bmd, this.colorBlend.color);
 			}
 		}
+
+		public function get averageZ():Number
+		{
+			mAverageZ = (vlist[vert[0]].z + vlist[vert[1]].z + vlist[vert[2]].z)/3;
+			return mAverageZ;
+		}
+
 	}
 }
