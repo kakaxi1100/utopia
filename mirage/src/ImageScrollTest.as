@@ -5,7 +5,7 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
-	[SWF(width="800", height="600", frameRate="30", backgroundColor="0xcccccc")]
+	[SWF(width="800", height="600", frameRate="120", backgroundColor="0xcccccc")]
 	public class ImageScrollTest extends Sprite
 	{
 		[Embed(source="assets/timg.jpg")]
@@ -19,18 +19,69 @@ package
 			super();
 			addChild(dest);
 //			incline();
-			sinMove();
-			
+//			sinMove();
+//			zWave();
+//			drawSin1();
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
 		protected function onEnterFrame(event:Event):void
 		{
 			dest.bitmapData.lock();
-//			dest.bitmapData.fillRect(dest.bitmapData.rect,0);
-			sinMove();
-			a += 1;
+			dest.bitmapData.fillRect(dest.bitmapData.rect,0);
+//			sinMove();
+			a += 0.5;
+//			drawSin();
+			zWave();
 			dest.bitmapData.unlock();
+		}
+		
+		private function drawSin1():void
+		{
+			var x:Number = 0, y:Number = 0;
+			for(var r:int = 0; r < bg.height; r++)
+			{
+				for(var c:int = 0; c < bg.width; c++)
+				{
+					y = x + 5 * Math.sin(0.01 * x);
+					x += 1;
+					dest.bitmapData.setPixel32(x, y, 0xFFFFFF);
+				}
+			}
+		}
+		
+		private function drawSin():void
+		{
+			var x:Number = 0, y:Number = 0;
+			for(var r:int = 0; r < bg.height; r++)
+			{
+				x += Math.PI* 4 /bg.height ;
+				y = Math.sin(x + a);
+				for(var c:int = 0; c < bg.width; c++)
+				{
+//					trace(y);
+//					dest.bitmapData.setPixel32(x, y, 0xFFFFFF);
+					dest.bitmapData.setPixel32(c, r, bg.bitmapData.getPixel32(c,r/y));
+				}
+			}
+		}
+		
+		private var b:Number = 0;
+		private function zWave():void
+		{
+			var x:int = 0, y:Number = 0;
+			for(var r:int = 0; r < bg.height; r++)
+			{
+				y = r +  5 * Math.sin(b + a);
+				b += Math.PI  * 4/ bg.height;
+				if(y < 0 || y > bg.height){
+					y = r;
+				}
+				for(var c:int = 0; c < bg.width; c++)
+				{
+					dest.bitmapData.setPixel32(c, r, bg.bitmapData.getPixel32(c,y));
+				}
+			}
 		}
 		
 		private var a:Number = 0;
