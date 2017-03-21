@@ -30,10 +30,10 @@ package
 		{
 			dest.bitmapData.lock();
 			dest.bitmapData.fillRect(dest.bitmapData.rect,0);
-//			sinMove();
+			sinMove();
 			a += 0.5;
 //			drawSin();
-			zWave2();
+//			zWave2();
 //			zWave();
 			dest.bitmapData.unlock();
 		}
