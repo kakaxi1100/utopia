@@ -52,6 +52,25 @@ package utils
 		}
 		
 		/**
+		 *求所有元素加起来的和 
+		 * @return 
+		 * 
+		 */		
+		public function getSum():Number
+		{
+			var sum:Number = 0;
+			for(var r:uint = 0; r < this.mRows; ++r)
+			{
+				for(var c:uint = 0; c < this.mCols; ++c)
+				{
+					sum += mMatrix[r][c];
+				}
+			}
+			
+			return sum;
+		}
+		
+		/**
 		 * 矩阵相乘把结果记录在 original 中 
 		 * @param m
 		 * @param original
