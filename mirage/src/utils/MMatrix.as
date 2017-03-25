@@ -1,6 +1,6 @@
 package utils
 {
-	
+	[SWF(width="800", height="600", frameRate="120", backgroundColor="0xcccccc")]
 	public class MMatrix
 	{
 		private var mMatrix:Vector.<Vector.<Number>>;
