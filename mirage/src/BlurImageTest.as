@@ -11,7 +11,7 @@ package
 	[SWF(width="800", height="600", frameRate="120", backgroundColor="0xcccccc")]
 	public class BlurImageTest extends Sprite
 	{
-		[Embed(source="assets/head.jpg")]
+		[Embed(source="assets/timg1.jpg")]
 		private var Background:Class;
 		
 		private var bg:Bitmap = new Background();
@@ -43,6 +43,7 @@ package
 			var color:MColor = new MColor();;
 			var redd:uint, greend:uint, blued:uint;
 			var b:int;
+			//解决了边缘尺寸不足一个方块的问题。
 			for(var c:int = 0; c < totalC; c++)
 			{
 				for(var r:int = 0; r < totalR; r++)
@@ -92,21 +93,22 @@ package
 		private function lighting(src:BitmapData, dest:BitmapData):void
 		{
 			
-			var power:int = 200;
+			var power:int = 100;
 			
 			var realX:int, realY:int;
 			var xl:int = src.width / 2;//光源中心
 			var yl:int = src.height / 2;
 			var radiusd:Number = xl*xl + yl*yl;
-			var radius:Number = Math.sqrt(radiusd);
+			var radius:Number = Math.sqrt(radiusd);//光源半径
 			
+			//像素点的离光源中心的距离
 			var distL:Number = 0, brightness:Number = 0;
 			var color:MColor = new MColor();
 			for(var c:int = 0; c < src.width; c++)
 			{	
 				for(var r:int = 0; r < src.height; r++)
 				{
-					distL = (c - xl)*(c - xl) + (r - yl)*(r - yl);
+					distL = (c - xl)*(c - xl) + (r - yl)*(r - yl);//像素点离光源的距离
 					
 					color.setColor(src.getPixel32(c, r));
 					if(distL < radiusd)
