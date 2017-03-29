@@ -9,6 +9,12 @@ package utils
 			return changePos*curTime/duration + startPos;
 		}
 		
+		//啥都不干, 用来处理空闲时间
+		public static function none():Number
+		{
+			return 0;
+		}
+		
 		//Back
 		public static function easeInBack(curTime:Number, duration:Number, startPos:Number, changePos:Number, s:Number = 1.70158):Number 
 		{
@@ -39,16 +45,15 @@ package utils
 				return changePos*(7.5625*(curTime-=(2.625/2.75))*curTime + .984375) + startPos;
 			}
 		}
-		
 		public static function easeInBounce(curTime:Number, duration:Number, startPos:Number, changePos:Number):Number 
 		{
-			return changePos - easeOutBounce(duration-curTime, 0, changePos, duration) + startPos;
+			return changePos - easeOutBounce(duration-curTime, duration, 0, changePos) + startPos;
 		}
 		
 		public static function easeInOutBounce(curTime:Number, duration:Number, startPos:Number, changePos:Number):Number 
 		{
-			if (curTime < duration*0.5) return easeInBounce (curTime*2, 0, changePos, duration) * .5 + startPos;
-			else return easeOutBounce (curTime*2-duration, 0, changePos, duration) * .5 + changePos*.5 + startPos;
+			if (curTime < duration*0.5) return easeInBounce (curTime*2, duration, 0, changePos) * .5 + startPos;
+			else return easeOutBounce (curTime*2-duration, duration, 0, changePos) * .5 + changePos*.5 + startPos;
 		}
 		
 		//Circ

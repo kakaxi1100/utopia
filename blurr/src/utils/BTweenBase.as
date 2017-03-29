@@ -9,8 +9,6 @@ package utils
 		private var mDuration:Number = 0;
 		//是否终止
 		private var mDie:Boolean = false;
-		//是否循环
-		private var mLoop:Boolean = false;
 		//要改变哪个对象
 		private var mTarget:Object;
 		//开始位置
@@ -19,14 +17,17 @@ package utils
 		private var mDestPos:Object;
 		//要调用那个缓动函数
 		private var mTweenFunc:Function = null;
+		
 		/**
 		 * 
 		 * @param d 持续时间
 		 * @param target 要改变的对象
 		 * @param property 要改变的属性 {x:100, y:100}
+		 * @param loop 是否循环播放
+		 * @param func 处理函数
 		 * 
 		 */		
-		public function BTweenBase(d:Number, target:Object, property:Object, loop:Boolean = false, func:Function = null):void
+		public function BTweenBase(d:Number, target:Object, property:Object, func:Function = null):void
 		{
 			mDuration = d;
 			mTarget = target;
@@ -37,7 +38,6 @@ package utils
 			
 //			setStartPos();//不应该在这里设置初始值, 因为可以能出现链式添加的情况
 			
-			mLoop = loop;
 			if(func == null){
 				mTweenFunc = BEasing.linear;
 			}else{
@@ -52,12 +52,8 @@ package utils
 			mT = mT + dt;
 			if(mT > mDuration)
 			{
-				if(mLoop != true){
-					mT = mDuration;
-					mDie = true;
-				}else{
-					mT = 0;
-				}
+				mT = mDuration;
+				mDie = true;
 			}
 			
 			if(mTweenFunc != null){
@@ -69,9 +65,24 @@ package utils
 			}
 		}
 		
+		//重置
+		public function reset():void
+		{
+			mT = 0;
+			mDie = false;
+		}
+		
 		public function isDie():Boolean
 		{
 			return mDie;
+		}
+		
+		public function kill():void
+		{
+			mStartPos = null;
+			mDestPos = null;
+			mTarget = null;
+			mTweenFunc = null;
 		}
 		
 		public function setStartPos():void
