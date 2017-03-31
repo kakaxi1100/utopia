@@ -32,12 +32,12 @@ package
 //			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 //			BTweenManger.getInstance().addQueue(new BTweenBase(3000, bg, {x:700, y:500}, false, BEasing.easeInOutBounce));
 //---------------------------------------------------------------------------------------------------------------------------
-			dt = getTimer();
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			BTweenManger_Achive.getInstance().addQueue(new BTweenBase_Achive(3000, bg, {x:700, y:0}, false, BEasing.easeInOutCirc))
-									  .addQueue(new BTweenBase_Achive(3000, bg, {y:500}, false, BEasing.easeInOutBack))
-									  .addQueue(new BTweenBase_Achive(3000, bg, {x:0}, false, BEasing.easeInOutElastic))
-									  .addQueue(new BTweenBase_Achive(3000, bg, {y:0}, false, BEasing.easeInOutBounce))
+//			dt = getTimer();
+//			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+//			BTweenManger_Achive.getInstance().addQueue(new BTweenBase_Achive(3000, bg, {x:700, y:0}, false, BEasing.easeInOutCirc))
+//									  .addQueue(new BTweenBase_Achive(3000, bg, {y:500}, false, BEasing.easeInOutBack))
+//									  .addQueue(new BTweenBase_Achive(3000, bg, {x:0}, false, BEasing.easeInOutElastic))
+//									  .addQueue(new BTweenBase_Achive(3000, bg, {y:0}, false, BEasing.easeInOutBounce))
 //									  .addParallel(new BTweenBase(3000, bg, {x:400, y:300}))
 //									  .addParallel(new BTweenBase(3000, bg1, {x:400, y:300}));
 		}
