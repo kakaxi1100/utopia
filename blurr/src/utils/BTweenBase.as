@@ -13,6 +13,8 @@ package utils
 		private var mTarget:Object;
 		//开始位置
 		private var mStartPos:Object = {};
+		//当前位置,有的时候位置是从当前位置开始取值的
+		private var mCurrentPos:Object = {};
 		//终止位置
 		private var mDestPos:Object;
 		//要调用那个缓动函数
@@ -57,8 +59,8 @@ package utils
 			}
 			
 			if(mTweenFunc != null){
-				for(var key:String in mStartPos){
-					var temp:Number = mTweenFunc.apply(this, [mT, mDuration, mStartPos[key], mDestPos[key] - mStartPos[key]]);
+				for(var key:String in mCurrentPos){
+					var temp:Number = mTweenFunc.apply(this, [mT, mDuration, mCurrentPos[key], mDestPos[key] - mCurrentPos[key]]);
 //					trace(key, temp);
 					mTarget[key] = temp;
 				}
@@ -79,12 +81,32 @@ package utils
 		
 		public function kill():void
 		{
+			mCurrentPos = null;
 			mStartPos = null;
 			mDestPos = null;
 			mTarget = null;
 			mTweenFunc = null;
 		}
 		
+		//重新回到初始值
+		public function targetBackToStart():void
+		{
+			for(var key:String in mDestPos)
+			{
+				mTarget[key] = mStartPos[key];
+			}
+		}
+		
+		//取得是当前物体的位置, 它与 setStartPos 的区别在于调用的地方不同
+		public function setCurrentPos():void
+		{
+			for(var key:String in mDestPos)
+			{
+				mCurrentPos[key] = mTarget[key];
+			}
+		}
+		
+		//取得是当前物体的位置, 它与 setCurrentPos 的区别在于调用的地方不同
 		public function setStartPos():void
 		{
 			for(var key:String in mDestPos)

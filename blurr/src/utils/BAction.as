@@ -33,6 +33,7 @@ package utils
 		public function addTween(o:BTweenBase):BAction
 		{
 			mList.push(o);
+			o.setStartPos();
 			return this;
 		}
 		
@@ -45,7 +46,7 @@ package utils
 		public function kill():void
 		{
 			while(mList.length > 0){
-				var element: BTweenBase_Achive = mList.pop();
+				var element: BTweenBase = mList.pop();
 				element.kill();
 			}
 			mDie = true;

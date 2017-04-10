@@ -51,6 +51,7 @@ package utils
 		{
 			mList.push(o);
 			o.setStartPos();
+			o.setCurrentPos();
 			return this;
 		}
 	}

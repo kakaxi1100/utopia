@@ -7,8 +7,13 @@ package
 	import flash.events.Event;
 	import flash.utils.getTimer;
 	
+	import utils.BAction;
+	import utils.BActionParallel;
+	import utils.BActionQueue;
 	import utils.BEasing;
+	import utils.BTweenBase;
 	import utils.BTweenBase_Achive;
+	import utils.BTweenManger;
 	import utils.BTweenManger_Achive;
 	
 	[SWF(width="800", height="600", frameRate="60", backgroundColor="0xcccccc")]
@@ -23,30 +28,38 @@ package
 		public function blurr()
 		{
 			bg.x = 0;
-			bg.y = 200;
+			bg.y = 0;
 			addChild(bg);
 			
+			addChild(bg1);
+			dt = getTimer();
+			
 //----------------test-------------------------------------------------------------------------------------------------------
-			addChild(bg1)
-//			TweenMax.to(bg1, 3, {x:700, y:500, ease:Bounce.easeInOut});
-//			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-//			BTweenManger.getInstance().addQueue(new BTweenBase(3000, bg, {x:700, y:500}, false, BEasing.easeInOutBounce));
-//---------------------------------------------------------------------------------------------------------------------------
-//			dt = getTimer();
-//			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-//			BTweenManger_Achive.getInstance().addQueue(new BTweenBase_Achive(3000, bg, {x:700, y:0}, false, BEasing.easeInOutCirc))
-//									  .addQueue(new BTweenBase_Achive(3000, bg, {y:500}, false, BEasing.easeInOutBack))
-//									  .addQueue(new BTweenBase_Achive(3000, bg, {x:0}, false, BEasing.easeInOutElastic))
-//									  .addQueue(new BTweenBase_Achive(3000, bg, {y:0}, false, BEasing.easeInOutBounce))
-//									  .addParallel(new BTweenBase(3000, bg, {x:400, y:300}))
-//									  .addParallel(new BTweenBase(3000, bg1, {x:400, y:300}));
+//-----------------------串行-------------------------------------------------------------------------------------------------
+			var action:BActionQueue = new BActionQueue(-1);
+			action.addTween(new BTweenBase(3000, bg, {x:700}, BEasing.easeInOutCirc))
+				  .addTween(new BTweenBase(3000, bg, {y:500}, BEasing.easeInOutBack))
+				  .addTween(new BTweenBase(3000, bg1, {x:400, y:300}, BEasing.easeInOutBack));
+				  
+			BTweenManger.getInstance().add(action);
+//--------------------------------------------------------------------------------------------------------------------------
+//-----------------------并行------------------------------------------------------------------------------------------------
+			var action1:BActionParallel = new BActionParallel(1);
+			action1.addTween(new BTweenBase(3000, bg, {y:500}, BEasing.easeInOutBack))
+				  .addTween(new BTweenBase(3000, bg, {y:0}, BEasing.easeInOutBack))
+				  .addTween(new BTweenBase(3000, bg1, {x:0, y:300}, BEasing.easeInOutBack));
+			
+			BTweenManger.getInstance().add(action1);
+//--------------------------------------------------------------------------------------------------------------------------
+//			BTweenManger.getInstance().add(action1).add(action);
+			
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);			
 		}
 		
 		protected function onEnterFrame(event:Event):void
 		{
 			dt = getTimer() - dt;
-//			BTweenManger.getInstance().updateQueue(dt);
-			BTweenManger_Achive.getInstance().update(dt);
+			BTweenManger.getInstance().update(dt);
 			dt = getTimer();
 		}
 	}
