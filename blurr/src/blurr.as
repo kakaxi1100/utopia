@@ -31,25 +31,26 @@ package
 			bg.y = 0;
 			addChild(bg);
 			
-			addChild(bg1);
+//			addChild(bg1);
 			dt = getTimer();
 			
 //----------------test-------------------------------------------------------------------------------------------------------
 //-----------------------串行-------------------------------------------------------------------------------------------------
 			var action:BActionQueue = new BActionQueue(-1);
-			action.addTween(new BTweenBase(3000, bg, {x:700}, BEasing.easeInOutCirc))
-				  .addTween(new BTweenBase(3000, bg, {y:500}, BEasing.easeInOutBack))
-				  .addTween(new BTweenBase(3000, bg1, {x:400, y:300}, BEasing.easeInOutBack));
+			action.addTween(new BTweenBase(500, bg, {scaleX:0.5, scaleY:0.5}, BEasing.easeInCirc))
+				  .addTween(new BTweenBase(500, bg, {scaleX:2, scaleY:2}, BEasing.easeOutBack))
+				  .addTween(new BTweenBase(500, bg, {scaleX:1, scaleY:1}, BEasing.easeInOutBack))
+//				  .addTween(new BTweenBase(3000, bg1, {x:400, y:300}, BEasing.easeInOutBack));
 				  
 			BTweenManger.getInstance().add(action);
 //--------------------------------------------------------------------------------------------------------------------------
 //-----------------------并行------------------------------------------------------------------------------------------------
-			var action1:BActionParallel = new BActionParallel(1);
-			action1.addTween(new BTweenBase(3000, bg, {y:500}, BEasing.easeInOutBack))
-				  .addTween(new BTweenBase(3000, bg, {y:0}, BEasing.easeInOutBack))
-				  .addTween(new BTweenBase(3000, bg1, {x:0, y:300}, BEasing.easeInOutBack));
-			
-			BTweenManger.getInstance().add(action1);
+//			var action1:BActionParallel = new BActionParallel(1);
+//			action1.addTween(new BTweenBase(3000, bg, {y:500}, BEasing.easeInOutBack))
+//				  .addTween(new BTweenBase(3000, bg, {y:0}, BEasing.easeInOutBack))
+//				  .addTween(new BTweenBase(3000, bg1, {x:0, y:300}, BEasing.easeInOutBack));
+//			
+//			BTweenManger.getInstance().add(action1);
 //--------------------------------------------------------------------------------------------------------------------------
 //			BTweenManger.getInstance().add(action1).add(action);
 			
