@@ -1,11 +1,11 @@
-package org.ares.fireflight.manager
+package org.ares.fireflight_v1.manager
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	
-	import org.ares.fireflight.FFParticle;
-	import org.ares.fireflight.pool.FFParticlePool;
+	import org.ares.fireflight_v1.FFParticle;
+	import org.ares.fireflight_v1.pool.FFParticlePool;
 
 	/**
 	 *粒子的管理器

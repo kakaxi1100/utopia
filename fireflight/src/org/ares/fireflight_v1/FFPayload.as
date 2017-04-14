@@ -1,11 +1,11 @@
-package org.ares.fireflight
+package org.ares.fireflight_v1
 {
-	import org.ares.fireflight.manager.FFParticleManager;
-	import org.ares.fireflight.manager.FFPayloadManager;
-	import org.ares.fireflight.pool.FFParticlePool;
-	import org.ares.fireflight.pool.FFPayloadPool;
-	import org.ares.fireflight.port.IGenerator;
-	import org.ares.fireflight.port.IPattern;
+	import org.ares.fireflight_v1.manager.FFParticleManager;
+	import org.ares.fireflight_v1.manager.FFPayloadManager;
+	import org.ares.fireflight_v1.pool.FFParticlePool;
+	import org.ares.fireflight_v1.pool.FFPayloadPool;
+	import org.ares.fireflight_v1.port.IGenerator;
+	import org.ares.fireflight_v1.port.IPattern;
 
 	public class FFPayload
 	{

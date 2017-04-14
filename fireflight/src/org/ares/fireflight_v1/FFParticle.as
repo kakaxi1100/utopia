@@ -1,7 +1,5 @@
-package org.ares.fireflight
+package org.ares.fireflight_v1
 {
-	import flash.geom.ColorTransform;
-
 	/**
 	 *速度的设定方式 是按 m/s 来设定的， 假设帧频是 60fps
 	 * 则有 每帧移动的 像素点为  px = v/60; 加入   v = 10, 则 px = 0.166666 

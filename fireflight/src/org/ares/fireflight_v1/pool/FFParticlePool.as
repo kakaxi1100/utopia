@@ -1,6 +1,6 @@
-package org.ares.fireflight.pool
+package org.ares.fireflight_v1.pool
 {
-	import org.ares.fireflight.FFParticle;
+	import org.ares.fireflight_v1.FFParticle;
 
 	public class FFParticlePool
 	{

@@ -3,7 +3,7 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	
-	import org.ares.fireflight.FFMath;
+	import org.ares.fireflight_v1.FFMath;
 	
 	public class MathTest extends Sprite
 	{

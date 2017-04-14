@@ -1,8 +1,8 @@
-package org.ares.fireflight.test
+package org.ares.fireflight_v1.test
 {
-	import org.ares.fireflight.FFPayload;
-	import org.ares.fireflight.manager.FFPayloadManager;
-	import org.ares.fireflight.port.IRule;
+	import org.ares.fireflight_v1.FFPayload;
+	import org.ares.fireflight_v1.manager.FFPayloadManager;
+	import org.ares.fireflight_v1.port.IRule;
 	
 	public class RuleLeft implements IRule
 	{

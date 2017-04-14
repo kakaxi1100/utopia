@@ -1,9 +1,9 @@
-package org.ares.fireflight.test
+package org.ares.fireflight_v1.test
 {
-	import org.ares.fireflight.FFParticle;
-	import org.ares.fireflight.FFPayload;
-	import org.ares.fireflight.manager.FFParticleManager;
-	import org.ares.fireflight.port.IGenerator;
+	import org.ares.fireflight_v1.FFParticle;
+	import org.ares.fireflight_v1.FFPayload;
+	import org.ares.fireflight_v1.manager.FFParticleManager;
+	import org.ares.fireflight_v1.port.IGenerator;
 	
 	public class GenerateUp implements IGenerator
 	{

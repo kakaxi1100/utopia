@@ -1,8 +1,8 @@
-package org.ares.fireflight.manager
+package org.ares.fireflight_v1.manager
 {
-	import org.ares.fireflight.FFParticle;
-	import org.ares.fireflight.FFPayload;
-	import org.ares.fireflight.pool.FFPayloadPool;
+	import org.ares.fireflight_v1.FFParticle;
+	import org.ares.fireflight_v1.FFPayload;
+	import org.ares.fireflight_v1.pool.FFPayloadPool;
 
 	/**
 	 *payload 管理器

@@ -1,6 +1,6 @@
-package org.ares.fireflight
+package org.ares.fireflight_v1
 {
-	import org.ares.fireflight.port.IRule;
+	import org.ares.fireflight_v1.port.IRule;
 
 	public class FFEmitter
 	{

@@ -1,8 +1,8 @@
-package org.ares.fireflight.test
+package org.ares.fireflight_v1.test
 {
-	import org.ares.fireflight.FFParticle;
-	import org.ares.fireflight.FFPayload;
-	import org.ares.fireflight.port.IPattern;
+	import org.ares.fireflight_v1.FFParticle;
+	import org.ares.fireflight_v1.FFPayload;
+	import org.ares.fireflight_v1.port.IPattern;
 	
 	public class PatternLeft implements IPattern
 	{

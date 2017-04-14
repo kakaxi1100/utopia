@@ -1,6 +1,6 @@
-package org.ares.fireflight.test
+package org.ares.fireflight_v1.test
 {
-	import org.ares.fireflight.port.ITrigger;
+	import org.ares.fireflight_v1.port.ITrigger;
 	
 	public class TriggerTrue implements ITrigger
 	{
