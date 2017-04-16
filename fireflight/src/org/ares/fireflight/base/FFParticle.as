@@ -22,80 +22,23 @@ package org.ares.fireflight.base
 		//private var mMass:Number;
 		//逆质量可以解决 0 和 无穷大 质量的问题，0质量的物体逆质量是无穷大，无穷大的物体逆质量是0
 		private var mInverseMass:Number;
-		//粒子寿命按秒计算
-		private var mLifespan:Number;
-		//当前寿命
-		private var mCurLife:Number;
-		//开始时的大小
-		private var mStartSize:Number;
-		//结束时候的大小
-		private var mEndSize:Number;
-		//结束值与初始值的差值用于做后面的计算
-		private var mSizeDiff:Number;
-		//当前距离Size 初始值 为 startSize
-		//计算公式为先计算每个时间步内变化的值
-		//stepSize = (endsize - startsize)*time/lifespan
-		//然后在用  CurSize + stepSize = CurSize
-		private var mCurSize:Number;
-		//粒子的颜色
-		private var mColor:uint;
 		
 		//用于临时存储, 避免过度创建对象
 		private var mTempVector:FFVector = new FFVector();
 		
 		public function FFParticle()
 		{
-
+			init();
 		}
-		/**
-		 * 集成器
-		 * 输入是秒
-		 * @param duration
-		 * 
-		 */
-		public function update(duration:Number):void
+		
+		public function init():void
 		{
-			//计算物理运动
-			integrate(duration);
-			//计算形变
-			deformation(duration);
-			//计算色变
-			discoloration(duration);
-		}
-		/**
-		 *粒子是否存在
-		 * 如果存在放回true 否则返回false 
-		 * @param duration
-		 * @return 
-		 * 
-		 */		
-		public function lifeTime(duration:Number):Boolean
-		{
-			mCurLife -= duration;
-			if(mCurLife <= 0)
-			{
-				return false;
-			}
-			return true;
-		}
-		/**
-		 *计算色变 
-		 * @param duration
-		 * 
-		 */		
-		private function discoloration(duration:Number):void
-		{
-			
-		}
-		/**
-		 *形变计算
-		 * @param duration
-		 * 
-		 */		
-		private function deformation(duration:Number):void
-		{
-			var stepSize:Number = mSizeDiff*duration/lifespan;
-			mCurSize += stepSize;
+			mPosition = new FFVector();
+			mVelocity = new FFVector();
+			mAcceleration = new FFVector();
+			mForceAccum = new FFVector();
+			mDamping = 1;
+			mInverseMass = 1;
 		}
 		
 		/**
@@ -104,7 +47,7 @@ package org.ares.fireflight.base
 		 * @param duration
 		 * 
 		 */		
-		private function integrate(duration:Number):void
+		public function integrate(duration:Number):void
 		{
 			if(duration <= 0) return;
 			//更新位置
@@ -126,7 +69,7 @@ package org.ares.fireflight.base
 			//力如果不清除,表示加速度每帧都在改变
 			//如果清除,则表示加速度只改变当前帧的这一次
 			//这里也是可以优化的,并不应该算在积分式里面
-//			mForceAccum.clear();
+			mForceAccum.clear();
 		}
 		
 		/**
@@ -138,20 +81,7 @@ package org.ares.fireflight.base
 		{
 			mForceAccum.plusEquals(v);
 		}
-		
-		public function init():void
-		{
-			mPosition = new FFVector();
-			mVelocity = new FFVector();
-			mAcceleration = new FFVector();
-			mForceAccum = new FFVector();
-			mDamping = 1;
-			mInverseMass = 1;
-			mStartSize = 0;
-			mEndSize = 0;
-			mLifespan = 0;
-			mCurLife = 0;
-		}
+
 		
 		public function destory():void
 		{
@@ -161,11 +91,6 @@ package org.ares.fireflight.base
 			mForceAccum.setTo(0,0);
 			mDamping = 1;
 			mInverseMass = 1;
-			mStartSize = 0;
-			mEndSize = 0;
-			mLifespan = 0;
-			mCurLife = 0;
-			mColor = 0;
 		}
 		
 		//--粒子位置属性
@@ -240,33 +165,6 @@ package org.ares.fireflight.base
 		{
 			mForceAccum = value;
 		}
-		
-		public function get lifespan():Number
-		{
-			return mLifespan;
-		}
-		
-		public function set lifespan(value:Number):void
-		{
-			mLifespan = value;
-			mCurLife = mLifespan;
-		}
-
-		public function get curSize():Number
-		{
-			return mCurSize;
-		}
-
-		public function get color():uint
-		{
-			return mColor;
-		}
-
-		public function set color(value:uint):void
-		{
-			mColor = value;
-		}
-
 
 	}
 }
