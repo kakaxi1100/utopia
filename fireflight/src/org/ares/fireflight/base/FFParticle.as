@@ -8,6 +8,9 @@ package org.ares.fireflight.base
 	 */	
 	public class FFParticle
 	{
+		//质量小于这个值就视为0
+		private static const MASS_E:Number = 0.001;
+		
 		//粒子的位置		
 		private var mPosition:FFVector;
 		//粒子的速度
@@ -22,7 +25,6 @@ package org.ares.fireflight.base
 		//private var mMass:Number;
 		//逆质量可以解决 0 和 无穷大 质量的问题，0质量的物体逆质量是无穷大，无穷大的物体逆质量是0
 		private var mInverseMass:Number;
-		
 		//用于临时存储, 避免过度创建对象
 		private var mTempVector:FFVector = new FFVector();
 		
@@ -64,7 +66,8 @@ package org.ares.fireflight.base
 			//因为速度公式是  v = v0 + at, 所以可以采用积分式 v+=at
 			mVelocity.plusScaledVector(tempAcc, duration);
 			//速度受阻尼影响逐渐减小 v*=d
-			mVelocity.multEquals(Math.pow(mDamping, duration));
+			// 这里转移到用正真的阻尼力来计算
+			//mVelocity.multEquals(Math.pow(mDamping, duration));
 			
 			//力如果不清除,表示加速度每帧都在改变
 			//如果清除,则表示加速度只改变当前帧的这一次
@@ -82,6 +85,11 @@ package org.ares.fireflight.base
 			mForceAccum.plusEquals(v);
 		}
 
+		
+		public function hasFiniteMass():Boolean
+		{
+			return mInverseMass == 0;
+		}
 		
 		public function destory():void
 		{
@@ -136,25 +144,18 @@ package org.ares.fireflight.base
 		//--粒子质量
 		public function get mass():Number
 		{
-			if(mInverseMass == 0) return Number.MAX_VALUE;
 			return 1/mInverseMass;
 		}
 
 		public function set mass(value:Number):void
 		{
-			if(value == 0) throw new Error("质量不能为0!");
-			mInverseMass = 1/value;
+			if(value < MASS_E){
+				mInverseMass = Number.MAX_VALUE;
+			}else{
+				mInverseMass = 1/value;
+			}
 		}
-		//--粒子逆质量
-		public function get inverseMass():Number
-		{
-			return mInverseMass;
-		}
-
-		public function set inverseMass(value:Number):void
-		{
-			mInverseMass = value;
-		}
+		
 		//--粒子所受到的力
 		public function get forceAccum():FFVector
 		{
