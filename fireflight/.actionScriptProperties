@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties analytics="false" mainApplicationPath="ForceTest.as" projectUUID="2b0b7dcf-c531-4eac-80ef-6fd874cc2762" version="11">
+<actionScriptProperties analytics="false" mainApplicationPath="ContactTest.as" projectUUID="2b0b7dcf-c531-4eac-80ef-6fd874cc2762" version="11">
   <compiler additionalCompilerArguments="-locale en_US" advancedTelemetry="true" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" useFlashSDK="true" verifyDigests="true" warn="true">
     <compilerSourcePath/>
     <libraryPath defaultLinkType="0">
@@ -32,6 +32,8 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
+    <application path="ContactTest.as"/>
+    <application path="SpringTest.as"/>
     <application path="ForceTest.as"/>
     <application path="MassTest.as"/>
     <application path="MathTest.as"/>

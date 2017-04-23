@@ -155,6 +155,10 @@ package org.ares.fireflight.base
 				mInverseMass = 1/value;
 			}
 		}
+		public function get inverseMass():Number
+		{
+			return mInverseMass;
+		}
 		
 		//--粒子所受到的力
 		public function get forceAccum():FFVector

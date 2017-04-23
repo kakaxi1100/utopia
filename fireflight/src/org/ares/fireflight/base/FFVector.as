@@ -41,9 +41,15 @@ package org.ares.fireflight.base
 		 * @return 
 		 * 
 		 */		
-		public function minus(v:FFVector):FFVector 
+		public function minus(v:FFVector, t:FFVector = null):FFVector 
 		{
-			return new FFVector(x - v.x, y - v.y);    
+			if(t == null){
+				t = new FFVector(x - v.x, y - v.y);
+			}else{
+				t.setTo(x - v.x, y - v.y);
+			}
+			
+			return t;    
 		}
 		/**
 		 *矢量相减 
@@ -66,9 +72,14 @@ package org.ares.fireflight.base
 		 * @return 
 		 * 
 		 */		
-		public function mult(s:Number):FFVector 
+		public function mult(s:Number, t:FFVector = null):FFVector 
 		{
-			return new FFVector(x * s, y * s);
+			if(t == null){
+				t = new FFVector(x * s, y * s)
+			}else{
+				t.setTo(x * s, y * s);
+			}
+			return t;
 		}
 		/**
 		 *数乘 
@@ -159,11 +170,12 @@ package org.ares.fireflight.base
 		 * @return 
 		 * 
 		 */		
-		public function normalizeEquals():void 
+		public function normalizeEquals():FFVector 
 		{
 			var m:Number = magnitude();
-			if (m == 0) return ;
+			if (m == 0) return null;
 			multEquals(1 / m);
+			return this;
 		}
 		
 		/**
@@ -188,15 +200,15 @@ package org.ares.fireflight.base
 			x = y = 0;
 		}
 		
-		public function clone(v:FFVector = null):FFVector
+		public function clone(t:FFVector = null):FFVector
 		{
-			if(v == null){
-				v = new FFVector(this.x, this.y);
+			if(t == null){
+				t = new FFVector(this.x, this.y);
 			}else{
-				v.setTo(this.x, this.y);
+				t.setTo(this.x, this.y);
 			}
 			
-			return v
+			return t
 		}
 		
 		public function toString():String 

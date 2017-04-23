@@ -7,12 +7,12 @@ package test
 	public class Shot extends Sprite
 	{
 		public var p:FFParticle = new FFParticle();
-		public function Shot()
+		public function Shot(c:uint = 0)
 		{
 			super();
 			this.graphics.clear();
 			this.graphics.lineStyle(1);
-			this.graphics.beginFill(0xFFFFFF);
+			this.graphics.beginFill(c);
 			this.graphics.drawCircle(0,0, 10);
 			this.graphics.endFill();
 		

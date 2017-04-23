@@ -12,7 +12,6 @@ package org.ares.fireflight.base
 	 */	
 	public class FFForceDrag extends FFForceBase
 	{
-		public static var NAME:String;
 		private var mK1:Number;
 		private var mK2:Number;
 		private var mTemp:FFVector = new FFVector();//临时存储 避免额外开销
@@ -22,7 +21,6 @@ package org.ares.fireflight.base
 			
 			mK1 = k1;
 			mK2 = k2;
-			NAME = name;
 		}
 		
 		override public function update(d:Number):void

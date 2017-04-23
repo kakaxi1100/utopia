@@ -5,6 +5,8 @@ package
 	import flash.utils.getTimer;
 	
 	import org.ares.fireflight.base.FFFForceGravity;
+	import org.ares.fireflight.base.FFForceAnchoredSpring;
+	import org.ares.fireflight.base.FFForceBungee;
 	import org.ares.fireflight.base.FFForceDrag;
 	import org.ares.fireflight.base.FFForceManager;
 	import org.ares.fireflight.base.FFVector;
@@ -12,27 +14,31 @@ package
 	import test.Shot;
 	
 	[SWF(frameRate="60", backgroundColor="0",width="800",height="600")]
-	public class ForceTest extends Sprite
+	public class SpringTest extends Sprite
 	{
 		private var shot:Shot = new Shot();
 		private var shot2:Shot = new Shot();
 		private var dt:Number;
-		public function ForceTest()
+		public function SpringTest()
 		{
 			super();
-			shot.setXY(10,10);
+			shot.setXY(220,100);
 			addChild(shot);
 			
-			shot2.setXY(10,10);
+			shot2.setXY(100,100);
 			addChild(shot2);
 			
 			changeType("PISTOL");
 			dt = getTimer();
 			
-			FFForceManager.getIntsance().registerForce(new FFFForceGravity("G", new FFVector(0, 20))).registerForce(new FFForceDrag("F", 0.01, 0.001));
+			this.graphics.lineStyle(1);
+			this.graphics.beginFill(0xFFFF00);
+			this.graphics.drawCircle(100,100,10);
+			this.graphics.endFill();
+			FFForceManager.getIntsance().registerForce(new FFForceAnchoredSpring("A", new FFVector(100, 100),0.1,110));
+			FFForceManager.getIntsance().registerForce(new FFForceBungee("B", shot2.p, 0.1, 110));
 			
-			FFForceManager.getIntsance().getForce("G").addParticle(shot.p).addParticle(shot2.p);
-			FFForceManager.getIntsance().getForce("F").addParticle(shot.p);
+			FFForceManager.getIntsance().getForce("B").addParticle(shot.p);
 			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
@@ -43,7 +49,7 @@ package
 			{
 				case "PISTOL":
 					shot.p.mass = 1;
-					shot.p.velocity.setTo(50,0);
+					shot.p.velocity.setTo(0,0);
 					shot2.p.mass = 1;
 					shot2.p.velocity.setTo(50,0);
 					break;
@@ -73,7 +79,7 @@ package
 			dt = getTimer() - dt;
 			FFForceManager.getIntsance().updateForce(dt/1000);
 			shot.update(dt/1000);
-			shot2.update(dt/1000);
+//			shot2.update(dt/1000);
 			trace(shot.p.position);
 			dt = getTimer();
 		}

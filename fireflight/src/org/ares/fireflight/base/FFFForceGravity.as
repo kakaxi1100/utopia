@@ -7,13 +7,11 @@ package org.ares.fireflight.base
 	 */	
 	public class FFFForceGravity extends FFForceBase
 	{
-		public static var NAME:String;
 		private var mGravity:FFVector;//重力
 		private var mTemp:FFVector = new FFVector();//临时存储 避免额外开销
 		public function FFFForceGravity(name:String, g:FFVector)
 		{
 			super(name);
-			NAME = name;
 			mGravity = g;
 		}
 		
