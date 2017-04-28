@@ -20,7 +20,7 @@ package org.ares.fireflight.base
 		//创建contact
 		public function createContact(name:String):FFContact
 		{
-			var c:FFContact = new FFContact(name);
+			var c:FFContact = new FFContact();
 			mContacts[name] = c;
 			return c;
 		}

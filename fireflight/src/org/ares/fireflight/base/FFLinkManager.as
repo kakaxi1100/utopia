@@ -13,10 +13,11 @@ package org.ares.fireflight.base
 			return instance ||= new FFLinkManager();
 		}
 		
-		//创建link
-		public function createLink(link:FFLinkBase):void
+		//注册link
+		public function registerLink(link:FFLinkBase):FFLinkManager
 		{
 			mLinks[link.name] = link; 
+			return instance;
 		}
 		//删除link
 		public function deleteLink(name:String):void

@@ -11,15 +11,12 @@ package org.ares.fireflight.base
 	{
 		//最大长度
 		private var mMaxLength:Number;
-		//恢复系数
-		private var mRestitution:Number;
-		public function FFLinkCable(name:String, c:FFContact, l:Number, r:Number)
+		public function FFLinkCable(name:String, c:FFContact, maxLen:Number, restitution:Number)
 		{
 			super(name, c);
 			
-			mMaxLength = l;
-			mRestitution = r;
-			mContact.restitution = r;
+			mMaxLength = maxLen;
+			mContact.restitution = restitution;
 		}
 		
 		override public function updateContact(dt:Number):int
