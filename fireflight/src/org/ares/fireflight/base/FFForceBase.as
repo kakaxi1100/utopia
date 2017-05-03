@@ -36,7 +36,7 @@ package org.ares.fireflight.base
 		
 		public function update(d:Number):void
 		{
-			
+			return;
 		}
 		
 		public function get name():String
