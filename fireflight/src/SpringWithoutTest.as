@@ -29,6 +29,7 @@ package
 		{
 			dt = getTimer() - dt;
 			dt /= 1000;
+
 			s.x += vx * dt;
 			var dx:Number = tx - s.x;
 			var ax:Number = dx * k;

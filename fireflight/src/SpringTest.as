@@ -17,7 +17,10 @@ package
 	public class SpringTest extends Sprite
 	{
 		private var shot:Shot = new Shot(0xFFFFFF);
-		private var shot2:Shot = new Shot(0xFF0000);
+		private var shot2:Shot = new Shot(0xFFFF);
+		private var k:Number = 4;
+		private var tx:Number = 200;
+		private var vx:Number = 0;
 		private var dt:Number;
 		public function SpringTest()
 		{
@@ -25,8 +28,8 @@ package
 			shot.setXY(100,200);
 			addChild(shot);
 			
-			shot2.setXY(100,100);
-//			addChild(shot2);
+			shot2.setXY(100,200);
+			addChild(shot2);
 			
 			changeType("PISTOL");
 			dt = getTimer();
@@ -77,10 +80,14 @@ package
 		protected function onEnterFrame(event:Event):void
 		{
 			dt = getTimer() - dt;
-			FFForceManager.getIntsance().updateForce(dt/1000);
-			shot.update(dt/1000);
-//			shot2.update(dt/1000);
-//			trace(shot.p.position);
+			dt /= 1000;
+			dt = 0.016;
+			FFForceManager.getIntsance().updateForce(dt);
+			shot.update(dt);
+			shot2.x += vx * dt;
+			var dx:Number = tx - shot2.x;
+			var ax:Number = dx * k;
+			vx += ax * dt;
 			dt = getTimer();
 		}
 	}

@@ -52,15 +52,11 @@ package org.ares.fireflight.base
 		public function integrate(duration:Number):void
 		{
 			if(duration <= 0) return;
-			//更新位置
-			//因为位移公式是  s = s0 + vt, 所以可以采用积分式 s+=vt
-			mPosition.plusScaledVector(mVelocity, duration);
 			
 			//计算加速度 f = ma a = f/m 所以当前的加速度等于初始设定的加速度加上a
 			//由于加速度就是 f/m 算出来的 所以不是积分式,其实这里能够简化,不必每帧计算
 			//只要再 力或者质量改变时计算即可
 			var tempAcc:FFVector = mAcceleration.clone(mTempVector);
-			trace(tempAcc);
 			tempAcc.plusScaledVector(mForceAccum,mInverseMass);
 			//更新速度
 			//因为速度公式是  v = v0 + at, 所以可以采用积分式 v+=at
@@ -72,6 +68,11 @@ package org.ares.fireflight.base
 			//力如果不清除,表示加速度每帧都在改变
 			//如果清除,则表示加速度只改变当前帧的这一次
 			//这里也是可以优化的,并不应该算在积分式里面
+			
+			//更新位置
+			//因为位移公式是  s = s0 + vt, 所以可以采用积分式 s+=vt
+			mPosition.plusScaledVector(mVelocity, duration);
+			
 			mForceAccum.clear();
 		}
 		
