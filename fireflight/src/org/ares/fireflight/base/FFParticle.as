@@ -60,8 +60,8 @@ package org.ares.fireflight.base
 			//由于加速度就是 f/m 算出来的 所以不是积分式,其实这里能够简化,不必每帧计算
 			//只要再 力或者质量改变时计算即可
 			var tempAcc:FFVector = mAcceleration.clone(mTempVector);
+			trace(tempAcc);
 			tempAcc.plusScaledVector(mForceAccum,mInverseMass);
-			
 			//更新速度
 			//因为速度公式是  v = v0 + at, 所以可以采用积分式 v+=at
 			mVelocity.plusScaledVector(tempAcc, duration);
@@ -84,7 +84,6 @@ package org.ares.fireflight.base
 		{
 			mForceAccum.plusEquals(v);
 		}
-
 		
 		public function hasFiniteMass():Boolean
 		{

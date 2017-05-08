@@ -16,29 +16,29 @@ package
 	[SWF(frameRate="60", backgroundColor="0",width="800",height="600")]
 	public class SpringTest extends Sprite
 	{
-		private var shot:Shot = new Shot();
-		private var shot2:Shot = new Shot();
+		private var shot:Shot = new Shot(0xFFFFFF);
+		private var shot2:Shot = new Shot(0xFF0000);
 		private var dt:Number;
 		public function SpringTest()
 		{
 			super();
-			shot.setXY(220,100);
+			shot.setXY(100,200);
 			addChild(shot);
 			
 			shot2.setXY(100,100);
-			addChild(shot2);
+//			addChild(shot2);
 			
 			changeType("PISTOL");
 			dt = getTimer();
 			
 			this.graphics.lineStyle(1);
 			this.graphics.beginFill(0xFFFF00);
-			this.graphics.drawCircle(100,100,10);
+			this.graphics.drawCircle(200,200,10);
 			this.graphics.endFill();
-			FFForceManager.getIntsance().registerForce(new FFForceAnchoredSpring("A", new FFVector(100, 100),0.1,110));
-			FFForceManager.getIntsance().registerForce(new FFForceBungee("B", shot2.p, 0.1, 110));
+			FFForceManager.getIntsance().registerForce(new FFForceAnchoredSpring("A", new FFVector(200, 200),4,0));
+//			FFForceManager.getIntsance().registerForce(new FFForceBungee("B", shot2.p, 0.1, 110));
 			
-			FFForceManager.getIntsance().getForce("B").addParticle(shot.p);
+			FFForceManager.getIntsance().getForce("A").addParticle(shot.p);
 			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
@@ -50,8 +50,8 @@ package
 				case "PISTOL":
 					shot.p.mass = 1;
 					shot.p.velocity.setTo(0,0);
-					shot2.p.mass = 1;
-					shot2.p.velocity.setTo(50,0);
+//					shot2.p.mass = 1;
+//					shot2.p.velocity.setTo(50,0);
 					break;
 				case "ARTILLERY":
 					shot.p.mass = 200;
@@ -80,7 +80,7 @@ package
 			FFForceManager.getIntsance().updateForce(dt/1000);
 			shot.update(dt/1000);
 //			shot2.update(dt/1000);
-			trace(shot.p.position);
+//			trace(shot.p.position);
 			dt = getTimer();
 		}
 	}

@@ -9,7 +9,7 @@ package
 	[SWF(frameRate="60", backgroundColor="0",width="800",height="600")]
 	public class MassTest extends Sprite
 	{
-		private var shot:Shot = new Shot();
+		private var shot:Shot = new Shot(0xFF00);
 		private var dt:Number;
 		public function MassTest()
 		{
