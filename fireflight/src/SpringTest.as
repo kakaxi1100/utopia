@@ -38,7 +38,7 @@ package
 			this.graphics.beginFill(0xFFFF00);
 			this.graphics.drawCircle(200,200,10);
 			this.graphics.endFill();
-			FFForceManager.getIntsance().registerForce(new FFForceAnchoredSpring("A", new FFVector(200, 200),4,0));
+			FFForceManager.getIntsance().registerForce(new FFForceAnchoredSpring("A", new FFVector(200, 200),4,110));
 //			FFForceManager.getIntsance().registerForce(new FFForceBungee("B", shot2.p, 0.1, 110));
 			
 			FFForceManager.getIntsance().getForce("A").addParticle(shot.p);
