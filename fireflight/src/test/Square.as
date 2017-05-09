@@ -7,14 +7,14 @@ package test
 	public class Square extends Sprite
 	{
 		public var p:FFRigidBody = new FFRigidBody();
-		public function Square(c:uint = 0)
+		public function Square(c:uint = 0, w:int = 40, h:int = 40)
 		{
 			super();
 			
 			this.graphics.clear();
 			this.graphics.lineStyle(1);
 			this.graphics.beginFill(c);
-			this.graphics.drawRect(-20, -20, 40, 40);
+			this.graphics.drawRect(-w/2, -h/2, w, h);
 			this.graphics.endFill();
 		}
 		

@@ -51,12 +51,9 @@ package org.ares.fireflight.base
 				mTemp.minusEquals(other.position);
 				var magnitude:Number = mTemp.magnitude();
 				magnitude -= mRestLength;
-				if(magnitude < 0) magnitude = -magnitude;
 				magnitude *= mK;
 				//计算方向
-				//这里感觉有点问题, 好像不管压缩还是伸长这个力都是同一个方向
-				//根据测试结果, 确实它是用位置来判断方向的
-				mTemp.normalize();
+				mTemp.normalizeEquals();
 				mTemp.multEquals(-magnitude);
 				o.addForce(mTemp);
 			}

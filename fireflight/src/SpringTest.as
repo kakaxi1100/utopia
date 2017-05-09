@@ -29,7 +29,7 @@ package
 			addChild(shot);
 			
 			shot2.setXY(100,200);
-			addChild(shot2);
+//			addChild(shot2);
 			
 			changeType("PISTOL");
 			dt = getTimer();
@@ -38,10 +38,12 @@ package
 			this.graphics.beginFill(0xFFFF00);
 			this.graphics.drawCircle(200,200,10);
 			this.graphics.endFill();
-			FFForceManager.getIntsance().registerForce(new FFForceAnchoredSpring("A", new FFVector(200, 200),4,110));
+			FFForceManager.getIntsance().registerForce(new FFForceAnchoredSpring("A", new FFVector(200, 200),4, 0))
+										.registerForce(new FFForceDrag("F",  0.01, 0.001));
 //			FFForceManager.getIntsance().registerForce(new FFForceBungee("B", shot2.p, 0.1, 110));
 			
 			FFForceManager.getIntsance().getForce("A").addParticle(shot.p);
+//			FFForceManager.getIntsance().getForce("F").addParticle(shot.p);
 			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}

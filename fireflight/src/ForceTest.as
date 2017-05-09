@@ -14,8 +14,8 @@ package
 	[SWF(frameRate="60", backgroundColor="0",width="800",height="600")]
 	public class ForceTest extends Sprite
 	{
-		private var shot:Shot = new Shot();
-		private var shot2:Shot = new Shot();
+		private var shot:Shot = new Shot(0xff00);
+		private var shot2:Shot = new Shot(0x00ffff);
 		private var dt:Number;
 		public function ForceTest()
 		{
@@ -74,7 +74,6 @@ package
 			FFForceManager.getIntsance().updateForce(dt/1000);
 			shot.update(dt/1000);
 			shot2.update(dt/1000);
-			trace(shot.p.position);
 			dt = getTimer();
 		}
 	}

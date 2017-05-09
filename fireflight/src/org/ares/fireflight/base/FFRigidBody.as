@@ -21,6 +21,8 @@ package org.ares.fireflight.base
 	{
 		//质量小于这个值就视为0
 		private static const MASS_E:Number = 0.001;
+		//惯量小于这个值就视为0
+		private static const INERTIA_E:Number = 0.0001;
 		//刚体位置		
 		private var mPosition:FFVector;
 		//刚体的速度
@@ -79,9 +81,7 @@ package org.ares.fireflight.base
 		public function integrate(duration:Number):void
 		{
 			if(duration <= 0) return;
-			//更新位置
-			//因为位移公式是  s = s0 + vt, 所以可以采用积分式 s+=vt
-			mPosition.plusScaledVector(mVelocity, duration);
+			
 			//计算加速度 f = ma a = f/m 所以当前的加速度等于初始设定的加速度加上a
 			//由于加速度就是 f/m 算出来的 所以不是积分式,其实这里能够简化,不必每帧计算
 			//只要再 力或者质量改变时计算即可
@@ -91,14 +91,21 @@ package org.ares.fireflight.base
 			//因为速度公式是  v = v0 + at, 所以可以采用积分式 v+=at
 			mVelocity.plusScaledVector(tempAcc, duration);
 			
-			//更新角度位置
-			mOrientation += mRotation * duration;
-			mAngle = (mOrientation*180/Math.PI) % 360;
+			//更新位置
+			//因为位移公式是  s = s0 + vt, 所以可以采用积分式 s+=vt
+			mPosition.plusScaledVector(mVelocity, duration);
+			
+			
 			//计算角加速度
 			var tempRotationAcc:Number = mAngularAcceleration;
 			tempRotationAcc += mTorqueAccum * mInverseRotationInertia;	
 			//计算角速度
 			mRotation += tempRotationAcc * duration;
+			mRotation *= 0.99
+			
+			//更新角度位置
+			mOrientation += mRotation * duration;
+			mAngle = (mOrientation*180/Math.PI) % 360;
 			
 			clearAccumulators();
 		}
@@ -113,9 +120,36 @@ package org.ares.fireflight.base
 			mForceAccum.plusEquals(v);
 		}
 		
-		public function addForceAtPoint():void
+		/**
+		 *在某一个点上加上力 
+		 * @param f
+		 * @param p
+		 * 
+		 */		
+		public function addForceAtPoint(f:FFVector, p:FFVector):void
 		{
+			//计算礼毕
+			p.minusEquals(this.position);
+			//这里会添加线性力, 感觉是不对的！
+//			mForceAccum.plusEquals(f);
+			//计算力矩
+			mTorqueAccum += p.vectorMult(f);
+		}
+		
+		/**
+		 *将局部坐标系转换为世界坐标系 
+		 * @param v
+		 * @return 
+		 * 
+		 */		
+		public function changeLocalToWorld(v:FFVector):FFVector
+		{
+			//先平移
+			v.plusEquals(mPosition);
+			//再旋转
+			v.rotate(mOrientation);
 			
+			return v;
 		}
 		
 		/**
@@ -142,6 +176,22 @@ package org.ares.fireflight.base
 		{
 			mPosition = value;
 		}
+		
+		//转动惯量
+		public function get rotationInertia():Number
+		{
+			return 1/mInverseRotationInertia;
+		}
+		
+		public function set rotationInertia(value:Number):void
+		{
+			if(value < INERTIA_E){
+				mInverseRotationInertia = Number.MAX_VALUE;
+			}else{
+				mInverseRotationInertia = 1/value;
+			}
+		}
+		
 		//--粒子质量
 		public function get mass():Number
 		{

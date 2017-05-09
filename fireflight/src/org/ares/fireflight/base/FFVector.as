@@ -131,6 +131,22 @@ package org.ares.fireflight.base
 		{
 			return x * v.y - y * v.x;
 		}
+		
+		/**
+		 *将矢量进行旋转 
+		 * @param theta
+		 * @param v
+		 * @return 
+		 * 
+		 */		
+		public function rotate(theta:Number):void
+		{
+			var tempX:Number = this.x*Math.cos(theta) - this.y*Math.sin(theta);
+			var tempY:Number = this.x*Math.sin(theta) + this.y*Math.cos(theta);
+			
+			this.setTo(tempX, tempY);
+		}
+		
 		/**
 		 *大小 
 		 * @return 

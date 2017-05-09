@@ -56,7 +56,7 @@ package org.ares.fireflight.base
 			//更新位置不能放在这里, 因为一旦放在这里的话
 			//加入加速度是依赖位置来计算的, 比如弹力
 			//则每次都是下一帧来计算上一帧产生的力,因为位置是在当前帧,更新上一帧的位置
-			//相当于每一帧多施加了一次上一帧与此帧只差的力
+			//相当于每一帧多施加了一次上一帧与此帧之差的力
 			//这样会造成误差
 			//从而使弹力系统不稳定, 会原来越快, 最后崩溃
 			//以FFForceAnchoredSpring为例
@@ -87,6 +87,8 @@ package org.ares.fireflight.base
 			//速度受阻尼影响逐渐减小 v*=d
 			// 这里转移到用正真的阻尼力来计算
 			//mVelocity.multEquals(Math.pow(mDamping, duration));
+			//或者用这个简化公式来代替
+			//mVelocity.multEquals(0.99);
 			
 			//力如果不清除,表示加速度每帧都在改变
 			//如果清除,则表示加速度只改变当前帧的这一次
