@@ -2,6 +2,7 @@ package
 {
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.utils.getTimer;
 	
 	import org.ares.fireflight.base.FFForceAnchoredSpring;
@@ -22,24 +23,61 @@ package
 			super();
 			
 			c.setXY(150,180);
-			c.p.rotationInertia = c.p.mass * (100*100)/12; 
+			c.p.rotationInertia = c.p.mass * (50*50)/12; 
 			addChild(c);
 
-			FFRigidForceManager.getIntsance().registerForce(new FFRigidForceAnchoredSpring("A", new FFVector(50, 0), new FFVector(200, 200),4,100));
+			FFRigidForceManager.getIntsance().registerForce(new FFRigidForceAnchoredSpring("A", new FFVector(50, 0), new FFVector(200, 200),4,100))
+											 .registerForce(new FFRigidForceAnchoredSpring("A2", new FFVector(-50, 0), new FFVector(100, 200),3,100))
 			FFRigidForceManager.getIntsance().getForce("A").addRigidBody(c.p);
+			FFRigidForceManager.getIntsance().getForce("A2").addRigidBody(c.p);
 				
 			dt = getTimer();
+			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+		}
+		
+		private var a:Boolean = false;
+		protected function onKeyUp(event:KeyboardEvent):void
+		{
+			a = true;
 		}
 		
 		protected function onEnterFrame(event:Event):void
 		{
+			if(!a) return;
 			dt = getTimer() - dt;
 			dt /= 1000;
 			dt = 0.016;
 			FFRigidForceManager.getIntsance().updateForce(dt);
 			c.update(dt);
 			dt = getTimer();
+			drawAll();
+		}
+		
+		private var temp:FFVector = new FFVector(50, 0);
+		private var temp2:FFVector = new FFVector(-50, 0);
+		private function drawAll():void
+		{
+			temp.setTo(50, 0);
+			c.p.changeLocalToWorld(temp);
+
+			temp2.setTo(-50, 0);
+			c.p.changeLocalToWorld(temp2);
+			
+			this.graphics.clear();
+			this.graphics.lineStyle(1, 0xffffff);
+			
+			this.graphics.drawCircle(200,200, 10);
+			this.graphics.drawCircle(100,200, 10);
+			
+			this.graphics.moveTo(200,200);
+			this.graphics.lineTo(temp.x, temp.y);
+			
+			this.graphics.moveTo(100,200);
+			this.graphics.lineTo(temp2.x, temp2.y);
+			
+			
 		}
 	}
 }

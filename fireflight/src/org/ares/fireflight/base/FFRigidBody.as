@@ -23,6 +23,10 @@ package org.ares.fireflight.base
 		private static const MASS_E:Number = 0.001;
 		//惯量小于这个值就视为0
 		private static const INERTIA_E:Number = 0.0001;
+		//弧度转化为度数
+		private static const DEGREE:Number = 180 / Math.PI;
+		//度数转化为弧度
+		private static const RADIAN:Number = Math.PI / 180;
 		//刚体位置		
 		private var mPosition:FFVector;
 		//刚体的速度
@@ -41,7 +45,6 @@ package org.ares.fireflight.base
 		private var mRotation:Number;
 		//方位即最后在世界坐标系中的角度位置
 		private var mOrientation:Number;
-		private var mAngle:Number;
 		//用在刚体上线性力的合集
 		private var mForceAccum:FFVector;
 		//用在刚体上的转矩或者扭力
@@ -69,7 +72,6 @@ package org.ares.fireflight.base
 			mAngularAcceleration = 0;
 			mOrientation = 0;
 			mInverseMass = 1;
-			mAngle = 0;
 		}
 		
 		/**
@@ -90,6 +92,7 @@ package org.ares.fireflight.base
 			//更新速度
 			//因为速度公式是  v = v0 + at, 所以可以采用积分式 v+=at
 			mVelocity.plusScaledVector(tempAcc, duration);
+//			mVelocity.multEquals(0.99);
 			
 			//更新位置
 			//因为位移公式是  s = s0 + vt, 所以可以采用积分式 s+=vt
@@ -101,11 +104,10 @@ package org.ares.fireflight.base
 			tempRotationAcc += mTorqueAccum * mInverseRotationInertia;	
 			//计算角速度
 			mRotation += tempRotationAcc * duration;
-			mRotation *= 0.99
+//			mRotation *= 0.99;
 			
 			//更新角度位置
 			mOrientation += mRotation * duration;
-			mAngle = (mOrientation*180/Math.PI) % 360;
 			
 			clearAccumulators();
 		}
@@ -128,10 +130,10 @@ package org.ares.fireflight.base
 		 */		
 		public function addForceAtPoint(f:FFVector, p:FFVector):void
 		{
-			//计算礼毕
+			//计算力臂
 			p.minusEquals(this.position);
 			//这里会添加线性力, 感觉是不对的！
-//			mForceAccum.plusEquals(f);
+			mForceAccum.plusEquals(f);
 			//计算力矩
 			mTorqueAccum += p.vectorMult(f);
 		}
@@ -144,10 +146,11 @@ package org.ares.fireflight.base
 		 */		
 		public function changeLocalToWorld(v:FFVector):FFVector
 		{
-			//先平移
-			v.plusEquals(mPosition);
-			//再旋转
+			//这里一定要先旋转哦, 因为平移的时候改变了坐标系
+			//先旋转
 			v.rotate(mOrientation);
+			//再平移
+			v.plusEquals(mPosition);
 			
 			return v;
 		}
@@ -213,12 +216,12 @@ package org.ares.fireflight.base
 
 		public function get angle():Number
 		{
-			return mAngle;
+			return (mOrientation * DEGREE) % 360;
 		}
 
 		public function set angle(value:Number):void
 		{
-			mAngle = value;
+			mOrientation = (value % 360) * RADIAN;  
 		}
 
 		public function get rotation():Number
