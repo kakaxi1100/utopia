@@ -28,7 +28,7 @@ package
 	public class Test extends Sprite
 	{
 		//动态圆相交测试(注意要改变testMovingRimRim方法来达到测试效果)
-		private var rim0:VBRim = new VBRim();
+		/*private var rim0:VBRim = new VBRim();
 		private var rim1:VBRim = new VBRim();
 		private var d:VBVector = new VBVector(1,0);
 		public function Test()
@@ -44,7 +44,7 @@ package
 			VBMathUtil.testMovingRimRim(rim0, d, 0, 400, rim1);
 			DrawUtil.drawRim2(this.graphics, rim0, 2, 0x00ff00);
 			DrawUtil.drawRim2(this.graphics, rim1, 2, 0xffff00);
-		}
+		}*/
 //---------------------------------------------------------------------------			
 		//测试线段和AABB相交
 		/*private var aabb:VBAABB = new VBAABB();

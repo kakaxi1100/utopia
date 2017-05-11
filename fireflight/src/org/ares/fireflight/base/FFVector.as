@@ -158,6 +158,16 @@ package org.ares.fireflight.base
 		}
 		
 		/**
+		 *大小的平方
+		 * @return 
+		 * 
+		 */		
+		public function magnitudeSquare():Number 
+		{
+			return x * x + y * y;
+		}
+		
+		/**
 		 *计算两点之间的距离 
 		 * @param v
 		 * @return 

@@ -6,6 +6,9 @@ package test.collision
 
 	/**
 	 *包围圆 
+	 * 
+	 * 注意这个计算最小包围圆的算法是错的
+	 * 
 	 * @author JuLi
 	 * 
 	 */	
