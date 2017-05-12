@@ -10,6 +10,7 @@ package org.ares.fireflight.base
 			x = px;
 			y = py;
 		}
+		
 		/**
 		 *矢量相加
 		 * 不改变原始值，产生一个新值 
@@ -17,9 +18,15 @@ package org.ares.fireflight.base
 		 * @return 
 		 * 
 		 */		
-		public function plus(v:FFVector):FFVector 
+		public function plus(v:FFVector, t:FFVector = null):FFVector 
 		{
-			return new FFVector(x + v.x, y + v.y); 
+			if(t == null){
+				t = new FFVector(x + v.x, y + v.y);
+			}else{
+				t.setTo(x + v.x, y + v.y);
+			}
+			
+			return t;  
 		}
 		/**
 		 * 矢量相加

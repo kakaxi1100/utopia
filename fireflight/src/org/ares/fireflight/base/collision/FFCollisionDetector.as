@@ -4,6 +4,9 @@ package org.ares.fireflight.base.collision
 
 	/**
 	 *工具类 
+	 * 
+	 * 凸包算法  Convex Hull
+	 * http://www.csie.ntnu.edu.tw/~u91029/ConvexHull.html#4
 	 * @author juli
 	 * 
 	 */	
