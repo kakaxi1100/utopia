@@ -3,19 +3,20 @@ package
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.display.StageScaleMode;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
 	[SWF(width="640", height="480", frameRate="30", backgroundColor="0")]
-	public class DrawTest2 extends Sprite
+	public class DrawTest3 extends Sprite
 	{
 		[Embed(source="assets/2.png")]
 		private var Background:Class;
 		
 		private var bmp:Bitmap = new Background();
 		
-		private var rows:int = 10;
-		private var cols:int = 10;
+		private var rows:int = 5;
+		private var cols:int = 5;
 		
 		private var w:int = bmp.width / cols;
 		private var h:int = bmp.height / rows;
@@ -29,20 +30,23 @@ package
 		private var pieces:Vector.<Vector.<Piece>> = new Vector.<Vector.<Piece>>();
 		private var map:Array = [];
 		
-		private var target:SpriteWithID;
+		private var target:Piece;
 		private var preMouseX:Number;
 		private var preMouseY:Number;
-		public function DrawTest2()
+		
+		private var root:Sprite = new Sprite;
+		
+		public static var index:int = 0; 
+		public function DrawTest3()
 		{
-			trace("a");
 			super();
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			this.graphics.lineStyle(2, 0xFF0000);
-//			test();
+			//			test();
 			WIDTH = w;
 			HEIGHT = h;
 			
-			addChild(ContainerManager.root);
+			addChild(root);
 			
 			initEgdeStyle();
 			createVexs(vexs);
@@ -51,16 +55,25 @@ package
 			drawAll();
 //			test2();
 			
+//			trace("start play");
+			
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
 			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMOVE);
+			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+		}
+		
+		protected function onKeyUp(event:KeyboardEvent):void
+		{
+			pieces[0][0].move(10,10);
+			resetAllPieces(false);
 		}
 		
 		protected function onMouseMOVE(event:MouseEvent):void
 		{
 			if(target){
-				target.x += mouseX - preMouseX;
-				target.y += mouseY - preMouseY;
+				target.move(mouseX - preMouseX, mouseY - preMouseY);
+				resetAllPieces(false);
 				preMouseX = mouseX;
 				preMouseY = mouseY;
 			}
@@ -70,31 +83,41 @@ package
 		{
 			if(target == null) return;
 			
-			var len:int = target.list.length;
-			for(var i:int = 0; i < len; i++){
-				target.list[i].connectCheck();
-			}
-//			//计算碰撞
-//			for each (var p:Piece in target.list){
-//				p.connectCheck();
-//			}
+			//计算碰撞
+			target.connectCheck();
+			resetAllPieces(true);
 			target = null;
 			checkOver();
 		}
 		
 		protected function onMouseDown(event:MouseEvent):void
 		{
-			for each(var s:SpriteWithID in ContainerManager.containerList){
-				for each (var p:Piece in s.list){
-					if(p.source.bitmapData.getPixel32(mouseX - (p.x + p.source.x + s.x), mouseY - (p.y + p.source.y + s.y)) == 0)
+			
+			for(var r:int = 0; r < rows; r++){
+				for(var c:int = 0; c < cols; c++){
+					var p:Piece = pieces[r][c];
+					if(p.source.bitmapData.getPixel32(mouseX - (p.x + p.source.x), mouseY - (p.y + p.source.y)) == 0)
 					{
 						continue;
 					}
 					
-					target = s;
+					target = p;
 					preMouseX = mouseX;
 					preMouseY = mouseY;
 					return;
+				}
+			}
+		}
+		
+		public function resetAllPieces(check:Boolean):void
+		{
+			for(var r:int = 0; r < rows; r++){
+				for(var c:int = 0; c < cols; c++){
+					if(check){
+						pieces[r][c].isChecked = false;
+					}else{
+						pieces[r][c].isMoved = false;
+					}
 				}
 			}
 		}
@@ -263,12 +286,11 @@ package
 				for(var c:int = 0; c < cols; c++)
 				{
 					p = pieces[r][c];
-//					p.draw(this.graphics);
+					//					p.draw(this.graphics);
 					p.draw(p.graphics, bmp.bitmapData);
-					ContainerManager.createContainer().addPiece(p);
+					root.addChildAt(p, 0);
 				}
 			}
-//			pieces[0][0].visible = false;
 		}
 		
 		private function test():void
@@ -304,50 +326,7 @@ import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.Graphics;
 import flash.display.Sprite;
-import flash.geom.Matrix;
 import flash.geom.Point;
-import flash.geom.Rectangle;
-
-class ContainerManager
-{
-	public static var INDEX:int = 0;
-	public static var containerList:Object = {};
-	public static var root:Sprite = new Sprite();
-	
-	public static function createContainer():SpriteWithID
-	{
-		var s:SpriteWithID = new SpriteWithID(INDEX); 
-		containerList[INDEX++] = s;
-		
-		root.addChildAt(s, 0);
-		return s;
-	}
-	
-	public static function removeContainer(id:int):void
-	{
-		if(containerList[id] == null)  return;
-		root.removeChild(containerList[id]);
-		containerList[id] = null;
-		delete containerList[id];
-	}
-}
-
-class SpriteWithID extends Sprite
-{
-	public var id:int;
-	public var list:Vector.<Piece> = new Vector.<Piece>();
-	public function SpriteWithID(i:int)
-	{
-		id = i;
-	}
-	
-	public function addPiece(p:Piece):void
-	{
-		list.push(p);	
-		addChildAt(p, 0);
-		p.sParent = this;
-	}
-}
 
 class Piece extends Sprite
 {
@@ -362,13 +341,16 @@ class Piece extends Sprite
 	public var left:Piece;
 	public var up:Piece;
 	
-	public var sParent:SpriteWithID;
 	public var connectRight:Boolean;
 	public var connectLeft:Boolean;
 	public var connectUp:Boolean;
 	public var connectDown:Boolean;
 	
 	public var source:Bitmap;
+	
+	public var isMoved:Boolean;
+	public var isChecked:Boolean;
+	
 	public function Piece()
 	{
 		super();
@@ -385,15 +367,11 @@ class Piece extends Sprite
 		}
 		this.graphics.endFill();
 		
-		var rect:Rectangle = this.getRect(this);
-		trace(rect);
-		var dest:BitmapData = new BitmapData(rect.width, rect.height, true, 0xFFFFFF);
-		var m:Matrix = new Matrix();
-		m.translate(-rect.x, -rect.y);
-		dest.draw(this, m, null, null, null);
+		var dest:BitmapData = new BitmapData(640, 480, true, 0xcccccc);
+		dest.draw(this);
 		source = new Bitmap(dest);
-		source.x = -(col * DrawTest2.WIDTH + DrawTest2.WIDTH * 0.5 - rect.x);
-		source.y = -(row * DrawTest2.HEIGHT + DrawTest2.HEIGHT * 0.5 - rect.y);
+		source.x = -(col * DrawTest3.WIDTH + DrawTest3.WIDTH * 0.5);
+		source.y = -(row * DrawTest3.HEIGHT + DrawTest3.HEIGHT * 0.5);
 		addChild(source);
 		
 		this.graphics.clear();
@@ -403,133 +381,97 @@ class Piece extends Sprite
 	{
 		if(this.parent){
 			realPos.setTo(this.parent.x + this.x, this.parent.y + this.y);
-		}else{
-			realPos.setTo(this.x, this.y);
 		}
 		return realPos;
 	}
 	
-	public function connectCheck():Boolean
+	public function connectCheck():void
 	{
 		var sp:Point = getRealPos();
-		var rp:Point, dp:Point, lp:Point, upp:Point
+		var dp:Point, upp:Point, lp:Point, rp:Point;
 		var dist:Number;
 		var p:Piece;
-		var preContainer:SpriteWithID;
-		var isConnect:Boolean;
-		//判断右边是否碰上了
-		if(right != null && !connectRight){
-			rp = right.getRealPos();
-			dist = Point.distance(sp, rp);
-			if(dist <= DrawTest2.Error + DrawTest2.WIDTH){
-				connectRight = true;
-				right.connectLeft = true;
-				//合并容器
-				//1.将容器整体移动过来
-				right.sParent.x += sp.x - rp.x + DrawTest2.WIDTH;
-				right.sParent.y += sp.y - rp.y;
-				//2.将右边的piece移到当前的容器中
-				preContainer = right.sParent;
-				while(preContainer!= this.sParent && preContainer.list.length > 0){
-					p = preContainer.list.pop();
-					p.x = p.getRealPos().x - sParent.x;
-					p.y = p.getRealPos().y - sParent.y;
-					this.sParent.addPiece(p);
+		isChecked = true;
+		if(up != null && !up.isChecked){
+			if(!connectUp){
+				upp = up.getRealPos();
+				dist = Point.distance(sp, upp);
+				if(dist <= DrawTest3.Error + DrawTest3.HEIGHT){
+					up.move(sp.x - upp.x, sp.y - upp.y - DrawTest3.HEIGHT);
+					up.connectDown = true;
+					connectUp = true;
 				}
-				//3.删除之前的 sprite
-				if(preContainer!= this.sParent){
-					ContainerManager.removeContainer(preContainer.id);
-				}
-				
-				isConnect = true;
 			}
+			up.connectCheck();
 		}
 		
-		//判断左边是否碰上了
-		if(down != null && !connectDown){
-			dp = down.getRealPos();
-			dist = Point.distance(sp, dp);
-			if(dist <= DrawTest2.Error + DrawTest2.HEIGHT){
-				connectDown = true;
-				down.connectUp = true;
-				//合并容器
-				//1.将容器整体移动过来
-				down.sParent.x += sp.x - dp.x;
-				down.sParent.y += sp.y - dp.y + DrawTest2.HEIGHT;
-				//2.将右边的piece移到当前的容器中
-				preContainer = down.sParent;
-				while(preContainer!= this.sParent && preContainer.list.length > 0){
-					p = preContainer.list.pop();
-					p.x = p.getRealPos().x - sParent.x;
-					p.y = p.getRealPos().y - sParent.y;
-					this.sParent.addPiece(p);
+		if(down != null && !down.isChecked){
+			if(!connectDown){
+				dp = down.getRealPos();
+				dist = Point.distance(sp, dp);
+				if(dist <= DrawTest3.Error + DrawTest3.HEIGHT){
+					down.move(sp.x - dp.x, sp.y - dp.y + DrawTest3.HEIGHT);
+					connectDown = true;
+					down.connectUp = true;
 				}
-				//3.删除之前的 sprite
-				if(preContainer!= this.sParent){
-					ContainerManager.removeContainer(preContainer.id);
-				}
-				
-				isConnect = true;
 			}
+			down.connectCheck();
 		}
 		
-		//判断上边是否碰上了
-		if(left != null && !connectLeft){
-			lp = left.getRealPos();
-			dist = Point.distance(sp, lp);
-			if(dist <= DrawTest2.Error + DrawTest2.WIDTH){
-				connectLeft = true;
-				left.connectRight = true;
-				//合并容器
-				//1.将容器整体移动过来
-				left.sParent.x += sp.x - lp.x - DrawTest2.WIDTH;
-				left.sParent.y += sp.y - lp.y;
-				//2.将右边的piece移到当前的容器中
-				preContainer = left.sParent;
-				while(preContainer!= this.sParent && preContainer.list.length > 0){
-					p = preContainer.list.pop();
-					p.x = p.getRealPos().x - sParent.x;
-					p.y = p.getRealPos().y - sParent.y;
-					this.sParent.addPiece(p);
+		if(left != null && !left.isChecked){
+			if(!connectLeft){
+				lp = left.getRealPos();
+				dist = Point.distance(sp, lp);
+				if(dist <= DrawTest3.Error + DrawTest3.WIDTH){
+					left.move(sp.x - lp.x - DrawTest3.WIDTH, sp.y - lp.y);
+					connectLeft = true;
+					left.connectRight = true;
 				}
-				//3.删除之前的 sprite
-				if(preContainer!= this.sParent){
-					ContainerManager.removeContainer(preContainer.id);
-				}
-				
-				isConnect = true;
 			}
+			left.connectCheck();
 		}
 		
-		//判断下边是否碰上了
-		if(up != null && !connectUp){
-			upp = up.getRealPos();
-			dist = Point.distance(sp, upp);
-			if(dist <= DrawTest2.Error + DrawTest2.HEIGHT){
-				connectUp = true;
-				up.connectDown = true;
-				//合并容器
-				//1.将容器整体移动过来
-				up.sParent.x += sp.x - upp.x;
-				up.sParent.y += sp.y - upp.y - DrawTest2.HEIGHT;
-				//2.将右边的piece移到当前的容器中
-				preContainer = up.sParent;
-				while(preContainer!= this.sParent && preContainer.list.length > 0){
-					p = preContainer.list.pop();
-					p.x = p.getRealPos().x - sParent.x;
-					p.y = p.getRealPos().y - sParent.y;
-					this.sParent.addPiece(p);
+		if(right != null && !right.isChecked){
+			if(!connectRight){
+				rp = right.getRealPos();
+				dist = Point.distance(sp, rp);
+				if(dist <= DrawTest3.Error + DrawTest3.WIDTH){
+					right.move(sp.x - rp.x + DrawTest3.WIDTH, sp.y - rp.y);
+					connectRight = true;
+					right.connectLeft = true;
 				}
-				//3.删除之前的 sprite
-				if(preContainer!= this.sParent){
-					ContainerManager.removeContainer(preContainer.id);
-				}
-				
-				isConnect = true;
 			}
+			right.connectCheck();
+		}
+	}
+	
+	public function move(ox:Number, oy:Number):void
+	{
+		trace(row, col);
+		this.x += ox;
+		this.y += oy;
+		isMoved = true;
+		if(right != null && connectRight && !right.isMoved){
+			right.move(ox, oy);
 		}
 		
-		return isConnect;
+		if(left != null && connectLeft && !left.isMoved){
+			left.move(ox, oy);
+		}
+		
+		if(up != null && connectUp && !up.isMoved){
+			up.move(ox, oy);
+		}
+		
+		if(down != null && connectDown && !down.isMoved){
+			down.move(ox, oy);
+		}
+	}
+	
+	public function reset():void
+	{
+		isChecked = false;
+		isMoved = false;
 	}
 	
 	public function get connectComplete():Boolean
@@ -549,7 +491,7 @@ class Dot implements IPointType
 	public var yPer:Number;
 	public function execute(center:Point, g:Graphics):void
 	{
-		g.lineTo(center.x + xPer * DrawTest2.WIDTH, center.y + yPer * DrawTest2.HEIGHT);
+		g.lineTo(center.x + xPer * DrawTest3.WIDTH, center.y + yPer * DrawTest3.HEIGHT);
 	}
 	
 	public function copy():IPointType
@@ -570,7 +512,7 @@ class Controller implements IPointType
 	public var ay:Number;
 	public function execute(center:Point, g:Graphics):void
 	{
-		g.curveTo(center.x + xPer * DrawTest2.WIDTH, center.y + yPer * DrawTest2.HEIGHT, center.x + ax * DrawTest2.WIDTH, center.y + ay * DrawTest2.HEIGHT);
+		g.curveTo(center.x + xPer * DrawTest3.WIDTH, center.y + yPer * DrawTest3.HEIGHT, center.x + ax * DrawTest3.WIDTH, center.y + ay * DrawTest3.HEIGHT);
 	}
 	
 	public function copy():IPointType
