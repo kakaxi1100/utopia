@@ -180,10 +180,22 @@ package org.ares.fireflight.base
 		 * @return 
 		 * 
 		 */		
-		public function distance(v:FFVector):Number
+		public function distance(v:FFVector, t:FFVector = null):Number
 		{
-			return this.minus(v).magnitude();
+			return this.minus(v, t).magnitude();
 		}
+		
+		/**
+		 *计算两点之间的距离平方
+		 * @param v
+		 * @return 
+		 * 
+		 */		
+		public function distanceSquare(v:FFVector, t:FFVector = null):Number
+		{
+			return this.minus(v, t).magnitudeSquare();
+		}
+		
 		/**
 		 *标准化矢量 
 		 * 不改变原始值，产生一个新值 

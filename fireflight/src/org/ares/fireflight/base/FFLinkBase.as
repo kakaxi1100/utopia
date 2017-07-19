@@ -29,7 +29,6 @@ package org.ares.fireflight.base
 		{
 			//注意方向
 			return mContact.secondParticle.position.minus(mContact.firstParticle.position, mTemp2).normalizeEquals(); 
-			 
 		}
 		
 		public function updateContact(dt:Number):int

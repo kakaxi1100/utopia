@@ -1,23 +1,57 @@
+/**
+ *圆形几何粒子
+ * 设计有问题, mCenter 和 mParticle 重复！
+ * 几何粒子必定是继承或者组合与粒子, 需要重新设计
+ * 
+ * 由圆形几何体和粒子组合而成 
+ * (为什么不用继承呢?哈哈哈, 不想用! 其实是因为写成这样不想改啦!并且用组合也没有什么不好.)
+ */
 package org.ares.fireflight.base.collision
 {
+	import flash.display.Graphics;
+	
+	import org.ares.fireflight.base.FFParticle;
 	import org.ares.fireflight.base.FFVector;
 
 	public class FFCollisionCircle
 	{
+		//粒子
+		private var mParticle:FFParticle;
 		//中心, 注意如果顶点是局部坐标那么算出来的就是局部坐标
 		//如果时世界坐标那么算出来的就是世界坐标
 		private var mCenter:FFVector;
 		//半径
 		private var mRadius:Number;
 		
+		//临时存储
 		private var mTemp1:FFVector = new FFVector();
 		private var mTemp2:FFVector = new FFVector();
-		public function FFCollisionCircle()
+		public function FFCollisionCircle(c:FFVector = null, r:Number = 0, p:FFParticle = null)
 		{
-			mCenter = new FFVector();
-			mRadius = 0;
+			mCenter = c == null ? new FFVector() :　c;
+			mRadius = r;
+			mParticle = p == null ? new FFParticle() : p;
+			mParticle.position.setTo(mCenter.x, mCenter.y);
 		}
 
+		public function update(d:Number):void
+		{
+			mParticle.integrate(d);
+			mCenter.setTo(mParticle.position.x, mParticle.position.y);
+		}
+		
+		public function draw(g:Graphics):void
+		{
+			g.beginFill(0x00ff00);
+			g.drawCircle(mCenter.x, mCenter.y, radius);
+			g.endFill();
+		}
+		
+		/**
+		 *寻找最小包围圆 
+		 * @param vertexs
+		 * 
+		 */		
 		public function updateCircle(vertexs:Vector.<FFVector>):void
 		{
 			approximateCircle(vertexs);
@@ -108,6 +142,16 @@ package org.ares.fireflight.base.collision
 		public function set radius(value:Number):void
 		{
 			mRadius = value;
+		}
+
+		public function get particle():FFParticle
+		{
+			return mParticle;
+		}
+
+		public function set particle(value:FFParticle):void
+		{
+			mParticle = value;
 		}
 
 

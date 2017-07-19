@@ -9,112 +9,125 @@ package org.ares.fireflight.base.collision
 		//轴向 [0] = e0  [1] = e1
 		private var mAxies:Vector.<FFVector>;
 		//每个轴的半宽 [0] = e0的长度     [1] = e1的长度
-		private var mHalfWidth:Vector.<Number>;
+		private var mHalfLength:Vector.<Number>;
 		
 		private var mTemp1:FFVector = new FFVector();
-		public function FFCollisionOBB()
+		public function FFCollisionOBB(center:FFVector = null, x:FFVector = null, y:FFVector = null, halfW:Number = 0, halfH:Number = 0)
 		{
+			mCenter = center == null ? new FFVector() : center;
+			
+			mAxies = new Vector.<FFVector>(2);
+			mAxies[0] = x == null ? new FFVector(1, 0) : x;
+			mAxies[1] = y == null ? new FFVector(0, 1) : y;
+			
+			mHalfLength = new Vector.<Number>(2);
+			mHalfLength[0] = halfW;
+			mHalfLength[1] = halfH;
 		}
 		
 		/**
-		 *OBB相交判断
-		 * 基于分离轴定理 （另外还可以根据 A-OBB 的所有顶点都在 B-OBB 的外面 来判断两个OBB 是否相交）
+		 *取得凸体的顶点集合，然后根据凸体的顶点集合可以算出值
+		 * 一定要是凸体(另外还有旋转卡尺算法可以更节约时间)
 		 * 
-		 * 分离轴定律
-		 * 原理：
-		 * 通俗来说，分离轴定理的原理就是：用光线从各个角度照射进行检测的两个物体，在垂直于光线的位置放置一堵墙，观察两个物体在墙上的投影，如果在某个角度下，
- 		 * 两者的投影不重叠，意味着这两个物体之间有空隙，两者不重叠，即没有发生碰撞。如果在所有角度下，这两个物体的投影都是重叠的，意味着两者重叠，即发生了碰撞。
-		 * 如果我们每个角度都对物体进行投影检测，这无疑是最保险的，但是这样做花费会非常大而且也是没有必要的。
-		 * 我们多次观察会发现，需要检测的投影轴都垂直于多边形的边，所以实际上需要的投影轴的数量等同于多边形的边的数量：
+		 * 原理: 
+		 * 凸多边形的最小包围矩形至少存在一条边与此凸多边形的某一条边共线
 		 * 
-		 * 以每条边的法向量为轴检测重叠情况 每个OBB有 4个轴向，但是其中2个与另外2个同轴只是方向相反，所以每个方块只需要检测2个点 
-		 * 两个OBB加起来总共要检测4 个轴
+		 * 步骤：
+		 * 1. 取得多边形的凸体
+		 * 2. 取得多边形的一条边视为包围盒的方向向量, 并得到垂直于改方向的正交轴
+		 * 3. 将全部多边形的顶点投影至这两个轴上, 计算出最大矩形的面积
+		 * 4. 测完每条边, 最小面积的相应边, 确定了最小面积包围矩形
 		 * 
-		 * 检测原理
-		 * 
-		 * 假如 两个OBB在轴上的投影半径大于，两个OBB中心在轴上的投影距离则两个OBB 相交
-		 * 否则只要 4 个轴中，只要有一个让它们不相交，则它们就不相交
-		 * 
-		 * 半径的计算方法为
-		 * 假设现在计算 A-e0 轴
-		 * A 的半径为 a.halfwidth
-		 * B 的半径为 b.halfwidth * |B-e0在A-e0 上的投影| + b.halfheight * |B-e1在A-e0 上的投影|
-		 * 注意是绝对值, 因为如果不是绝对值的话, 对角线的长度可能为短边, 需要画图得知
-		 * 在书中 12章中有我用纸做的笔记
-		 * 
-		 * 
-		 * @param obb
+		 * @param convexVexs
 		 * @return 
 		 * 
-		 */	
-		public function hitTestOBB(b:FFCollisionOBB):Boolean
+		 */		
+		public function updateOBB(convexVexs:Vector.<FFVector>):Number
 		{
-			var i:int = 0;
-			var dist:Number, ra:Number, rb:Number;
-			for( i = 0; i < 2; i++){
-				//先检测A-eX
-				//距离再A-eX上的投影
-				dist = Math.abs(this.mCenter.minus(b.mCenter, mTemp1).scalarMult(mAxies[i]));
-				ra = this.mHalfWidth[i];
-				rb = b.mHalfWidth[0] * Math.abs(b.mAxies[0].scalarMult(mAxies[i])) 
-					+ b.mHalfWidth[1] * Math.abs(b.mAxies[1].scalarMult(mAxies[i]));
+			var minArea:Number = Number.MAX_VALUE;
+			//循环计算每条边
+			for(var i:int = 0, j:int = convexVexs.length - 1; i < convexVexs.length; j = i, i++)
+			{
+				//计算e0轴 及 i-j轴作为的X轴和Y轴，此时 convexVexs[j] 点为坐标原点
+				var e0:FFVector = convexVexs[i].minus(convexVexs[j]);
+				//标准化
+				e0.normalizeEquals();
+				//计算e0的正交轴 e1作为Y轴,正交轴满足点积为0，此时 e1 已经是标准化向量（参考标准化公式） 
+				var e1:FFVector = new FFVector(-e0.y, e0.x);
 				
-				if(dist > ra + rb) {
-					return false;
+				//包围矩形的4个顶点
+				var mine0:Number = 0, maxe0:Number = 0, mine1:Number = 0, maxe1:Number = 0;
+				//计算每个点在 e0, e1 上的投影，找到矩形对应的4个顶点
+				for(var k:int = 0; k < convexVexs.length; k++)
+				{
+					//计算每个点相对于  j 点的位置算出在 e0-e1 坐标系下该点的坐标（即转换了坐标系 e0-e1）
+					var d:FFVector = convexVexs[k].minus(convexVexs[j]);
+					//算出点在 e0 轴上的投影, 即 k 点 对于 e0 标准化向量的点积
+					var dot:Number = d.scalarMult(e0);
+					//找出在 e0 轴上最大, 最小点
+					if(dot > maxe0)
+					{
+						maxe0 = dot;
+					}else if(dot < mine0)
+					{
+						mine0 = dot;
+					}
+					
+					//算出点在 e1 轴上的投影，即 k 点对于 e1 标准化向量的点积
+					dot = d.scalarMult(e1);
+					//找出在 e1 轴上的最大, 最小点
+					if(dot > maxe1)
+					{
+						maxe1 = dot;
+					}else if(dot < mine1)
+					{
+						mine1 = dot;
+					}
 				}
-				
-				//再检测B-eX
-				//距离再B-eX上的投影
-				dist = Math.abs(this.mCenter.minus(b.mCenter, mTemp1).scalarMult(b.mAxies[i]));
-				rb = b.mHalfWidth[i];
-				ra = mHalfWidth[0] * Math.abs(mAxies[0].scalarMult(b.mAxies[i])) 
-					+ mHalfWidth[1] * Math.abs(mAxies[1].scalarMult(b.mAxies[i]));
-				
-				if(dist > ra + rb) {
-					return false;
+				//算出面积
+				var area:Number = (maxe0 - mine0)*(maxe1 - mine1);
+				if(area < minArea)
+				{
+					minArea = area;
+					//中心点的算法
+					//1.先对于 e0-e1 坐标系，则是 X 坐标是 ，e0 上 min+max 的一半，同理  Y 坐标是 e1 上 min+max 的一半
+					//2.然后乘以 e0-e1的轴向，即得出相对于世界坐标系(0,0)点 e0-e1轴向上的分量
+					//3.然后两个分量相加，即得到中心点相对于世界坐标系(0,0)点的位置，最后再加上 j 点的坐标，算出偏移量
+					var tempx:FFVector = e0.mult((mine0 + maxe0)).mult(0.5);
+					var tempy:FFVector = e1.mult((mine1 + maxe1)).mult(0.5);
+					this.mCenter = convexVexs[j].plus(tempx.plus(tempy));
+					this.mHalfLength[0] = (maxe0 - mine0)*0.5;//半宽
+					this.mHalfLength[1] = (maxe1 - mine1)*0.5;//半高
+					this.axies[0] = e0;
+					this.axies[1] = e1;
 				}
 			}
-			
-			return true;
+			return minArea;
 		}
 		
+		public function get center():FFVector
+		{
+			return mCenter;
+		}
+
+		public function get halfLength():Vector.<Number>
+		{
+			return mHalfLength;
+		}
+
+		public function get axies():Vector.<FFVector>
+		{
+			return mAxies;
+		}
+
+		public function get x():FFVector
+		{
+			return mAxies[0];
+		}
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		public function get y():FFVector
+		{
+			return mAxies[1];
+		}
 	}
 }

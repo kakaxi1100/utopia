@@ -500,9 +500,9 @@ package org.ares.vernalbreeze
 		 * 
 		 * 由A向CD做垂线得h1， 由B向CD做垂线得h2
 		 * 由相似三角形的比可以得出 (注意符号,h1,h2 反号，所以是 h1-h2）
-		 * t = AP/AB = h1/h1 - h2
+		 * t = AP/AB = h1/(h1 - h2)
 		 * 以CD为底可以转化成面积(注意面积也是带符号的 所以减就是和)
-		 * t = (CD*h1*1/2)/(CD*h1*1/2) - (CD*h2*1/2) = △ACD/△ACD - △BCD
+		 * t = (CD*h1*1/2)/((CD*h1*1/2) - (CD*h2*1/2)) = △ACD/(△ACD - △BCD)
 		 * 
 		 * @param a
 		 * @param b
@@ -1136,7 +1136,7 @@ package org.ares.vernalbreeze
 		 * 
 		 * 在t时刻两球心之间的向量为
 		 * d(t) = (C0 + tV0) - (C1 + tV1) = (C0-C1)+t(V0 - V1)
-		 * 当向量d的长度等于圆半径之和是，二者相交
+		 * 当向量d的长度等于圆半径之和 时，二者相交
 		 * d(t) • d(t) = (r0 + r1)^2
 		 * 假设 s=C0-C1, v=V0-V1, r=r0+r1
 		 * (s+tv) • (s+tv) = r^2

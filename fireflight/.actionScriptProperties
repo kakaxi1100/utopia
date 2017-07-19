@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties analytics="false" mainApplicationPath="BoundingCircleTest.as" projectUUID="2b0b7dcf-c531-4eac-80ef-6fd874cc2762" version="11">
+<actionScriptProperties analytics="false" mainApplicationPath="CollisionBallsDemo.as" projectUUID="2b0b7dcf-c531-4eac-80ef-6fd874cc2762" version="11">
   <compiler additionalCompilerArguments="-locale en_US" advancedTelemetry="true" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" useFlashSDK="true" verifyDigests="true" warn="true">
     <compilerSourcePath>
       <compilerSourcePathEntry kind="1" linkType="1" path="lib/ape_a045/source"/>
@@ -34,6 +34,9 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
+    <application path="CollisionBallsDemo.as"/>
+    <application path="ContactTest4.as"/>
+    <application path="ClosestTest.as"/>
     <application path="BoundingCircleTest.as"/>
     <application path="SpringWithoutTest.as"/>
     <application path="RigidBodyTest.as"/>

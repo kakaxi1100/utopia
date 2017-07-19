@@ -27,7 +27,7 @@ package
 //			spherize(bg.bitmapData, dest.bitmapData);
 //			swirl(bg.bitmapData, dest.bitmapData);
 //			lighting(bg.bitmapData, dest.bitmapData);
-			mosaic(bg.bitmapData, dest.bitmapData);
+//			mosaic(bg.bitmapData, dest.bitmapData);
 		}
 		
 		private function mosaic(src:BitmapData, dest:BitmapData):void

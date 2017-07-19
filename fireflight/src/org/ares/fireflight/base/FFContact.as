@@ -27,6 +27,15 @@ package org.ares.fireflight.base
 			mName = name;
 			mParticles[0] = p1;
 			mParticles[1] = p2;
+			mRestitution = 1;
+		}
+			
+		public function destory():void
+		{
+			mParticles[0] = mParticles[1] = null;
+			mContactNormal = null;
+			mRestitution = 1;
+			mPenetration = 0;
 		}
 		
 		/**
@@ -159,10 +168,20 @@ package org.ares.fireflight.base
 		{
 			return mParticles[0];
 		}
+
+		public function set firstParticle(v:FFParticle):void
+		{
+			mParticles[0] = v;
+		}
 		
 		public function get secondParticle():FFParticle
 		{
 			return mParticles[1];
+		}
+		
+		public function set secondParticle(v:FFParticle):void
+		{
+			mParticles[1] = v;
 		}
 		
 		public function get name():String

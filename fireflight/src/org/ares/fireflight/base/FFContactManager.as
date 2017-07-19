@@ -17,12 +17,19 @@ package org.ares.fireflight.base
 		{
 			return instance ||= new FFContactManager();
 		}
+		
 		//创建contact
 		public function createContact(name:String):FFContact
 		{
 			var c:FFContact = new FFContact();
 			mContacts[name] = c;
 			return c;
+		}
+		
+		//取得碰撞
+		public function getContact(name:String):FFContact
+		{
+			return mContacts[name];
 		}
 		
 		//删除contact
