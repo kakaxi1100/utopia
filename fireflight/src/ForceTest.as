@@ -4,10 +4,10 @@ package
 	import flash.events.Event;
 	import flash.utils.getTimer;
 	
-	import org.ares.fireflight.base.FFFForceGravity;
-	import org.ares.fireflight.base.FFForceDrag;
-	import org.ares.fireflight.base.FFForceManager;
-	import org.ares.fireflight.base.FFVector;
+	import org.ares.fireflight.FFFForceGravity;
+	import org.ares.fireflight.FFForceDrag;
+	import org.ares.fireflight.FFForceManager;
+	import org.ares.fireflight.FFVector;
 	
 	import test.Shot;
 	

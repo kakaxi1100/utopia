@@ -11,12 +11,12 @@ package
 	import flash.geom.Point;
 	import flash.utils.getTimer;
 	
-	import org.ares.fireflight_v1.FFEmitter;
-	import org.ares.fireflight_v1.FFParticle;
-	import org.ares.fireflight_v1.manager.FFParticleManager;
-	import org.ares.fireflight_v1.manager.FFPayloadManager;
-	import org.ares.fireflight_v1.port.IRule;
-	import org.ares.fireflight_v1.test.RuleUp;
+	import org.ares.archive.fireflight_v1.FFEmitter;
+	import org.ares.archive.fireflight_v1.FFParticle;
+	import org.ares.archive.fireflight_v1.manager.FFParticleManager;
+	import org.ares.archive.fireflight_v1.manager.FFPayloadManager;
+	import org.ares.archive.fireflight_v1.port.IRule;
+	import org.ares.archive.fireflight_v1.test.RuleUp;
 	
 	[SWF(frameRate="30", backgroundColor="0",width="800",height="600")]
 	public class fireflight extends Sprite

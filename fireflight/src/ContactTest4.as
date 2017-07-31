@@ -4,9 +4,9 @@ package
 	import flash.events.Event;
 	import flash.utils.getTimer;
 	
-	import org.ares.fireflight.base.FFVector;
-	import org.ares.fireflight.base.collision.FFCollisionCircle;
-	import org.ares.fireflight.base.collision.FFCollisionDetector;
+	import org.ares.fireflight.FFVector;
+	import org.ares.fireflight.collision.FFCollisionCircle;
+	import org.ares.fireflight.collision.FFCollisionDetector;
 	
 	[SWF(frameRate="60", backgroundColor="0",width="800",height="600")]
 	public class ContactTest4 extends Sprite

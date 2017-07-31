@@ -11,7 +11,7 @@ package
 	[SWF(width="800", height="600", frameRate="120", backgroundColor="0xcccccc")]
 	public class BlurImageTest extends Sprite
 	{
-		[Embed(source="assets/surge.png")]
+		[Embed(source="assets/head.jpg")]
 		private var Background:Class;
 		
 		private var bg:Bitmap = new Background();
@@ -25,7 +25,7 @@ package
 //			blur(bg.bitmapData, dest.bitmapData);
 //			pinch(bg.bitmapData, dest.bitmapData);
 //			spherize(bg.bitmapData, dest.bitmapData);
-//			swirl(bg.bitmapData, dest.bitmapData);
+			swirl(bg.bitmapData, dest.bitmapData);
 //			lighting(bg.bitmapData, dest.bitmapData);
 //			mosaic(bg.bitmapData, dest.bitmapData);
 		}
@@ -128,7 +128,7 @@ package
 		private function swirl(src:BitmapData, dest:BitmapData):void
 		{
 			
-			var degree:int = 100;
+			var degree:int = 10;
 			var swirlDegree:Number = degree / 1000;//这是一个程度变量,需要根据实际情况调节
 			
 			var realX:int, realY:int;

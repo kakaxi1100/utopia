@@ -4,17 +4,17 @@ package
 	import flash.events.Event;
 	import flash.utils.getTimer;
 	
-	import org.ares.fireflight.base.FFContact;
-	import org.ares.fireflight.base.FFFForceGravity;
-	import org.ares.fireflight.base.FFForceManager;
-	import org.ares.fireflight.base.FFLinkBase;
-	import org.ares.fireflight.base.FFLinkCable;
-	import org.ares.fireflight.base.FFLinkManager;
-	import org.ares.fireflight.base.FFLinkRod;
-	import org.ares.fireflight.base.FFParticle;
-	import org.ares.fireflight.base.FFVector;
-	import org.ares.fireflight.base.collision.FFCollisionCircle;
-	import org.ares.fireflight.base.collision.FFCollisionDetector;
+	import org.ares.fireflight.FFContact;
+	import org.ares.fireflight.FFFForceGravity;
+	import org.ares.fireflight.FFForceManager;
+	import org.ares.fireflight.FFLinkBase;
+	import org.ares.fireflight.FFLinkCable;
+	import org.ares.fireflight.FFLinkManager;
+	import org.ares.fireflight.FFLinkRod;
+	import org.ares.fireflight.FFParticle;
+	import org.ares.fireflight.FFVector;
+	import org.ares.fireflight.collision.FFCollisionCircle;
+	import org.ares.fireflight.collision.FFCollisionDetector;
 	
 	[SWF(frameRate="60", backgroundColor="0",width="800",height="600")]
 	public class CollisionBallsDemo extends Sprite
@@ -70,11 +70,19 @@ package
 			FFLinkManager.getInstance().updateLink(dt);
 			FFForceManager.getIntsance().updateForce(dt);
 			
-			FFCollisionDetector.contactCircleCircle(cs[0], cs[1], dt);
-			FFCollisionDetector.contactCircleCircle(cs[1], cs[2], dt);
-			FFCollisionDetector.contactCircleCircle(cs[2], cs[3], dt);
-			FFCollisionDetector.contactCircleCircle(cs[3], cs[4], dt);
+			for(var m:int = 0; m < 50; m++){
+				for(var k:int = 0; k < cs.length; k++){
+					for(var j:int = k; j < cs.length; j++){
+						FFCollisionDetector.contactCircleCircle(cs[k], cs[j], dt);
+					}
+				}
+			}
 			
+//			FFCollisionDetector.contactCircleCircle(cs[0], cs[1], dt);
+//			FFCollisionDetector.contactCircleCircle(cs[1], cs[2], dt);
+//			FFCollisionDetector.contactCircleCircle(cs[2], cs[3], dt);
+//			FFCollisionDetector.contactCircleCircle(cs[3], cs[4], dt);
+//			
 			
 			dt = getTimer();
 		}

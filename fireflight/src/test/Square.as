@@ -2,7 +2,7 @@ package test
 {
 	import flash.display.Sprite;
 	
-	import org.ares.fireflight.base.FFRigidBody;
+	import org.ares.fireflight.FFRigidBody;
 	
 	public class Square extends Sprite
 	{

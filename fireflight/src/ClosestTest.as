@@ -2,10 +2,10 @@ package
 {
 	import flash.display.Sprite;
 	
-	import org.ares.fireflight.base.FFVector;
-	import org.ares.fireflight.base.collision.FFCollisionAABB;
-	import org.ares.fireflight.base.collision.FFCollisionDetector;
-	import org.ares.fireflight.base.collision.FFCollisionSegment;
+	import org.ares.fireflight.FFVector;
+	import org.ares.fireflight.collision.FFCollisionAABB;
+	import org.ares.fireflight.collision.FFCollisionDetector;
+	import org.ares.fireflight.collision.FFCollisionSegment;
 	
 	public class ClosestTest extends Sprite
 	{

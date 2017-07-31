@@ -3,8 +3,8 @@ package
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
-	import org.ares.fireflight.base.FFVector;
-	import org.ares.fireflight.base.collision.FFCollisionCircle;
+	import org.ares.fireflight.FFVector;
+	import org.ares.fireflight.collision.FFCollisionCircle;
 	
 	[SWF(frameRate="60", backgroundColor="0",width="800",height="600")]
 	public class BoundingCircleTest extends Sprite
