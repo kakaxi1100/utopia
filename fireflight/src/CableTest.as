@@ -34,15 +34,18 @@ package
 			addChild(shot2);
 			
 			var c:FFContact = new FFContact(shot1.p, shot2.p);
-			var link:FFLinkBase = new FFLinkCable("test", c, 100);
+//			var link:FFLinkBase = new FFLinkCable("test", c, 100);
+			var link:FFLinkBase = new FFLinkRod("test", c, 100);
 			FFLinkManager.getInstance().registerLink(link);
 			
-			var f:FFForceBase = new FFFForceGravity("G", new FFVector(0, 20000));
-			FFForceManager.getIntsance().registerForce(f);
+			var f:FFForceBase = new FFFForceGravity("G", new FFVector(0, 0));
+			var f2:FFForceBase = new FFFForceGravity("G2", new FFVector(20, -20));
+			FFForceManager.getIntsance().registerForce(f).registerForce(f2);
 			FFForceManager.getIntsance().getForce("G").addParticle(shot2.p);
+			FFForceManager.getIntsance().getForce("G2").addParticle(shot2.p);
 			
-//			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+//			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
 		}
 		
 		protected function onMouseClick(event:MouseEvent):void
@@ -57,11 +60,17 @@ package
 			this.graphics.moveTo(shot1.x, shot1.y);
 			this.graphics.lineTo(shot2.x, shot2.y);
 			
+			//注意顺序
+			//只要计算过位置就要被update！！
+			FFForceManager.getIntsance().updateForce(1/60);
 			shot1.update(1/60);
 			shot2.update(1/60);
-			
-			FFForceManager.getIntsance().updateForce(1/60);
+			trace(shot2.y);
 			FFLinkManager.getInstance().updateLink(1/60);
+			shot2.update(1/60);
+			trace(shot2.y);
+			trace("---------------------------");
+			
 		}
 	}
 }

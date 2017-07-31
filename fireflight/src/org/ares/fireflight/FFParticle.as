@@ -62,7 +62,7 @@ package org.ares.fireflight
 			//以FFForceAnchoredSpring为例
 			//错误的过程：
 			//假设第一次加速度是 400
-			// 第一帧  f = 400 p = 0 a = 400 v = 400
+			//第一帧  f = 400 p = 0 a = 400 v = 400
 			//第二帧 因为先计算 force f = 400(因为此时计算f时p = 0), p = 400  a = 400 v = 800
 			//第三帧 f = 380, p = 1200, a = 380 v = 1180
 			//第四帧 f = 380(因为此时计算f时p = 400) a = 380 v = 1560
@@ -79,11 +79,18 @@ package org.ares.fireflight
 			//计算加速度 f = ma a = f/m 所以当前的加速度等于初始设定的加速度加上a
 			//由于加速度就是 f/m 算出来的 所以不是积分式,其实这里能够简化,不必每帧计算
 			//只要再 力或者质量改变时计算即可
-			var tempAcc:FFVector = mAcceleration.clone(mTempVector);
-			tempAcc.plusScaledVector(mForceAccum,mInverseMass);
+			//加速度本来就是由力产生, 为什么需要克隆呢？
+			//如果时克隆的话, 在当前帧其它计算中要用到加速度, 则加速度值会不正确,如果初始是0则永远是0
+//			var tempAcc:FFVector = mAcceleration.clone(mTempVector);
+//			tempAcc.plusScaledVector(mForceAccum, mInverseMass);
+			//所以加速度公式修改如下
+			mAcceleration.setTo(mForceAccum.x * mInverseMass, mForceAccum.y * mInverseMass);
+			
 			//更新速度
 			//因为速度公式是  v = v0 + at, 所以可以采用积分式 v+=at
-			mVelocity.plusScaledVector(tempAcc, duration);
+			//由于上诉原因更改了加速度公式, 所以这里也要对应改一下
+//			mVelocity.plusScaledVector(tempAcc, duration);
+			mVelocity.plusScaledVector(mAcceleration, duration);
 			//速度受阻尼影响逐渐减小 v*=d
 			// 这里转移到用正真的阻尼力来计算
 			//mVelocity.multEquals(Math.pow(mDamping, duration));

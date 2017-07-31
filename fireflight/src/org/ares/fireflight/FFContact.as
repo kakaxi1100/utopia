@@ -44,8 +44,11 @@ package org.ares.fireflight
 		 */		
 		public function resolve(duration:Number):void
 		{
-			resolveVelocity(duration);
-			resolveInterpenetration(duration);
+			//只有碰撞到的物体才需要计算速度
+			if(resolveInterpenetration(duration))
+			{
+				resolveVelocity(duration);
+			}
 		}
 		
 		/**
@@ -79,10 +82,10 @@ package org.ares.fireflight
 		 * pa = mb/(ma + mb)*dn
 		 * pb = -ma/(ma + mb)*dn
 		 */		
-		public function resolveInterpenetration(duration:Number):void
+		public function resolveInterpenetration(duration:Number):Boolean
 		{
 			//物体没有接触
-			if(mPenetration <= 0) return;
+			if(mPenetration <= 0) return false;
 			//计算出物体的总质量
 			var totalInverseMass:Number = mParticles[0].inverseMass;
 			if(mParticles[1] != null)
@@ -92,7 +95,7 @@ package org.ares.fireflight
 			//假如物体都是无限质量的
 			if(totalInverseMass <= 0)
 			{
-				return;
+				return false;
 			}
 			//p(ma*mb)/(ma + mb)
 			var movePerIMass:FFVector = mContactNormal.mult(mPenetration/totalInverseMass, mTemp5);
@@ -103,11 +106,20 @@ package org.ares.fireflight
 				//粒子2跟法向相反
 				mParticles[1].position.minusEquals(movePerIMass.mult(mParticles[1].inverseMass, mTemp7));
 			}
+			
+			return true;
 		}
 		
 		/**
 		 *计算碰撞后物体的世界速度 
+		 * 物体碰撞之后的速度为
+		 * va' = va + Δva
+		 * vb' = vb + Δvb
 		 * 
+		 * Δva = I/ma
+		 * Δva = I/mb
+		 * 
+		 * I  = Δv总 * m总
 		 */		
 		public function resolveVelocity(duration:Number):void
 		{
@@ -136,7 +148,7 @@ package org.ares.fireflight
 				//2.比较碰撞后的速度和下一帧产生的速度的大小
 				newSeparatingVelocity += accCausedSepVelocity*mRestitution;
 				//3.如果反弹的速度比向下的还小, 那么他就静止了, 即没有反弹速度, 也可以说反弹速度为0
-				if(newSeparatingVelocity < 0)
+				if(newSeparatingVelocity <= 0)
 				{
 					newSeparatingVelocity = 0;
 				}
@@ -153,7 +165,7 @@ package org.ares.fireflight
 			if(totalInverseMass <= 0) return;
 			//计算出物体的冲量 Δv*ma*mb/(ma+mb)
 			var impluse:Number = deltaVelocity / totalInverseMass;
-			//计算冲量的方向
+			//计算冲量的方向(同时也包括了大小)
 			var implusePerIMass:FFVector = mContactNormal.mult(impluse, mTemp2);
 			//计算粒子的世界速度
 			mParticles[0].velocity.plusEquals(implusePerIMass.mult(mParticles[0].inverseMass, mTemp3));
