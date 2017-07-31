@@ -1,7 +1,7 @@
 package org.ares.vernalbreeze
 {
 	/**
-	 *粒子承载器
+	 *粒子承载器 
 	 * 承载器可以是一个矩形范围，粒子坐标是相对于承载起坐标的
 	 * 对应一个规则，和这个规则下有多少个粒子 
 	 * @author JuLi
