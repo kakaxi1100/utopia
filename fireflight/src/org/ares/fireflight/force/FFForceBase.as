@@ -1,5 +1,7 @@
-package org.ares.fireflight
+package org.ares.fireflight.force
 {
+	import org.ares.fireflight.FFParticle;
+
 	public class FFForceBase
 	{
 		protected var mPList:Vector.<FFParticle> = new Vector.<FFParticle>();

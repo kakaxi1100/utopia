@@ -4,13 +4,13 @@ package
 	import flash.events.Event;
 	import flash.utils.getTimer;
 	
-	import org.ares.fireflight.FFContact;
-	import org.ares.fireflight.FFContactManager;
-	import org.ares.fireflight.FFForceManager;
-	import org.ares.fireflight.FFLinkBase;
-	import org.ares.fireflight.FFLinkCable;
-	import org.ares.fireflight.FFLinkManager;
-	import org.ares.fireflight.FFLinkRod;
+	import org.ares.fireflight.contact.FFContact;
+	import org.ares.fireflight.contact.FFContactManager;
+	import org.ares.fireflight.force.FFForceManager;
+	import org.ares.fireflight.link.FFLinkBase;
+	import org.ares.fireflight.link.FFLinkCable;
+	import org.ares.fireflight.link.FFLinkManager;
+	import org.ares.fireflight.link.FFLinkRod;
 	
 	import test.Shot;
 	

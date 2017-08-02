@@ -1,5 +1,7 @@
-package org.ares.fireflight
+package org.ares.fireflight.rigid
 {
+	import org.ares.fireflight.FFVector;
+
 	public class FFRigidForceAnchoredSpring extends FFRigidForceBase
 	{
 		//链接到自己身上的点

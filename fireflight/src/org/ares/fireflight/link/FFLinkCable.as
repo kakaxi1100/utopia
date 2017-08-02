@@ -1,5 +1,7 @@
-package org.ares.fireflight
+package org.ares.fireflight.link
 {
+	import org.ares.fireflight.contact.FFContact;
+
 	/**
 	 *绳索
 	 * 小于最大长度时,没有改变

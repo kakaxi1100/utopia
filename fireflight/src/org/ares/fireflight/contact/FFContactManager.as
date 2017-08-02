@@ -1,4 +1,4 @@
-package org.ares.fireflight
+package org.ares.fireflight.contact
 {
 	/**
 	 *碰撞处理的管理器 

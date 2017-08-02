@@ -1,5 +1,8 @@
-package org.ares.fireflight
+package org.ares.fireflight.rigid
 {
+	import org.ares.fireflight.FFParticle;
+	import org.ares.fireflight.FFVector;
+
 	/**
 	 *刚体的重力发生器 
 	 * @author juli

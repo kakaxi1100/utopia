@@ -1,8 +1,8 @@
-package org.ares.fireflight.base
+package org.ares.archive.fireflight_v2
 {
-	import org.ares.fireflight.FFRigidBody;
-	import org.ares.fireflight.FFRigidForceBase;
-	import org.ares.fireflight.FFVector;
+	import org.ares.archive.fireflight_v2.FFRigidBody;
+	import org.ares.archive.fireflight_v2.FFRigidForceBase;
+	import org.ares.archive.fireflight_v2.FFVector;
 
 	public class FFRigidForceAnchoredSpring extends FFRigidForceBase
 	{

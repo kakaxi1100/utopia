@@ -1,5 +1,8 @@
-package org.ares.fireflight
+package org.ares.fireflight.link
 {
+	import org.ares.fireflight.contact.FFContact;
+	import org.ares.fireflight.FFVector;
+
 	/**
 	 *各种连杆的基类
 	 *  

@@ -1,5 +1,8 @@
-package org.ares.fireflight
+package org.ares.fireflight.link
 {
+	import org.ares.fireflight.contact.FFContact;
+	import org.ares.fireflight.FFVector;
+
 	public class FFLinkRod extends FFLinkBase
 	{
 		//长度误差在这个范围内, 则视为长度没有改变

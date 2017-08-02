@@ -1,5 +1,8 @@
-package org.ares.fireflight
+package org.ares.fireflight.force
 {
+	import org.ares.fireflight.FFParticle;
+	import org.ares.fireflight.FFVector;
+
 	/**
 	 *一端固定的弹簧
 	 * 和基本弹簧差不多, 只不过另一端是一个固定点 verctor替代了粒子的position 

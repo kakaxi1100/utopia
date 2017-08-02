@@ -1,5 +1,8 @@
-package org.ares.fireflight
+package org.ares.fireflight.force
 {
+	import org.ares.fireflight.FFParticle;
+	import org.ares.fireflight.FFVector;
+
 	/**
 	 *公式
 	 * 

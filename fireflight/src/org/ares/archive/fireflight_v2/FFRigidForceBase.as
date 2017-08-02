@@ -1,6 +1,6 @@
-package org.ares.fireflight.base
+package org.ares.archive.fireflight_v2
 {
-	import org.ares.fireflight.FFRigidBody;
+	import org.ares.archive.fireflight_v2.FFRigidBody;
 
 	public class FFRigidForceBase
 	{

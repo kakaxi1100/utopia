@@ -1,6 +1,6 @@
-package org.ares.fireflight.base.collision
+package org.ares.archive.fireflight_v2.collision
 {
-	import org.ares.fireflight.FFVector;
+	import org.ares.archive.fireflight_v2.FFVector;
 
 	public class FFCollisionOBB
 	{

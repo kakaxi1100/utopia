@@ -1,6 +1,6 @@
-package org.ares.fireflight.base
+package org.ares.archive.fireflight_v2
 {
-	import org.ares.fireflight.FFLinkBase;
+	import org.ares.archive.fireflight_v2.FFLinkBase;
 
 	public class FFLinkManager
 	{

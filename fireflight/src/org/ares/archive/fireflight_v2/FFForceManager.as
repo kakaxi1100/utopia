@@ -1,6 +1,6 @@
-package org.ares.fireflight.base
+package org.ares.archive.fireflight_v2
 {
-	import org.ares.fireflight.FFForceBase;
+	import org.ares.archive.fireflight_v2.FFForceBase;
 
 	/**
 	 *力管理器, 它管理力, 力管理粒子

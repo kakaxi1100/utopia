@@ -1,8 +1,8 @@
-package org.ares.fireflight.base
+package org.ares.archive.fireflight_v2
 {
-	import org.ares.fireflight.FFParticle;
-	import org.ares.fireflight.FFRigidForceBase;
-	import org.ares.fireflight.FFVector;
+	import org.ares.archive.fireflight_v2.FFParticle;
+	import org.ares.archive.fireflight_v2.FFRigidForceBase;
+	import org.ares.archive.fireflight_v2.FFVector;
 
 	/**
 	 *刚体的重力发生器 

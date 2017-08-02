@@ -1,13 +1,13 @@
-package org.ares.fireflight.base.collision
+package org.ares.archive.fireflight_v2.collision
 {
-	import org.ares.fireflight.FFContact;
-	import org.ares.fireflight.FFContactManager;
-	import org.ares.fireflight.FFVector;
-	import org.ares.fireflight.collision.FFCollisionAABB;
-	import org.ares.fireflight.collision.FFCollisionCircle;
-	import org.ares.fireflight.collision.FFCollisionOBB;
-	import org.ares.fireflight.collision.FFCollisionSegment;
-	import org.ares.fireflight.collision.FFCollisionTriangle;
+	import org.ares.archive.fireflight_v2.FFContact;
+	import org.ares.archive.fireflight_v2.FFContactManager;
+	import org.ares.archive.fireflight_v2.FFVector;
+	import org.ares.archive.fireflight_v2.collision.FFCollisionAABB;
+	import org.ares.archive.fireflight_v2.collision.FFCollisionCircle;
+	import org.ares.archive.fireflight_v2.collision.FFCollisionOBB;
+	import org.ares.archive.fireflight_v2.collision.FFCollisionSegment;
+	import org.ares.archive.fireflight_v2.collision.FFCollisionTriangle;
 
 	/**
 	 *工具类 

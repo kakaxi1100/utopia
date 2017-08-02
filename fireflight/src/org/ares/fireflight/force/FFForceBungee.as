@@ -1,5 +1,8 @@
-package org.ares.fireflight
+package org.ares.fireflight.force
 {
+	import org.ares.fireflight.FFParticle;
+	import org.ares.fireflight.FFVector;
+
 	/**
 	 *橡皮筋模拟
 	 * 就是长度小于静止长度的时候就不在给力了

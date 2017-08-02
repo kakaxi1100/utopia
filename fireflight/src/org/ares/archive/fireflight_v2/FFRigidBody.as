@@ -1,6 +1,6 @@
-package org.ares.fireflight.base
+package org.ares.archive.fireflight_v2
 {
-	import org.ares.fireflight.FFVector;
+	import org.ares.archive.fireflight_v2.FFVector;
 
 	/**
 	 *刚体与粒子的区别是它多了一个旋转

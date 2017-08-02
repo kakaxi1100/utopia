@@ -6,12 +6,12 @@
  * 由圆形几何体和粒子组合而成 
  * (为什么不用继承呢?哈哈哈, 不想用! 其实是因为写成这样不想改啦!并且用组合也没有什么不好.)
  */
-package org.ares.fireflight.base.collision
+package org.ares.archive.fireflight_v2.collision
 {
 	import flash.display.Graphics;
 	
-	import org.ares.fireflight.FFParticle;
-	import org.ares.fireflight.FFVector;
+	import org.ares.archive.fireflight_v2.FFParticle;
+	import org.ares.archive.fireflight_v2.FFVector;
 
 	public class FFCollisionCircle
 	{

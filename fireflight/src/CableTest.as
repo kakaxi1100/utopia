@@ -4,14 +4,14 @@ package
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
-	import org.ares.fireflight.FFContact;
-	import org.ares.fireflight.FFFForceGravity;
-	import org.ares.fireflight.FFForceBase;
-	import org.ares.fireflight.FFForceManager;
-	import org.ares.fireflight.FFLinkBase;
-	import org.ares.fireflight.FFLinkCable;
-	import org.ares.fireflight.FFLinkManager;
-	import org.ares.fireflight.FFLinkRod;
+	import org.ares.fireflight.contact.FFContact;
+	import org.ares.fireflight.force.FFForceGravity;
+	import org.ares.fireflight.force.FFForceBase;
+	import org.ares.fireflight.force.FFForceManager;
+	import org.ares.fireflight.link.FFLinkBase;
+	import org.ares.fireflight.link.FFLinkCable;
+	import org.ares.fireflight.link.FFLinkManager;
+	import org.ares.fireflight.link.FFLinkRod;
 	import org.ares.fireflight.FFVector;
 	
 	import test.Shot;
@@ -38,8 +38,8 @@ package
 			var link:FFLinkBase = new FFLinkRod("test", c, 100);
 			FFLinkManager.getInstance().registerLink(link);
 			
-			var f:FFForceBase = new FFFForceGravity("G", new FFVector(0, 0));
-			var f2:FFForceBase = new FFFForceGravity("G2", new FFVector(20, -20));
+			var f:FFForceBase = new FFForceGravity("G", new FFVector(0, 0));
+			var f2:FFForceBase = new FFForceGravity("G2", new FFVector(20, -20));
 			FFForceManager.getIntsance().registerForce(f).registerForce(f2);
 			FFForceManager.getIntsance().getForce("G").addParticle(shot2.p);
 			FFForceManager.getIntsance().getForce("G2").addParticle(shot2.p);

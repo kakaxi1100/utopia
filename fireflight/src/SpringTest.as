@@ -4,11 +4,11 @@ package
 	import flash.events.Event;
 	import flash.utils.getTimer;
 	
-	import org.ares.fireflight.FFFForceGravity;
-	import org.ares.fireflight.FFForceAnchoredSpring;
-	import org.ares.fireflight.FFForceBungee;
-	import org.ares.fireflight.FFForceDrag;
-	import org.ares.fireflight.FFForceManager;
+	import org.ares.fireflight.force.FFForceGravity;
+	import org.ares.fireflight.force.FFForceAnchoredSpring;
+	import org.ares.fireflight.force.FFForceBungee;
+	import org.ares.fireflight.force.FFForceDrag;
+	import org.ares.fireflight.force.FFForceManager;
 	import org.ares.fireflight.FFVector;
 	
 	import test.Shot;

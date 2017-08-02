@@ -1,5 +1,7 @@
-package org.ares.fireflight
+package org.ares.fireflight.rigid
 {
+	import org.ares.fireflight.FFVector;
+
 	/**
 	 *刚体与粒子的区别是它多了一个旋转
 	 * 旋转是要基于原点(注册点)和受力位置来改变rotation的

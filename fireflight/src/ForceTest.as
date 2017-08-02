@@ -4,9 +4,9 @@ package
 	import flash.events.Event;
 	import flash.utils.getTimer;
 	
-	import org.ares.fireflight.FFFForceGravity;
-	import org.ares.fireflight.FFForceDrag;
-	import org.ares.fireflight.FFForceManager;
+	import org.ares.fireflight.force.FFForceGravity;
+	import org.ares.fireflight.force.FFForceDrag;
+	import org.ares.fireflight.force.FFForceManager;
 	import org.ares.fireflight.FFVector;
 	
 	import test.Shot;
@@ -29,7 +29,7 @@ package
 			changeType("PISTOL");
 			dt = getTimer();
 			
-			FFForceManager.getIntsance().registerForce(new FFFForceGravity("G", new FFVector(0, 20))).registerForce(new FFForceDrag("F", 0.01, 0.001));
+			FFForceManager.getIntsance().registerForce(new FFForceGravity("G", new FFVector(0, 20))).registerForce(new FFForceDrag("F", 0.01, 0.001));
 			
 			FFForceManager.getIntsance().getForce("G").addParticle(shot.p).addParticle(shot2.p);
 			FFForceManager.getIntsance().getForce("F").addParticle(shot.p);

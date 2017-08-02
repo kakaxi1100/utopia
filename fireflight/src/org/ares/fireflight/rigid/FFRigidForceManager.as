@@ -1,33 +1,24 @@
-package org.ares.fireflight
+package org.ares.fireflight.rigid
 {
 	/**
-	 *力管理器, 它管理力, 力管理粒子
-	 * 
-	 * 它有以下几个方法:
-	 * 注册力,如果你要使用一种力,那么必须要先注册它
-	 * 取得力
-	 * 删除力,删除力之后必须重新注册力才行
-	 * 删除所有力
-	 * 清除力,清除力下面的所有粒子,无需重新注册
-	 * 清除所有力
-	 *  
+	 *管理刚体所受的力 
 	 * @author juli
 	 * 
 	 */	
-	public class FFForceManager
+	public class FFRigidForceManager
 	{
 		private var forces:Object = {};
-		private static var instance:FFForceManager = null;
-		public function FFForceManager()
+		private static var instance:FFRigidForceManager = null;
+		public function FFRigidForceManager()
 		{
 			if(instance != null)
 			{
-				throw Error("FFForceManager 已经被创建过了, 它只能被创建一次！");
+				throw Error("FFRigidForceManager 已经被创建过了, 它只能被创建一次！");
 			}
 		}
-		public static function getIntsance():FFForceManager
+		public static function getIntsance():FFRigidForceManager
 		{
-			return instance ||= new FFForceManager();
+			return instance ||= new FFRigidForceManager();
 		}
 		/**
 		 *注册力
@@ -35,7 +26,7 @@ package org.ares.fireflight
 		 * @param f
 		 * 
 		 */		
-		public function registerForce(f:FFForceBase):FFForceManager
+		public function registerForce(f:FFRigidForceBase):FFRigidForceManager
 		{
 			forces[f.name] = f;
 			return instance;
@@ -46,7 +37,7 @@ package org.ares.fireflight
 		 * @param name
 		 * 
 		 */		
-		public function getForce(name:String):FFForceBase
+		public function getForce(name:String):FFRigidForceBase
 		{
 			return forces[name];
 		}
@@ -90,7 +81,7 @@ package org.ares.fireflight
 		
 		public function updateForce(dt:Number):void
 		{
-			for each(var o:FFForceBase in forces)
+			for each(var o:FFRigidForceBase in forces)
 			{
 				o.update(dt);
 			}

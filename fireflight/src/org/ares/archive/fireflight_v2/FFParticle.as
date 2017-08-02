@@ -1,6 +1,6 @@
-package org.ares.fireflight.base
+package org.ares.archive.fireflight_v2
 {
-	import org.ares.fireflight.FFVector;
+	import org.ares.archive.fireflight_v2.FFVector;
 
 	/**
 	 *速度的设定方式 是按 m/s 来设定的， 假设帧频是 60fps

@@ -1,6 +1,6 @@
-package org.ares.fireflight.base
+package org.ares.archive.fireflight_v2
 {
-	import org.ares.fireflight.FFContact;
+	import org.ares.archive.fireflight_v2.FFContact;
 
 	/**
 	 *碰撞处理的管理器 

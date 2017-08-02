@@ -1,5 +1,7 @@
-package org.ares.fireflight
+package org.ares.fireflight.contact
 {
+	import org.ares.fireflight.FFParticle;
+	import org.ares.fireflight.FFVector;
 	
 	public class FFContact
 	{
@@ -151,6 +153,7 @@ package org.ares.fireflight
 				if(newSeparatingVelocity <= 0)
 				{
 					newSeparatingVelocity = 0;
+					//这里是否应该直接把它们的速度置为0, 因为已经resolve它们的距离了？？？？
 				}
 			}
 			//计算出速度的总的变化量

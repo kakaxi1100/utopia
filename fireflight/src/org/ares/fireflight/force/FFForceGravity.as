@@ -1,15 +1,18 @@
-package org.ares.fireflight
+package org.ares.fireflight.force
 {
+	import org.ares.fireflight.FFParticle;
+	import org.ares.fireflight.FFVector;
+
 	/**
 	 *重力是速度乘以粒子的质量 
 	 * @author juli
 	 * 
 	 */	
-	public class FFFForceGravity extends FFForceBase
+	public class FFForceGravity extends FFForceBase
 	{
 		private var mGravity:FFVector;//重力
 		private var mTemp:FFVector = new FFVector();//临时存储 避免额外开销
-		public function FFFForceGravity(name:String, g:FFVector)
+		public function FFForceGravity(name:String, g:FFVector)
 		{
 			super(name);
 			mGravity = g;

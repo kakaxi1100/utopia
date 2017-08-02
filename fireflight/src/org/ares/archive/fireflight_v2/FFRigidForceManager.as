@@ -1,6 +1,6 @@
-package org.ares.fireflight.base
+package org.ares.archive.fireflight_v2
 {
-	import org.ares.fireflight.FFRigidForceBase;
+	import org.ares.archive.fireflight_v2.FFRigidForceBase;
 
 	/**
 	 *管理刚体所受的力 
