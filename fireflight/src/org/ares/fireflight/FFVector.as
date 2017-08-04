@@ -234,10 +234,12 @@ package org.ares.fireflight
 			return (this.x == v.x && this.y == v.y);
 		}
 		
-		public function setTo(px:Number, py:Number):void
+		public function setTo(px:Number, py:Number):FFVector
 		{
 			x = px;
 			y = py;
+			
+			return this;
 		}
 		
 		public function clear():void

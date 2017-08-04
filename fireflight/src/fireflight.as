@@ -1,3 +1,10 @@
+/**
+ *8/4/2017
+ * 
+ * 物理引擎 第二阶段结束, 又要告别一个段落咯！
+ * 
+ *  
+ */
 package
 {
 	import flash.display.Bitmap;

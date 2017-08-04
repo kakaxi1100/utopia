@@ -17,22 +17,17 @@ package org.ares.fireflight.collision
 			mRadius = r;
 		}
 		
+		override public function update(dt:Number):void
+		{
+			prev.setTo(this.position.x, this.position.y);
+			super.update(dt);
+		}
+		
 		override public function draw(g:Graphics):void
 		{
 			g.beginFill(0x00ff00, 0.8);
 			g.drawCircle(this.position.x, this.position.y, mRadius);
 			g.endFill();
-		}
-		
-		override public function hitTest(c:FFCollisionGeometry):Boolean
-		{
-			//先进行动态测试
-			if(c is FFCollisionCircle)
-			{
-				
-			}
-			
-			return true;
 		}
 		
 		public function get radius():Number

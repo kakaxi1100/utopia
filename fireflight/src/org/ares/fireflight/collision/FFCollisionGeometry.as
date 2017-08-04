@@ -7,7 +7,13 @@ package org.ares.fireflight.collision
 	
 	public class FFCollisionGeometry extends FFParticle
 	{
-		public var prevPos:FFVector = new FFVector();
+		//前一帧的位置
+		public var prev:FFVector = new FFVector();
+		//样本
+		public var sample:FFVector = new FFVector();
+		//采样个数
+		public var multisample:int = 0;
+		
 		public function FFCollisionGeometry()
 		{
 			super();
@@ -22,10 +28,6 @@ package org.ares.fireflight.collision
 		{
 			super.integrate(dt);
 		}
-		
-		public function hitTest(c:FFCollisionGeometry):Boolean
-		{
-			return false;
-		}
+	
 	}
 }
