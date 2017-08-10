@@ -27,8 +27,10 @@ package
 		private var GH:Number = 64;
 		private var GW:Number = 64;
 		private var map:Array = [[1,1,1,1], [0,0,0,0], [0,0,0,0], [0,0,0,0]];
+		private var mapGrid:Array = [];
 		
 		private var grids:Array = [];
+		private var ray:Ray;
 		public function RayCastingTest()
 		{
 			super();
@@ -41,7 +43,9 @@ package
 			s.addChild(player);
 			
 			for(var i:int = 0; i < map.length; i++){
+				mapGrid[i] = [];
 				for(var j:int = 0; j < map[0].length; j++){
+					
 					var t:int = map[i][j];
 					var g:Grid = new Grid(t);
 					g.row = i;
@@ -50,36 +54,94 @@ package
 					g.x = j * 64;
 					g.y = i * 64;
 					s.addChild(g);
+					mapGrid[i][j] = g;
 				}
 			}
 			
-			var r:Ray = new Ray(-60, 96, 224);
-			s.addChild(r);
+			ray = new Ray(-60, 96, 224);
+			s.addChild(ray);
 
+			checkCrossPoint();
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onMouseKeyDown);
 		}
 		
 		protected function onMouseKeyDown(event:KeyboardEvent):void
 		{
-		}		
+		}
+		
+		private function checkCrossPoint():void
+		{
+			var startRow:int = player.row;
+			var startCol:int = player.col;
+			var i:int = 0;
+			var g:Grid;
+			var dot:Dot;
+			//upward
+			if(ray.dir < 0)
+			{
+				for(i = startRow; i >= 0; i-- )
+				{
+						g = mapGrid[i][0];
+						dot = new Dot();
+						dot.y = g.upLine;
+						dot.x = ray.getXByYPoint(dot.y);
+						
+						s.addChild(dot);
+				}
+			}
+			//rightward
+			if(ray.dir <0 && ray.dir >= -90)
+			{
+				for(i = startCol; i < mapGrid[0].length; i++)
+				{
+					g = mapGrid[0][i];
+					dot = new Dot();
+					dot.x = g.leftLine;
+					dot.y = ray.getYByXPoint(dot.x);
+					
+					s.addChild(dot);
+				}
+			}
+		}
 
 	}
 }
 import flash.display.Sprite;
 
+class Dot extends Sprite
+{
+	public function Dot()
+	{
+		this.graphics.lineStyle(1,0xFFFF00);
+		this.graphics.drawCircle(0, 0, 5);
+	}
+}
+
 class Ray extends Sprite
 {
 	public var dir:Number = 0;
 	public var k:Number = 0;
+	public var b:Number = 0;
 	public function Ray(d:Number, px:Number, py:Number)
 	{
 		this.x = px;
 		this.y = py;
 		dir = d;
 		k = Math.tan(dir * Math.PI / 180);
+		b = this.y - k * this.x;
 		
 		this.graphics.lineStyle(1,0x8B0000);
 		this.graphics.lineTo(1000, 1000 * k);
+	}
+	
+	public function getXByYPoint(py:Number):Number
+	{
+		return (py - b) / k;
+	}
+	
+	public function getYByXPoint(px:Number):Number
+	{
+		return k * px + b;
 	}
 }
 
@@ -89,6 +151,16 @@ class Player extends Sprite
 	{
 		this.graphics.lineStyle(1, 0x006400);
 		this.graphics.drawCircle(0,0, 20);
+	}
+	
+	public function get row():int
+	{
+		return this.y / 64;
+	}
+	
+	public function get col():int
+	{
+		return this.x / 64
 	}
 }
 
@@ -112,6 +184,26 @@ class Grid extends Sprite
 			this.graphics.lineTo(0, 64);
 			this.graphics.lineTo(0, 0);
 		}
+	}
+	
+	public function get upLine():Number
+	{
+		return this.y;
+	}
+	
+	public function get downLine():Number
+	{
+		return this.y + 63;
+	}
+	
+	public function get leftLine():Number
+	{
+		return this.x;
+	}
+	
+	public function get rightLine():Number
+	{
+		return this.x + 63;
 	}
 }
 
