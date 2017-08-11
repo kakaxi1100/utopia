@@ -96,7 +96,7 @@ package
 				{
 					g = mapGrid[0][i];
 					dot = new Dot();
-					dot.x = g.leftLine;
+					dot.x = g.rightLine;
 					dot.y = ray.getYByXPoint(dot.x);
 					
 					s.addChild(dot);
@@ -113,7 +113,7 @@ class Dot extends Sprite
 	public function Dot()
 	{
 		this.graphics.lineStyle(1,0xFFFF00);
-		this.graphics.drawCircle(0, 0, 5);
+		this.graphics.drawCircle(0, 0, 2);
 	}
 }
 
