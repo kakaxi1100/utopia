@@ -31,16 +31,24 @@ package
 		
 		private var grids:Array = [];
 		private var ray:Ray;
+		private var rayList:Array = [];
+		
+		private var selectedGrid:Array = [];
+		private var slices:Array = [];
+		private var s2:Sprite = new Sprite();
 		public function RayCastingTest()
 		{
 			super();
-			addChild(s);
+//			addChild(s);
 			s.x = 100;
 			s.y = 5;
 			
 			player.x = 96;
 			player.y = 224;
 			s.addChild(player);
+			
+			addChild(s2);
+			s2.graphics.lineStyle(1, 0x00ff00);
 			
 			for(var i:int = 0; i < map.length; i++){
 				mapGrid[i] = [];
@@ -58,10 +66,23 @@ package
 				}
 			}
 			
-			ray = new Ray(-60, 96, 224);
-			s.addChild(ray);
-
-			checkCrossPoint();
+			for(var r:Number = 0, k:int = 0; r < 60; r += 60/320, k++)
+			{
+				ray = new Ray(-60 - r, 96, 224);
+				ray.index = k;
+				rayList[k] = ray;
+				s.addChild(ray);
+				checkCrossPoint(ray);
+			}
+			
+			for(var n : int = 0; n < selectedGrid.length; n++)
+			{
+				if(selectedGrid[n] == null) continue;
+				var projH:Number = 64/selectedGrid[n] * 277;
+				s2.graphics.moveTo(n, 0);
+				s2.graphics.lineTo(n, projH);
+			}
+			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onMouseKeyDown);
 		}
 		
@@ -69,37 +90,93 @@ package
 		{
 		}
 		
-		private function checkCrossPoint():void
+		private function checkCrossPoint(ray:Ray):void
 		{
 			var startRow:int = player.row;
 			var startCol:int = player.col;
 			var i:int = 0;
 			var g:Grid;
+			var temp:Grid;
 			var dot:Dot;
 			//upward
 			if(ray.dir < 0)
 			{
-				for(i = startRow; i >= 0; i-- )
+				for(i = startRow - 1; i >= 0; i-- )
 				{
-						g = mapGrid[i][0];
-						dot = new Dot();
-						dot.y = g.upLine;
-						dot.x = ray.getXByYPoint(dot.y);
+					g = mapGrid[i][0];
+					dot = new Dot();
+					dot.y = g.downLine;
+					dot.x = ray.getXByYPoint(dot.y);
+					ray.end.setTo(dot.x, dot.x);
+					try{
+						temp = mapGrid[i][Math.floor(dot.x / 64)];
 						
-						s.addChild(dot);
+						if(temp.type == 1)
+						{
+							selectedGrid[ray.index] = ray.getLength();
+							s.addChild(dot);
+							continue;
+						}
+					}catch(e:Error){
+						
+					}
 				}
 			}
+			
 			//rightward
-			if(ray.dir <0 && ray.dir >= -90)
+			if(ray.dir <=0 && ray.dir >= -90)
 			{
-				for(i = startCol; i < mapGrid[0].length; i++)
+				for(i = startCol + 1; i < mapGrid[0].length; i++)
+				{
+					g = mapGrid[0][i];
+					dot = new Dot();
+					dot.x = g.leftLine;
+					dot.y = ray.getYByXPoint(dot.x);
+					ray.end.setTo(dot.x, dot.x);
+					try{
+						temp = mapGrid[Math.floor(dot.y / 64)][i];
+						if(temp.type == 1)
+						{
+							if(selectedGrid[ray.index] == null){
+								selectedGrid[ray.index] = ray.getLength();
+							}else if(selectedGrid[ray.index] > ray.getLength()){
+								selectedGrid[ray.index] = ray.getLength();
+							}
+							s.addChild(dot);
+							continue;
+						}
+					}catch(e:Error){
+						
+					}
+				}
+			}
+			
+			//leftward
+			if(ray.dir <-90 && ray.dir >= -180)
+			{
+				for(i = startCol - 1; i >=0; i--)
 				{
 					g = mapGrid[0][i];
 					dot = new Dot();
 					dot.x = g.rightLine;
 					dot.y = ray.getYByXPoint(dot.x);
-					
-					s.addChild(dot);
+					ray.end.setTo(dot.x, dot.x);
+					try{
+						temp = mapGrid[Math.floor(dot.y / 64)][i];
+						
+						if(temp.type == 1)
+						{
+							if(selectedGrid[ray.index] == null){
+								selectedGrid[ray.index] = ray.getLength();
+							}else if(selectedGrid[ray.index] > ray.getLength()){
+								selectedGrid[ray.index] = ray.getLength();
+							}
+							s.addChild(dot);
+							continue;
+						}
+					}catch(e:Error){
+						
+					}
 				}
 			}
 		}
@@ -107,6 +184,7 @@ package
 	}
 }
 import flash.display.Sprite;
+import flash.geom.Point;
 
 class Dot extends Sprite
 {
@@ -119,9 +197,12 @@ class Dot extends Sprite
 
 class Ray extends Sprite
 {
+	public var index:int = -1;
 	public var dir:Number = 0;
 	public var k:Number = 0;
 	public var b:Number = 0;
+	
+	public var end:Point = new Point();
 	public function Ray(d:Number, px:Number, py:Number)
 	{
 		this.x = px;
@@ -130,8 +211,25 @@ class Ray extends Sprite
 		k = Math.tan(dir * Math.PI / 180);
 		b = this.y - k * this.x;
 		
+		
 		this.graphics.lineStyle(1,0x8B0000);
-		this.graphics.lineTo(1000, 1000 * k);
+		if(dir < 0)
+		{
+			if(dir >= -90)
+			{
+				this.graphics.lineTo(1000, 1000 * k);
+			}else{
+				this.graphics.lineTo(-1000, -1000 * k);
+			}
+		}
+	}
+	
+	public function getLength():Number
+	{
+		var dx:Number = end.x - this.x;
+		var dy:Number = end.y - this.y;
+		
+		return Math.sqrt(dx*dx + dy*dy);
 	}
 	
 	public function getXByYPoint(py:Number):Number
