@@ -21,17 +21,6 @@ package
 			super();
 			this.graphics.lineStyle(2, 0xFFFFFF, 0.8);
 			
-			//这是三条平行线
-//			l = new Line(new Point(100,100), new Point(300, 300));
-//			l.draw(this.graphics);
-//			
-//			l = new Line(new Point(150,50), new Point(350, 250));
-//			l.draw(this.graphics);
-//			
-//			l = new Line(new Point(50,150), new Point(250, 350));
-//			l.draw(this.graphics);
-			
-			
 			l = new Line(new Point(100,100), new Point(300, 300));
 			l.draw(this.graphics);
 			pre = l.a;
