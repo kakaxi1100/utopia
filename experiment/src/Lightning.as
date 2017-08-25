@@ -21,7 +21,7 @@ package
 			super();
 			this.graphics.lineStyle(2, 0xFFFFFF, 0.8);
 			
-			l = new Line(new Point(100,100), new Point(300, 300));
+			l = new Line(new Point(200,100), new Point(300, 300));
 			l.draw(this.graphics);
 			pre = l.a;
 			var i:int;
@@ -29,6 +29,7 @@ package
 			
 			var r:Number;			
 			//这个是线上的t值
+			//这里可以采取随机步进
 			for(i = 0; i < l.length() / 20; i++)
 			{
 				r = 20/l.length();
@@ -120,6 +121,7 @@ package
 		{
 			if(index < list.length)
 			{
+				//这里可以换成随机步进
 				var offset:Number = Math.random() * 40 - 20;;
 				t += list[index];
 				index++;
