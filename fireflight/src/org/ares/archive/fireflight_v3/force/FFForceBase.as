@@ -1,6 +1,6 @@
-package org.ares.fireflight.force
+package org.ares.archive.fireflight_v3.force
 {
-	import org.ares.fireflight.FFParticle;
+	import org.ares.archive.fireflight_v3.FFParticle;
 
 	public class FFForceBase
 	{

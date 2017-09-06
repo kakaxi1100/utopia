@@ -1,8 +1,8 @@
-package org.ares.fireflight.collision
+package org.ares.archive.fireflight_v3.collision
 {
 	import flash.display.Graphics;
 	
-	import org.ares.fireflight.FFVector;
+	import org.ares.archive.fireflight_v3.FFVector;
 
 	public class FFCollisionSegment extends FFCollisionGeometry
 	{

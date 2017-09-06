@@ -1,6 +1,6 @@
-package org.ares.fireflight.rigid
+package org.ares.archive.fireflight_v3.rigid
 {
-	import org.ares.fireflight.FFVector;
+	import org.ares.archive.fireflight_v3.FFVector;
 
 	/**
 	 *刚体与粒子的区别是它多了一个旋转

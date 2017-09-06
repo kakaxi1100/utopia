@@ -2,7 +2,7 @@ package test
 {
 	import flash.display.Sprite;
 	
-	import org.ares.fireflight.FFParticle;
+	import org.ares.archive.fireflight_v3.FFParticle;
 	
 	public class Shot extends Sprite
 	{

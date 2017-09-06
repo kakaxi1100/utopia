@@ -1,4 +1,4 @@
-package org.ares.fireflight
+package org.ares.archive.fireflight_v3
 {
 	/**
 	 *速度的设定方式 是按 m/s 来设定的， 假设帧频是 60fps

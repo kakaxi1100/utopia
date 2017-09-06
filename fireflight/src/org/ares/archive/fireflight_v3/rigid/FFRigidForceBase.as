@@ -1,4 +1,4 @@
-package org.ares.fireflight.rigid
+package org.ares.archive.fireflight_v3.rigid
 {
 	public class FFRigidForceBase
 	{

@@ -1,10 +1,10 @@
-package org.ares.fireflight.collision
+package org.ares.archive.fireflight_v3.collision
 {
-	import org.ares.fireflight.FFParticle;
-	import org.ares.fireflight.FFUtils;
-	import org.ares.fireflight.FFVector;
-	import org.ares.fireflight.contact.FFContact;
-	import org.ares.fireflight.contact.FFContactManager;
+	import org.ares.archive.fireflight_v3.FFParticle;
+	import org.ares.archive.fireflight_v3.FFUtils;
+	import org.ares.archive.fireflight_v3.FFVector;
+	import org.ares.archive.fireflight_v3.contact.FFContact;
+	import org.ares.archive.fireflight_v3.contact.FFContactManager;
 
 	/**
 	 *工具类 

@@ -7,11 +7,11 @@ package
 	import flash.events.KeyboardEvent;
 	import flash.utils.getTimer;
 	
-	import org.ares.fireflight.force.FFForceAnchoredSpring;
-	import org.ares.fireflight.force.FFForceDrag;
-	import org.ares.fireflight.rigid.FFRigidForceAnchoredSpring;
-	import org.ares.fireflight.rigid.FFRigidForceManager;
-	import org.ares.fireflight.FFVector;
+	import org.ares.archive.fireflight_v3.force.FFForceAnchoredSpring;
+	import org.ares.archive.fireflight_v3.force.FFForceDrag;
+	import org.ares.archive.fireflight_v3.rigid.FFRigidForceAnchoredSpring;
+	import org.ares.archive.fireflight_v3.rigid.FFRigidForceManager;
+	import org.ares.archive.fireflight_v3.FFVector;
 	
 	import test.Square;
 	

@@ -25,7 +25,7 @@ package
 		private var back:Bitmap = new Bitmap(new BitmapData(stage.stageWidth, stage.stageHeight, false, 0));
 		private var object3D:Objective;
 		
-		private var worldPos:CPoint3D = new CPoint3D(0,0,400);
+		private var worldPos:CPoint3D = new CPoint3D(0,200,100);
 		private var camera:EulerCamera = new EulerCamera(new CPoint3D(0,200,0), new CPoint3D(0,0,0));
 		
 		public function WireframeNew()
@@ -114,7 +114,7 @@ package
 			//1.世界坐标变换
 			transforToWorld(object3D, worldPos);
 			//2.背面消除
-//			hidingSide();
+			hidingSide();
 			//3.相机坐标变换
 			transforToCamera(object3D, camera);
 			//4.透视投影

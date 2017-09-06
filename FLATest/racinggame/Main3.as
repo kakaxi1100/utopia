@@ -1,37 +1,41 @@
 ﻿package 
 {
-    import flash.display.*;
-    import flash.events.*;
+	import flash.display.*;
+	import flash.events.*;
+	import flash.geom.Point;
+	import fl.motion.easing.Linear;
 
-    public class Main3 extends MovieClip
-    {
+	public class Main3 extends MovieClip
+	{
 		private var lines:Array = [];
-		private var d:Number = 415;
-		private var h:Number = 10;
-        public function Main3()
-        {
-			var index = 0;
-			for(var i:int = 0; i < 150; i++)
+		private var linesLength:int = 150;
+		private var camera:Object = {"y":100};
+		private var dist:Number = 415;
+		public function Main3()
+		{
+			var i:int;
+			for (i = 0; i < linesLength; i++)
 			{
-				var r:Road = new Road();
-				r.z = i * 5 + d;
-				
-				if(i % 10 == 0)
-				{
-					index ^= 1;
-				}
-				r.gotoAndStop(index + 1);
-				addChild(r);
-				
-				//Calculate Y
-				//Calculate X
+				var l:Road = new Road();
+				l.stop();
+				l.cx = stage.stageWidth / 2;
+				l.cy = 0 - camera.y;
+				l.cz = dist + i;
+				addChild(l);
+				//caculate X
+				l.x = l.cx;
+				//caculate Y
+				l.y = stage.stageHeight + (dist * l.cy / l.cz);
+				//l.y = stage.stageHeight - i;
+				trace(l.y);
 			}
-            //addEventListener(Event.ENTER_FRAME, this.race);
-        }
+			
+			//addEventListener(Event.ENTER_FRAME, this.race);
+		}
 
-        private function race(event:Event) : void
-        {
-            
-        }
-    }
+		private function race(event:Event):void
+		{
+
+		}
+	}
 }

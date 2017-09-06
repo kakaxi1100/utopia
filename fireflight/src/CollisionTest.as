@@ -5,10 +5,10 @@ package
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	
-	import org.ares.fireflight.FFVector;
-	import org.ares.fireflight.collision.FFCollisionCircle;
-	import org.ares.fireflight.collision.FFCollisionDetector;
-	import org.ares.fireflight.collision.FFCollisionSegment;
+	import org.ares.archive.fireflight_v3.FFVector;
+	import org.ares.archive.fireflight_v3.collision.FFCollisionCircle;
+	import org.ares.archive.fireflight_v3.collision.FFCollisionDetector;
+	import org.ares.archive.fireflight_v3.collision.FFCollisionSegment;
 	
 	[SWF(frameRate="60", backgroundColor="0",width="800",height="600")]
 	public class CollisionTest extends Sprite

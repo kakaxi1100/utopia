@@ -4,7 +4,6 @@
 
     dynamic public class Road extends MovieClip
     {
-
         public function Road()
         {
             return;

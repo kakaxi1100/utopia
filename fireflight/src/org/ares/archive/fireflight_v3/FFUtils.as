@@ -1,7 +1,7 @@
-package org.ares.fireflight
+package org.ares.archive.fireflight_v3
 {
-	import org.ares.fireflight.FFVector;
-	import org.ares.fireflight.collision.FFCollisionSegment;
+	import org.ares.archive.fireflight_v3.FFVector;
+	import org.ares.archive.fireflight_v3.collision.FFCollisionSegment;
 
 	public class FFUtils
 	{
