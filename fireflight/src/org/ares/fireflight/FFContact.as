@@ -1,7 +1,7 @@
-package org.ares.fireflight.contact
+package org.ares.archive.fireflight_v3.contact
 {
-	import org.ares.fireflight.FFParticle;
-	import org.ares.fireflight.FFVector;
+	import org.ares.archive.fireflight_v3.FFParticle;
+	import org.ares.archive.fireflight_v3.FFVector;
 	
 	public class FFContact
 	{
