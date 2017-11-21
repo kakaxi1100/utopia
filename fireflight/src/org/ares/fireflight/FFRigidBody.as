@@ -51,6 +51,8 @@ package org.ares.fireflight
 		private var mForceAccum:FFVector;
 		//用在刚体上的转矩或者扭力
 		private var mTorqueAccum:Number;
+		//碰撞信息
+		private var mConnectInfo:FFContactInfo;
 		
 		//用于临时存储, 避免过度创建对象
 		private var mTempVector1:FFVector = new FFVector();
@@ -83,6 +85,7 @@ package org.ares.fireflight
 			mAngularAcceleration = 0;
 			mOrientation = 0;
 			mInverseMass = 1;
+			mConnectInfo = new FFContactInfo();
 		}
 		
 		/**
@@ -257,6 +260,16 @@ package org.ares.fireflight
 		public function set angularAcceleration(value:Number):void
 		{
 			mAngularAcceleration = value;
+		}
+
+		public function get connectInfo():FFContactInfo
+		{
+			return mConnectInfo;
+		}
+
+		public function set connectInfo(value:FFContactInfo):void
+		{
+			mConnectInfo = value;
 		}
 
 
