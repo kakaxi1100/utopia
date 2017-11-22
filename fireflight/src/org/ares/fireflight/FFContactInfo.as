@@ -13,6 +13,8 @@ package org.ares.fireflight
 		//碰撞产生的重点
 		private var mEnd:FFVector;
 		
+		
+		
 		//临时存储数据
 		private var mTemp1:FFVector = new FFVector();
 		

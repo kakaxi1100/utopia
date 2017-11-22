@@ -1,5 +1,7 @@
 package org.ares.fireflight
 {
+	import flash.display.Graphics;
+	
 	import org.ares.fireflight.FFVector;
 
 	/**
@@ -21,6 +23,8 @@ package org.ares.fireflight
 	 */	
 	public class FFRigidBody
 	{
+		public var name:String = "";
+		
 		//质量小于这个值就视为0
 		private static const MASS_E:Number = 0.001;
 		//惯量小于这个值就视为0
@@ -51,8 +55,6 @@ package org.ares.fireflight
 		private var mForceAccum:FFVector;
 		//用在刚体上的转矩或者扭力
 		private var mTorqueAccum:Number;
-		//碰撞信息
-		private var mConnectInfo:FFContactInfo;
 		
 		//用于临时存储, 避免过度创建对象
 		private var mTempVector1:FFVector = new FFVector();
@@ -85,7 +87,6 @@ package org.ares.fireflight
 			mAngularAcceleration = 0;
 			mOrientation = 0;
 			mInverseMass = 1;
-			mConnectInfo = new FFContactInfo();
 		}
 		
 		/**
@@ -213,6 +214,11 @@ package org.ares.fireflight
 			}
 		}
 		
+		public function draw(g:Graphics, color:uint = 0xFFFFFF):void
+		{
+			
+		}
+		
 		//--粒子质量
 		public function get mass():Number
 		{
@@ -261,17 +267,6 @@ package org.ares.fireflight
 		{
 			mAngularAcceleration = value;
 		}
-
-		public function get connectInfo():FFContactInfo
-		{
-			return mConnectInfo;
-		}
-
-		public function set connectInfo(value:FFContactInfo):void
-		{
-			mConnectInfo = value;
-		}
-
 
 	}
 }

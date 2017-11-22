@@ -119,9 +119,12 @@ package org.ares.archive.fireflight_v3.contact
 		 * vb' = vb + Δvb
 		 * 
 		 * Δva = I/ma
-		 * Δva = I/mb
+		 * Δvb = I/mb
 		 * 
 		 * I  = Δv总 * m总
+		 * 
+		 * 恢复系数
+		 * e = Δv1 / Δv0
 		 */		
 		public function resolveVelocity(duration:Number):void
 		{
