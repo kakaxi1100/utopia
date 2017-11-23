@@ -268,5 +268,16 @@ package org.ares.fireflight
 			mAngularAcceleration = value;
 		}
 
+		public function get velocity():FFVector
+		{
+			return mVelocity;
+		}
+
+		public function set velocity(value:FFVector):void
+		{
+			mVelocity.setTo(value.x, value.y);
+		}
+
+
 	}
 }

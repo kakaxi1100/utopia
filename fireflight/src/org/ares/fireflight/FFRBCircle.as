@@ -13,6 +13,7 @@ package org.ares.fireflight
 		private var mTemp1:FFVector = new FFVector();
 		private var mTemp2:FFVector = new FFVector();
 		private var mTemp3:FFVector = new FFVector();
+		private var mTemp4:FFVector = new FFVector();
 
 		public function FFRBCircle(r:Number = 20, c:FFVector = null)
 		{
@@ -66,16 +67,17 @@ package org.ares.fireflight
 			var penetration:Number = c1.radius + c2.radius - centerDist;
 			//注意这个normal的方向, 会影响到后面的碰撞计算
 			var normal:FFVector = mTemp1.normalizeEquals();
-			var c2toc1:FFVector = normal.mult(-1, mTemp2);
-			c2toc1.multEquals(c2.radius);
+			normal.mult(c2.radius, mTemp2);
 			//起点
-			var start:FFVector = c2.center.plus(c2toc1, mTemp3);
+			var start:FFVector = c2.center.plus(mTemp2, mTemp3);
 			//终点
-			var end:FFVector = start.plus(mTemp1.multEquals(penetration), mTemp2);
+			var negativeDepthNormal:FFVector = normal.mult(-penetration, mTemp2);
+			var end:FFVector = start.plus(negativeDepthNormal, mTemp4);;
 			
 			FFResolver.setContactInfo(penetration, normal, start, end); 
 			//resolve
 			FFResolver.resolveInterpenetration(c1, c2);
+			FFResolver.resolveVelocity(c1, c2);
 		}
 		
 		public function testWithRect(t:ICollideTest):void

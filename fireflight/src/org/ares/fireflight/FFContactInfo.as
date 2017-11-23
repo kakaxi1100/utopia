@@ -12,8 +12,8 @@ package org.ares.fireflight
 		private var mStart:FFVector;
 		//碰撞产生的重点
 		private var mEnd:FFVector;
-		
-		
+		//分离系数
+		private var mRestitution:Number;
 		
 		//临时存储数据
 		private var mTemp1:FFVector = new FFVector();
@@ -24,6 +24,7 @@ package org.ares.fireflight
 			mEnd = new FFVector();
 			mNormal = new FFVector();
 			mPenetration = 0;
+			mRestitution = 1;
 		}
 			
 		public function get penetration():Number
@@ -65,5 +66,16 @@ package org.ares.fireflight
 		{
 			mEnd.setTo(value.x, value.y);
 		}
+
+		public function get restitution():Number
+		{
+			return mRestitution;
+		}
+
+		public function set restitution(value:Number):void
+		{
+			mRestitution = value;
+		}
+
 	}
 }

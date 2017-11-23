@@ -1,6 +1,7 @@
 package
 {
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 	
@@ -19,12 +20,33 @@ package
 			
 			createBodies();
 			objs[0].name = "circle red";
-			objs[0].position.setTo(350, 200);
+			objs[0].mass = 10;
+			objs[0].velocity.setTo(0, 2);
+			objs[0].position.setTo(320, 100);
 			objs[1].name = "circle green";
+			objs[1].mass = 10;
 			objs[1].position.setTo(350, 250);
 			drawObjs();
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		protected function onEnterFrame(event:Event):void
+		{
+			moving();
+		}
+		
+		private function moving():void
+		{
+			var i:int;
+			for(; i < objs.length; i++)
+			{
+				objs[i].position.plusEquals(objs[i].velocity);
+			}
+			test();
+			drawObjs();
 		}
 		
 		protected function onKeyDown(event:KeyboardEvent):void
