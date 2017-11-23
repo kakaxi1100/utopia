@@ -81,8 +81,8 @@ package org.ares.archive.fireflight_v3.contact
 		/**
 		 *解决渗透问题 
 		 * 两个物体渗透之后，需要反弹的距离是由它们的质量决定的
-		 * pa = mb/(ma + mb)*dn
-		 * pb = -ma/(ma + mb)*dn
+		 * pa = ptotal * mb/(ma + mb)*dn
+		 * pb = -ptotal * ma/(ma + mb)*dn
 		 */		
 		public function resolveInterpenetration(duration:Number):Boolean
 		{
