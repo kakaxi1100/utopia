@@ -17,6 +17,9 @@ package org.ares.fireflight
 	 * 
 	 * 如果系统的转轴固定, 那么转动惯量就是固定的
 	 * 
+	 * 线性和角度的关系对比:
+	 * linear displacement corresponds to rotation, velocity to 
+	 * angular velocity, force to torque, and mass to rotational inertia
 	 * 
 	 * @author juli
 	 * 
@@ -227,8 +230,10 @@ package org.ares.fireflight
 		
 		public function set mass(value:Number):void
 		{
-			if(value < MASS_E){
+			if(value < MASS_E &&　value >= 0){
 				mInverseMass = Number.MAX_VALUE;
+			}else if(value < 0){
+				mInverseMass = 0;
 			}else{
 				mInverseMass = 1/value;
 			}

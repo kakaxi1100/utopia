@@ -5,6 +5,7 @@ package org.ares.fireflight
 		private static var mContactInfo:FFContactInfo = new FFContactInfo();
 
 		private static var mTemp1:FFVector = new FFVector();
+		private static var mTemp2:FFVector = new FFVector();
 		public static function resolve():void
 		{
 			
@@ -21,15 +22,21 @@ package org.ares.fireflight
 		/**
 		 *解决渗透问题 
 		 * 两个物体渗透之后，需要反弹的距离是由它们的质量决定的
-		 * pa = ptotal * mb/(ma + mb)*dn
-		 * pb =-ptotal * ma/(ma + mb)*dn
+		 * pa = penetration * mb/(ma + mb)*dn
+		 * pb =-penetration * ma/(ma + mb)*dn
 		 */	
 		public static function resolveInterpenetration(b1:FFRigidBody, b2:FFRigidBody):void
 		{
-			var dist:Number = mContactInfo.penetration/2;
-			var move:FFVector = mContactInfo.normal.mult(dist, mTemp1);
-			b1.position.plusEquals(move);
-			b2.position.minusEquals(move);
+			//(ma + mb)/(ma*mb)
+			var totalInverseMass:Number = b1.inverseMass + b2.inverseMass;
+			var penetration1:Number = mContactInfo.penetration * b1.inverseMass / totalInverseMass;
+			var penetration2:Number = -mContactInfo.penetration * b2.inverseMass / totalInverseMass;
+			
+			var move1:FFVector = mContactInfo.normal.mult(penetration1, mTemp1);
+			var move2:FFVector = mContactInfo.normal.mult(penetration2, mTemp2);
+			
+			b1.position.plusEquals(move1);
+			b2.position.plusEquals(move2);
 		}
 		
 		/**
