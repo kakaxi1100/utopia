@@ -79,7 +79,7 @@ package org.ares.fireflight
 			var totalSpeed:Number = separatingSpeed - relativeSpeed;
 			//5.计算总质量的倒数(为了之后方便计算)  (ma + mb)/(ma * mb)
 			var totalInverseMass:Number = b1.inverseMass + b2.inverseMass;
-			//6.计算Δv1和Δv2
+			//6.计算Δva和Δvb
 			var deltaSpeed1:Number = totalSpeed * b1.inverseMass / totalInverseMass;
 			var deltaSpeed2:Number = totalSpeed * b2.inverseMass / totalInverseMass;
 			//7.计算va1 和 vb1
@@ -89,6 +89,9 @@ package org.ares.fireflight
 			
 			var deltaV2:FFVector = mContactInfo.normal.mult(-deltaSpeed2, mTemp1);
 			b2.velocity.plusEquals(deltaV2);
+			
+			
+			
 		}
 		
 		
