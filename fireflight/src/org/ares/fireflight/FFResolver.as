@@ -73,14 +73,16 @@ package org.ares.fireflight
 		 * 然后根据碰撞后的速度等于碰撞后的速度乘以恢复系数(在碰撞法线上!)可得:
 		 * 9. Vab2·N = -eVab1·N  (0<=e<=1)
 		 * 
+		 * (注意一下等式的成立都是建立在法线方向上的!)
+		 * 
 		 * 10. ma*va1 + mb*vb1 = ma*va2 + mb*vb2 
 		 * 11. j = ma*Va2 - maVa1 = -(mb*Vb2 - mb*Vb1)    
-		 * 12. Va2 = Va1 + j*N/ma
-		 * 13. Vb2 = Vb1 - j*N/mb
+		 * 12. Va2 = Va1 + j/ma
+		 * 13. Vb2 = Vb1 - j/mb
 		 * 
 		 * 同理可以推导出 Wa2和Wb2
 		 * Ia = ma*Rap²
-		 * Ib = ma*Rbp²
+		 * Ib = mb*Rbp²
 		 * 
 		 * ma = Ia / Rap²
 		 * mb = Ib / Rbp²
@@ -89,9 +91,9 @@ package org.ares.fireflight
 		 * Vap1单独 = Wa1 * Rap Vap2单独 = Wa2 * Rap
 		 * Vbp1单独 = Wb1 * Rbp Vbp2单独 = Wb2 * Rbp
 		 * 根据动量守恒 同 12,13可得
-		 * Vap1单独 = Vap2单独 + j*N/ma
-		 * 14. Wa2 * Rap = Wa1 * Rap + j*N*Rap²/Ia  =>  Wa2 = Wa1 + (Rap*j*N)/Ia
-		 * 15. Wb2 * Rbp = Wb1 * Rbp + j*N*Rbp²/Ib  =>  Wb2 = Wb1 + (Rbp*j*N)/Ib
+		 * Vap1单独 = Vap2单独 + j/ma
+		 * 14. Wa2 * Rap = Wa1 * Rap + j*Rap²/Ia  =>  Wa2 = Wa1 + (Rap*j)/Ia
+		 * 15. Wb2 * Rbp = Wb1 * Rbp + j*Rbp²/Ib  =>  Wb2 = Wb1 + (Rbp*j)/Ib
 		 * 
 		 * 将7,8,12,13,14,15,代入9可得:
 		 * 
@@ -103,6 +105,12 @@ package org.ares.fireflight
 		 * (A × B) · C = (B × C) · A
 		 * (A × B) × A · B = (A × B) · (A × B) = (A × B)2
 		 * n · n = 1 
+		 * 
+		 * 点积运算法则:
+		 * 交换律：A · B = B · A
+		 * 分配律：A (B + C) = A B + A C
+		 * 结合律：(mA) · B其中m是实数。
+		 *	
 		 * 
 		 * 
 		 */		

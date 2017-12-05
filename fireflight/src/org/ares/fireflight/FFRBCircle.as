@@ -72,7 +72,7 @@ package org.ares.fireflight
 			var start:FFVector = c2.center.plus(mTemp2, mTemp3);
 			//终点
 			var negativeDepthNormal:FFVector = normal.mult(-penetration, mTemp2);
-			var end:FFVector = start.plus(negativeDepthNormal, mTemp4);;
+			var end:FFVector = start.plus(negativeDepthNormal, mTemp4);
 			
 			FFResolver.setContactInfo(penetration, normal, start, end); 
 			//resolve
