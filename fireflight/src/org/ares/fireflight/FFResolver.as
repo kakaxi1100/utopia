@@ -1,14 +1,29 @@
 package org.ares.fireflight
 {
+	import flash.display.Graphics;
+
 	public class FFResolver
 	{
 		private static var mContactInfo:FFContactInfo = new FFContactInfo();
 
 		private static var mTemp1:FFVector = new FFVector();
 		private static var mTemp2:FFVector = new FFVector();
+		private static var mTemp3:FFVector = new FFVector();
+		private static var mTemp4:FFVector = new FFVector();
+		private static var mTemp5:FFVector = new FFVector();
+		private static var mTemp6:FFVector = new FFVector();
+		private static var mTemp7:FFVector = new FFVector();
+		private static var mTemp8:FFVector = new FFVector();
+		
 		public static function resolve():void
 		{
 			
+		}
+		
+		public static function draw(g:Graphics, color:uint = 0xFFFFFF):void
+		{
+			g.lineStyle(2, color);
+			g.drawCircle(mContactInfo.contectPoint.x, mContactInfo.contectPoint.y, 1);
 		}
 		
 		public static function setContactInfo(penetration:Number, normal:FFVector, start:FFVector, end:FFVector):void
@@ -37,13 +52,21 @@ package org.ares.fireflight
 			
 			b1.position.plusEquals(move1);
 			b2.position.plusEquals(move2);
+			
+			//计算碰撞点的位置
+			mContactInfo.contectPoint = mContactInfo.end.plus(move2, mTemp1); 
+			trace("1---", mContactInfo.contectPoint);
+			
+//			var start:FFVector = mContactInfo.start.mult(b2.inverseMass / totalInverseMass, mTemp1);
+//			var end:FFVector = mContactInfo.end.mult(b1.inverseMass / totalInverseMass, mTemp2);
+//			trace("2---", start.plus(end, mTemp3));
 		}
 		
 		/**
 		 * 刚体速度解决方案
 		 * 
 		 * ma, mb = A,B的质量
-		 * Rap, Rbp = A,B中心点到碰撞点P的距离
+		 * Rap, Rbp = A,B中心点到碰撞点P的距离,这是一个矢量
 		 * Wa1, Wb1 = 碰撞前 A,B 的角速度
 		 * Wa2, Wb2 = 碰撞后 A,B 的角速度
 		 * Va1, Vb1 = 碰撞前 A,B 的线速度
@@ -58,17 +81,19 @@ package org.ares.fireflight
 		 * 
 		 * 计算公式:
 		 * 
-		 * 1. Vap1=Va1 + Wa1 * Rap
-		 * 2. Vap2=Va2 + Wa2 * Rap
-		 * 3. Vbp1=Va1 + Wa1 * Rbp
-		 * 4. Vbp2=Vb2 + Wa2 * Rbp
+		 * V = W x R 这里是叉乘, 不要问为什么, 物理公式就是这样定义的
+		 * 
+		 * 1. Vap1=Va1 + Wa1 x Rap
+		 * 2. Vap2=Va2 + Wa2 x Rap
+		 * 3. Vbp1=Va1 + Wa1 x Rbp
+		 * 4. Vbp2=Vb2 + Wa2 x Rbp
 		 * 
 		 * 5. Vab1=Vap1 - Vbp1
 		 * 6. Vab2=Vap2 - Vbp2
 		 *  
 		 * 将①②③④代入⑤⑥得到:
-		 * 7. Vab1 = Va1 + Wa1 * Rap - Vb1 - Wb1 * Rbp
-		 * 8. Vab2 = Va2 + Wa2 * Rap - Vb2 - Wb2 * Rbp
+		 * 7. Vab1 = Va1 + Wa1 x Rap - Vb1 - Wb1 x Rbp
+		 * 8. Vab2 = Va2 + Wa2 x Rap - Vb2 - Wb2 x Rbp
 		 * 
 		 * 然后根据碰撞后的速度等于碰撞后的速度乘以恢复系数(在碰撞法线上!)可得:
 		 * 9. Vab2·N = -eVab1·N  (0<=e<=1)
@@ -88,16 +113,16 @@ package org.ares.fireflight
 		 * mb = Ib / Rbp²
 		 * 
 		 * 则A,B到P点单独的线速度为
-		 * Vap1单独 = Wa1 * Rap Vap2单独 = Wa2 * Rap
-		 * Vbp1单独 = Wb1 * Rbp Vbp2单独 = Wb2 * Rbp
+		 * Vap1单独 = Wa1 x Rap Vap2单独 = Wa2 x Rap
+		 * Vbp1单独 = Wb1 x Rbp Vbp2单独 = Wb2 x Rbp
 		 * 根据动量守恒 同 12,13可得
 		 * Vap1单独 = Vap2单独 + j/ma
-		 * 14. Wa2 * Rap = Wa1 * Rap + j*Rap²/Ia  =>  Wa2 = Wa1 + (Rap*j)/Ia
-		 * 15. Wb2 * Rbp = Wb1 * Rbp + j*Rbp²/Ib  =>  Wb2 = Wb1 + (Rbp*j)/Ib
+		 * 14. Wa2 x Rap = Wa1 x Rap + j * Rap²/Ia  =>  Wa2 = Wa1 + (Rap * j)/Ia
+		 * 15. Wb2 x Rbp = Wb1 x Rbp + j * Rbp²/Ib  =>  Wb2 = Wb1 + (Rbp * j)/Ib
 		 * 
 		 * 将7,8,12,13,14,15,代入9可得:
 		 * 
-		 * 16. j =  (−(1 + e) Vab1·N)/(1⁄ma + 1⁄mb + (Rap × N)2 ⁄ Ia + (Rbp × N)2 ⁄ Ib)
+		 * 16. j =  (−(1 + e) Vab1·N)/(1⁄ma + 1⁄mb + (Rap × N)²/Ia + (Rbp × N)²⁄Ib)
 		 *
 		 * 通过16反代入 12,13,14,15可求出对应的A,B当前线速度和角速度
 		 * 
@@ -116,7 +141,42 @@ package org.ares.fireflight
 		 */		
 		public static function resolveVelocity(b1:FFRigidBody, b2:FFRigidBody):void
 		{
+			//1. 先计算 Rap,和 Rbp
+			var r1:FFVector = mContactInfo.contectPoint.minus(b1.position, mTemp1);
+			var r2:FFVector = mContactInfo.contectPoint.minus(b2.position, mTemp2);
 			
+			//2. 计算亲和速度 Vp = V + W x R, 注意叉乘的方向 是与这个矢量成正交的
+			var v1:FFVector = b1.velocity.plus(mTemp3.setTo(-1 * b1.angularVelocity * r1.y, b1.angularVelocity * r1.x), mTemp4);
+			var v2:FFVector = b2.velocity.plus(mTemp3.setTo(-1 * b2.angularVelocity * r2.y, b2.angularVelocity * r2.x), mTemp5);
+			//计算两个物体的相对速度, 注意这个方向
+			var relativeVelocity:FFVector = v1.minus(v2, mTemp3);
+			//计算相对速度在法线上的投影
+			var relativeSpeed:Number = relativeVelocity.scalarMult(mContactInfo.normal);
+			//碰撞法线 与 当前速度(在法相方向上的投影)如果不一致,那么他们不会发生碰撞, 也就不需要解决速度问题
+			//分为同向和相向
+			if(relativeSpeed >= 0)
+			{
+				return;
+			}
+			//3.计算jn
+			//计算 R x N
+			var r1crossN:Number = r1.vectorMult(mContactInfo.normal);
+			var r2crossN:Number = r2.vectorMult(mContactInfo.normal);
+			//计算分子
+			var jnUp:Number = -(1 + mContactInfo.restitution) * relativeSpeed;
+			//计算分母
+			var jnDown:Number = b1.inverseMass + b2.inverseMass + r1crossN * r1crossN / b1.rotationInertia
+								+  r2crossN * r2crossN / b2.rotationInertia;
+			var jn:Number = jnUp / jnDown;
+			//计算法线上的冲量
+			var impulse:FFVector = mContactInfo.normal.mult(jn, mTemp6);
+			
+			//4.得到最终的线速度
+			b1.velocity.plusEquals(impulse.mult(b1.inverseMass, mTemp7));
+			b2.velocity.plusEquals(impulse.mult(b2.inverseMass, mTemp8));	
+			//5.得到最终的角速度
+			b1.angularVelocity += r1crossN * jn / b1.rotationInertia;
+			b2.angularVelocity -= r2crossN * jn / b2.rotationInertia;
 		}
 		
 //		/**

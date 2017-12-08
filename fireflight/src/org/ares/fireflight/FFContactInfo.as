@@ -14,6 +14,8 @@ package org.ares.fireflight
 		private var mEnd:FFVector;
 		//分离系数
 		private var mRestitution:Number;
+		//碰撞点
+		private var mContectPoint:FFVector;
 		
 		//临时存储数据
 		private var mTemp1:FFVector = new FFVector();
@@ -23,6 +25,7 @@ package org.ares.fireflight
 			mStart = new FFVector();
 			mEnd = new FFVector();
 			mNormal = new FFVector();
+			mContectPoint = new FFVector();
 			mPenetration = 0;
 			mRestitution = 1;
 		}
@@ -76,6 +79,17 @@ package org.ares.fireflight
 		{
 			mRestitution = value;
 		}
+
+		public function get contectPoint():FFVector
+		{
+			return mContectPoint;
+		}
+
+		public function set contectPoint(value:FFVector):void
+		{
+			mContectPoint.setTo(value.x, value.y);
+		}
+
 
 	}
 }

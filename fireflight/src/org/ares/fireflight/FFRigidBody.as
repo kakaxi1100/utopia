@@ -1,6 +1,7 @@
 package org.ares.fireflight
 {
 	import flash.display.Graphics;
+	import flash.display.Sprite;
 	
 	import org.ares.fireflight.FFVector;
 
@@ -27,6 +28,7 @@ package org.ares.fireflight
 	public class FFRigidBody
 	{
 		public var name:String = "";
+		public var drawSprite:Sprite = new Sprite();
 		
 		//质量小于这个值就视为0
 		private static const MASS_E:Number = 0.001;
@@ -50,15 +52,15 @@ package org.ares.fireflight
 		private var mInverseRotationInertia:Number;
 		//角加速度
 		private var mAngularAcceleration:Number;
-		//刚体旋转的角速度(弧度或者度)
-		private var mRotation:Number;
+		//刚体旋转的角速度(弧度或者度), 这里采用弧度, 因为要涉及到线速度的计算
+		private var mAngularVelocity:Number;
 		//方位即最后在世界坐标系中的角度位置
 		private var mOrientation:Number;
 		//用在刚体上线性力的合集
 		private var mForceAccum:FFVector;
 		//用在刚体上的转矩或者扭力
 		private var mTorqueAccum:Number;
-		
+
 		//用于临时存储, 避免过度创建对象
 		private var mTempVector1:FFVector = new FFVector();
 		private var mTempVector2:FFVector = new FFVector();
@@ -67,16 +69,7 @@ package org.ares.fireflight
 		{
 			init();
 		}
-		
-		/**
-		 *子类实现 
-		 * 
-		 */		
-		public function test(t:ICollideTest):void
-		{
-			return;
-		}
-		
+			
 		public function init():void
 		{
 			mPosition = new FFVector();
@@ -84,7 +77,7 @@ package org.ares.fireflight
 			mAcceleration = new FFVector();
 			mForceAccum = new FFVector();
 			mTorqueAccum = 0;
-			mRotation = 0;
+			mAngularVelocity = 0;
 			mRotationInertia = 0;
 			mInverseRotationInertia = 0;
 			mAngularAcceleration = 0;
@@ -120,17 +113,17 @@ package org.ares.fireflight
 			//因为位移公式是  s = s0 + vt, 所以可以采用积分式 s+=vt
 			mPosition.plusScaledVector(mVelocity, duration);
 			
-/******	TODO:		
+		
 			//计算角加速度
 			var tempRotationAcc:Number = mAngularAcceleration;
 			tempRotationAcc += mTorqueAccum * mInverseRotationInertia;	
 			//计算角速度
-			mRotation += tempRotationAcc * duration;
+			mAngularVelocity += tempRotationAcc * duration;
 //			mRotation *= 0.99;
 			
 			//更新角度位置
-			mOrientation += mRotation * duration;
-******/			
+			mOrientation += mAngularVelocity * duration;
+			
 			clearAccumulators();
 		}
 		
@@ -216,12 +209,7 @@ package org.ares.fireflight
 				mInverseRotationInertia = 1/value;
 			}
 		}
-		
-		public function draw(g:Graphics, color:uint = 0xFFFFFF):void
-		{
-			
-		}
-		
+
 		//--粒子质量
 		public function get mass():Number
 		{
@@ -238,6 +226,7 @@ package org.ares.fireflight
 				mInverseMass = 1/value;
 			}
 		}
+		
 		public function get inverseMass():Number
 		{
 			return mInverseMass;
@@ -253,14 +242,14 @@ package org.ares.fireflight
 			mOrientation = (value % 360) * RADIAN;  
 		}
 
-		public function get rotation():Number
+		public function get angularVelocity():Number
 		{
-			return mRotation;
+			return mAngularVelocity;
 		}
 
-		public function set rotation(value:Number):void
+		public function set angularVelocity(value:Number):void
 		{
-			mRotation = value;
+			mAngularVelocity = value;
 		}
 
 		public function get angularAcceleration():Number
@@ -283,6 +272,16 @@ package org.ares.fireflight
 			mVelocity.setTo(value.x, value.y);
 		}
 
-
+//-------------------交给子类实现--------------------------------------------		
+		public function test(t:ICollideTest):void
+		{
+			return;
+		}
+		
+		public function draw(color:uint = 0xFFFFFF):void
+		{
+			return;
+		}
+//-----------------------------------------------------------------------		
 	}
 }

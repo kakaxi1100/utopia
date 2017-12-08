@@ -13,11 +13,11 @@ package
 	import org.ares.fireflight.FFVector;
 	
 	[SWF(frameRate="60", backgroundColor="0",width="800",height="600")]
-	public class newEngineTest extends Sprite
+	public class RotateTest extends Sprite
 	{
 		private var mSpeed:Number = 10;
 		private var objs:Vector.<FFRigidBody> = new Vector.<FFRigidBody>();
-		public function newEngineTest()
+		public function RotateTest()
 		{
 			super();
 			

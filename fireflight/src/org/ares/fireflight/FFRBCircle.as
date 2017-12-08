@@ -85,11 +85,14 @@ package org.ares.fireflight
 			
 		}
 		
-		override public function draw(g:Graphics, color:uint = 0xFFFFFF):void
+		override public function draw(color:uint = 0xFFFFFF):void
 		{
+			var g:Graphics = drawSprite.graphics;
+			g.clear();
 			g.lineStyle(2, color);
-			g.drawCircle(this.mCenter.x, this.mCenter.y, this.mRadius);
-			g.drawCircle(this.mCenter.x, this.mCenter.y, 1);
+			g.drawCircle(0, 0, this.mRadius);
+			g.drawCircle(0, 0, 1);
+			g.lineTo(this.radius, 0);
 		}
 		
 		public function get radius():Number

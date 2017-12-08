@@ -130,6 +130,7 @@ package org.ares.fireflight
 		 * 1.|A|·|B|·sinα
 		 * 2.|x1 y1|
 		 *   |x2 y2|= x1*y2 - x2*y1
+		 * 3.得到的量方向是与两个矢量正交
 		 * @param v
 		 * @return 
 		 * 
