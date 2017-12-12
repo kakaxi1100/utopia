@@ -55,7 +55,6 @@ package org.ares.fireflight
 			
 			//计算碰撞点的位置
 			mContactInfo.contectPoint = mContactInfo.end.plus(move2, mTemp1); 
-			trace("1---", mContactInfo.contectPoint);
 			
 //			var start:FFVector = mContactInfo.start.mult(b2.inverseMass / totalInverseMass, mTemp1);
 //			var end:FFVector = mContactInfo.end.mult(b1.inverseMass / totalInverseMass, mTemp2);
@@ -173,10 +172,11 @@ package org.ares.fireflight
 			
 			//4.得到最终的线速度
 			b1.velocity.plusEquals(impulse.mult(b1.inverseMass, mTemp7));
-			b2.velocity.plusEquals(impulse.mult(b2.inverseMass, mTemp8));	
+			b2.velocity.minusEquals(impulse.mult(b2.inverseMass, mTemp8));	
 			//5.得到最终的角速度
 			b1.angularVelocity += r1crossN * jn / b1.rotationInertia;
 			b2.angularVelocity -= r2crossN * jn / b2.rotationInertia;
+			trace(b1.angularVelocity, b2.angularVelocity);
 		}
 		
 //		/**

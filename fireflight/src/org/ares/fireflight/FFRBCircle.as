@@ -95,6 +95,11 @@ package org.ares.fireflight
 			g.lineTo(this.radius, 0);
 		}
 		
+		override public function get rotationInertia():Number
+		{
+			return this.mass * this.mRadius * this.mRadius / 12;
+		}
+		
 		public function get radius():Number
 		{
 			return mRadius;

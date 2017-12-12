@@ -24,12 +24,12 @@ package
 			createBodies();
 			objs[0].name = "circle red";
 			objs[0].mass = 10;
-//			objs[0].velocity.setTo(0, 2);
-			objs[0].angularVelocity = 1;
-			objs[0].position.setTo(350, 110);
+//			objs[0].velocity.setTo(0, 10);
+//			objs[0].angularVelocity = 6;
+			objs[0].position.setTo(380, 110);
 			objs[1].name = "circle green";
-			objs[1].mass = -1;
-			objs[1].angularVelocity = 1;
+			objs[1].mass = 10;
+//			objs[1].angularVelocity = 1;
 			objs[1].position.setTo(350, 250);
 			
 			objs[0].drawSprite.x = objs[0].position.x;

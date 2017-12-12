@@ -47,7 +47,7 @@ package org.ares.fireflight
 		//逆质量可以解决 0 和 无穷大 质量的问题，0质量的物体逆质量是无穷大，无穷大的物体逆质量是0
 		private var mInverseMass:Number;
 		//转动惯量
-		private var mRotationInertia:Number;
+//		private var mRotationInertia:Number;
 		//转动惯量倒数
 		private var mInverseRotationInertia:Number;
 		//角加速度
@@ -78,7 +78,7 @@ package org.ares.fireflight
 			mForceAccum = new FFVector();
 			mTorqueAccum = 0;
 			mAngularVelocity = 0;
-			mRotationInertia = 0;
+//			mRotationInertia = 0;
 			mInverseRotationInertia = 0;
 			mAngularAcceleration = 0;
 			mOrientation = 0;
@@ -198,17 +198,17 @@ package org.ares.fireflight
 		//转动惯量
 		public function get rotationInertia():Number
 		{
-			return 1/mInverseRotationInertia;
+			return 0;
 		}
 		
-		public function set rotationInertia(value:Number):void
-		{
-			if(value < INERTIA_E){
-				mInverseRotationInertia = Number.MAX_VALUE;
-			}else{
-				mInverseRotationInertia = 1/value;
-			}
-		}
+//		public function set rotationInertia(value:Number):void
+//		{
+//			if(value < INERTIA_E){
+//				mInverseRotationInertia = Number.MAX_VALUE;
+//			}else{
+//				mInverseRotationInertia = 1/value;
+//			}
+//		}
 
 		//--粒子质量
 		public function get mass():Number
