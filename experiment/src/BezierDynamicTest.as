@@ -50,8 +50,8 @@ package
 			
 //			drawAll();
 
-//			stage.addEventListener(KeyboardEvent.KEY_DOWN, onMouseClick);
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onMouseClick);
+//			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
 		protected function onEnterFrame(event:Event):void
