@@ -36,6 +36,7 @@ package org.ares.fireflight
 		
 		/**
 		 *解决渗透问题 
+		 * 这个深度的解决是不精确的,如果需要精确的解决需要按时间回退,然后再执行检测, 会比较麻烦
 		 * 两个物体渗透之后，需要反弹的距离是由它们的质量决定的
 		 * pa = penetration * mb/(ma + mb)*dn
 		 * pb =-penetration * ma/(ma + mb)*dn
@@ -62,6 +63,20 @@ package org.ares.fireflight
 		}
 		
 		/**
+		 * 设两球的初始速度为 V1, V2 , 碰撞后的速度为 Va, Vb
+		 * 两球受到的力均为F,且碰撞时间为Δt 注意：只在碰撞法线上会产生力
+		 * 假定 V1方向是正方向 
+		 *  
+		 *	积分(-F*Δt)=M1*Va-M1*V1 ①
+		 *	积分(F*Δt)=M2*Vb-M2*V2 ②
+		 *	所以 ①+②得：
+		 *	M1*Va+M2*Vb-(M1*V1+M2*V2)=0
+		 *	即：
+		 *	M1*Va+M2*Vb=M1*V1+M2*V2
+		 * 
+		 * 
+		 * 	
+		 *
 		 * 刚体速度解决方案
 		 * 
 		 * ma, mb = A,B的质量
@@ -179,57 +194,5 @@ package org.ares.fireflight
 			trace(b1.angularVelocity, b2.angularVelocity);
 		}
 		
-//		/**
-//		 * 这个是针对粒子的, 刚体的需要另行计算
-//		 * 
-//		 * 接近速度就是两个物体相互接近的速度或者说,就是两个物体的相对速度（有时也指两物体在质心系中的速度）
-//		 * 分离速度就是两个物体相互远离的速度也是两个物体的相对速度,但是方向与之前相反.
-//		 * v1和v0是反向的 
-//		 * 
-//		 * 动量的计算公式，两个物体碰撞后他们满足
-//		 * 注意va vb是包含了方向的
-//		 * ma*va0 + mb*vb0 = ma*va1 + mb*vb1
-//		 * ① ma*Δva = -mb*Δvb
-//		 * ② Δva+Δvb = Δv
-//		 * 将②带入到①可得
-//		 * Δva = Δv*mb/(ma+mb)
-//		 * Δvb = Δv*ma/(ma+mb)
-//		 * 
-//		 * 恢复系数
-//		 * e = - v1 / v0
-//		 * v1 = -v0 * e
-//		 * 
-//		 */		
-//		public static function resolveVelocity(b1:FFRigidBody, b2:FFRigidBody):void
-//		{
-//			//现在的信息是以b1为标准的
-//			//计算碰撞前的总速度
-//			//1.计算两个物体的相对速度, 注意这个方向
-//			var relativeVelocity:FFVector = b1.velocity.minus(b2.velocity, mTemp1);
-//			//2.计算相对速度在法线上的投影
-//			var relativeSpeed:Number = relativeVelocity.scalarMult(mContactInfo.normal);
-//			//碰撞法线 与 当前速度(在法相方向上的投影)如果不一致,那么他们不会发生碰撞, 也就不需要解决速度问题
-//			//分为同向和相向
-//			if(relativeSpeed >= 0)
-//			{
-//				return;
-//			}
-//			//3.计算分离后的速度
-//			var separatingSpeed:Number = -relativeSpeed * mContactInfo.restitution;
-//			//4.计算总速度
-//			var totalSpeed:Number = separatingSpeed - relativeSpeed;
-//			//5.计算总质量的倒数(为了之后方便计算)  (ma + mb)/(ma * mb)
-//			var totalInverseMass:Number = b1.inverseMass + b2.inverseMass;
-//			//6.计算Δva和Δvb
-//			var deltaSpeed1:Number = totalSpeed * b1.inverseMass / totalInverseMass;
-//			var deltaSpeed2:Number = totalSpeed * b2.inverseMass / totalInverseMass;
-//			//7.计算va1 和 vb1
-//			//v1是朝着当前的normal方向, v2是朝着当前normal方向的反方向
-//			var deltaV1:FFVector = mContactInfo.normal.mult(deltaSpeed1, mTemp1);
-//			b1.velocity.plusEquals(deltaV1);
-//			
-//			var deltaV2:FFVector = mContactInfo.normal.mult(-deltaSpeed2, mTemp1);
-//			b2.velocity.plusEquals(deltaV2);
-//		}
 	}
 }

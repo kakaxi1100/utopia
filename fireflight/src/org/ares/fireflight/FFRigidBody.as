@@ -116,7 +116,7 @@ package org.ares.fireflight
 		
 			//计算角加速度
 			var tempRotationAcc:Number = mAngularAcceleration;
-			tempRotationAcc += mTorqueAccum * mInverseRotationInertia;	
+			tempRotationAcc += mTorqueAccum * (1/rotationInertia)//mInverseRotationInertia;
 			//计算角速度
 			mAngularVelocity += tempRotationAcc * duration;
 //			mRotation *= 0.99;
@@ -146,11 +146,16 @@ package org.ares.fireflight
 		public function addForceAtPoint(f:FFVector, p:FFVector):void
 		{
 			//计算力臂
-			p.minusEquals(this.position);
+//			p.minusEquals(this.position);
+			p.minus(this.position, mTempVector1);
 			//这里会添加线性力, 感觉是不对的！
+			//这里感觉不对是因为理解成要把所有的力都加在质心
+			//而实际上是经过计算的力加到质心上
+			//这里还是看demo吧, 解释不清楚
 			mForceAccum.plusEquals(f);
+			
 			//计算力矩
-			mTorqueAccum += p.vectorMult(f);
+			mTorqueAccum += mTempVector1.vectorMult(f);
 		}
 		
 		/**
@@ -282,6 +287,28 @@ package org.ares.fireflight
 		{
 			return;
 		}
+
+		public function get torqueAccum():Number
+		{
+			return mTorqueAccum;
+		}
+
+		public function set torqueAccum(value:Number):void
+		{
+			mTorqueAccum = value;
+		}
+
+		public function get forceAccum():FFVector
+		{
+			return mForceAccum;
+		}
+
+		public function set forceAccum(value:FFVector):void
+		{
+			mForceAccum = value;
+		}
+
+
 //-----------------------------------------------------------------------		
 	}
 }
