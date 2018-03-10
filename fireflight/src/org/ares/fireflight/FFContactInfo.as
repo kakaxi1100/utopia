@@ -14,6 +14,8 @@ package org.ares.fireflight
 		private var mEnd:FFVector;
 		//分离系数
 		private var mRestitution:Number;
+		//摩擦系数
+		private var mFriction:Number;
 		//碰撞点
 		private var mContectPoint:FFVector;
 		
@@ -28,6 +30,7 @@ package org.ares.fireflight
 			mContectPoint = new FFVector();
 			mPenetration = 0;
 			mRestitution = 1;
+			mFriction = 1;
 		}
 			
 		public function get penetration():Number
@@ -88,6 +91,16 @@ package org.ares.fireflight
 		public function set contectPoint(value:FFVector):void
 		{
 			mContectPoint.setTo(value.x, value.y);
+		}
+
+		public function get friction():Number
+		{
+			return mFriction;
+		}
+
+		public function set friction(value:Number):void
+		{
+			mFriction = value;
 		}
 
 

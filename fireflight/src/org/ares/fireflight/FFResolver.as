@@ -14,6 +14,11 @@ package org.ares.fireflight
 		private static var mTemp6:FFVector = new FFVector();
 		private static var mTemp7:FFVector = new FFVector();
 		private static var mTemp8:FFVector = new FFVector();
+		private static var mTemp9:FFVector = new FFVector();
+		private static var mTemp10:FFVector = new FFVector();
+		private static var mTemp11:FFVector = new FFVector();
+		private static var mTemp12:FFVector = new FFVector();
+		private static var mTemp13:FFVector = new FFVector();
 		
 		public static function resolve():void
 		{
@@ -150,7 +155,8 @@ package org.ares.fireflight
 		 * 分配律：A (B + C) = A B + A C
 		 * 结合律：(mA) · B其中m是实数。
 		 *	
-		 * 
+		 * 同理:
+		 * jT = ((-(1+e) Vab1·T)f)/(1⁄ma + 1⁄mb + (Rap × T)²/Ia + (Rbp × T)²⁄Ib)
 		 * 
 		 */		
 		public static function resolveVelocity(b1:FFRigidBody, b2:FFRigidBody):void
@@ -189,9 +195,37 @@ package org.ares.fireflight
 			b1.velocity.plusEquals(impulse.mult(b1.inverseMass, mTemp7));
 			b2.velocity.minusEquals(impulse.mult(b2.inverseMass, mTemp8));	
 			//5.得到最终的角速度
+			//由于法线上没有摩擦力, 所以理论上这个角速度是不会变的
 			b1.angularVelocity += r1crossN * jn / b1.rotationInertia;
 			b2.angularVelocity -= r2crossN * jn / b2.rotationInertia;
-			trace(b1.angularVelocity, b2.angularVelocity);
+			
+			//二.计算切线冲量 (摩擦力)
+			//1.先计算切线方向, 切线上的速度 + 法线上速度 = 亲和速度
+			var tangent:FFVector = relativeVelocity.minus(mContactInfo.normal.mult(relativeSpeed, mTemp9), mTemp10);
+			//由于是摩擦力, 所以方向相反
+			tangent = tangent.normalizeEquals().multEquals(-1);
+			var relativeTangentSpeed:Number = relativeVelocity.scalarMult(tangent);
+			//计算 R x T
+			var r1crossT:Number = r1.vectorMult(tangent);
+			var r2crossT:Number = r2.vectorMult(tangent);
+			//计算分子
+			var jtUp:Number = -(1 + mContactInfo.restitution) * relativeTangentSpeed * mContactInfo.friction;
+			//计算分母
+			var jtDown:Number = b1.inverseMass + b2.inverseMass + r1crossT * r1crossT / b1.rotationInertia
+								+  r2crossT * r2crossT / b2.rotationInertia;
+			var jt:Number = jtUp / jtDown;
+			//摩擦力是物体的压力有关的,它是不能大于法线力的
+			if(jt > jn){
+				jt = jn;
+			}
+			//计算切线上的冲量
+			impulse = tangent.mult(jt, mTemp11);
+			//得到最终的切线速度
+			b1.velocity.plusEquals(impulse.mult(b1.inverseMass, mTemp12));
+			b2.velocity.minusEquals(impulse.mult(b2.inverseMass, mTemp13));	
+			//得到最终的切线角速度
+			b1.angularVelocity += r1crossT * jt / b1.rotationInertia;
+			b2.angularVelocity -= r1crossT * jt / b2.rotationInertia;
 		}
 		
 	}
