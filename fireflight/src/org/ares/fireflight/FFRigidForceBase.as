@@ -5,11 +5,13 @@
  */
 package org.ares.fireflight
 {
+	import flash.display.Sprite;
+
 	public class FFRigidForceBase
 	{
 		protected var mRigidList:Vector.<FFRigidBody> = new Vector.<FFRigidBody>();
 		protected var mName:String;
-		
+		public var drawSprite:Sprite = new Sprite();
 		public function FFRigidForceBase(name:String)
 		{
 			mName = name;
@@ -41,6 +43,11 @@ package org.ares.fireflight
 		}
 		
 		public function update(d:Number):void
+		{
+			return;
+		}
+		
+		public function draw(color:uint = 0xFFFFFF):void
 		{
 			return;
 		}

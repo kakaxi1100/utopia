@@ -219,8 +219,9 @@ package org.ares.fireflight
 		public function normalizeEquals():FFVector 
 		{
 			var m:Number = magnitude();
-			if (m == 0) return null;
-			multEquals(1 / m);
+			if (m != 0){
+				multEquals(1 / m);
+			}
 			return this;
 		}
 		

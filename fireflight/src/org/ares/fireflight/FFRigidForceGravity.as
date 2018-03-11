@@ -24,7 +24,8 @@ package org.ares.fireflight
 				o = mRigidList[i];
 				if(o.hasFiniteMass() == false)
 				{
-					o.addForce(mGravity.clone(mTemp).multEquals(o.mass));
+					//o.addForce(mGravity.clone(mTemp).multEquals(o.mass));
+					o.addForceAtPoint(mGravity.clone(mTemp).multEquals(o.mass), o.position);
 				}
 			}
 		}
