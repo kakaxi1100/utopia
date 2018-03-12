@@ -24,12 +24,14 @@ package
 			draw();
 			
 			
-			FFRigidForceManager.getIntsance().registerForce(new FFRigidForceAnchoredSpring("A", new FFVector(10, -10), new FFVector(350, 150),3,100))
-											 .registerForce(new FFRigidForceAnchoredSpring("A1", new FFVector(10, 10), new FFVector(250, 150),1,100))
-											 .registerForce(new FFRigidForceGravity("G", new FFVector(0, 10)));
+			FFRigidForceManager.getIntsance().registerForce(new FFRigidForceAnchoredSpring("A", new FFVector(-10, -10), new FFVector(300, 150),10,100))
+											 .registerForce(new FFRigidForceAnchoredSpring("A1", new FFVector(10, -10), new FFVector(400, 150),100,100))
+											 .registerForce(new FFRigidForceGravity("G", new FFVector(0, 10)))
+											 .registerForce(new FFRigidForceGravity("W", new FFVector(100, 0)));
 			FFRigidForceManager.getIntsance().getForce("A").addRigidBody(circle1);
 			FFRigidForceManager.getIntsance().getForce("A1").addRigidBody(circle1);
 			FFRigidForceManager.getIntsance().getForce("G").addRigidBody(circle1);
+			FFRigidForceManager.getIntsance().getForce("W").addRigidBody(circle1);
 			
 			addChild(circle1.drawSprite);
 			addChild(FFRigidForceManager.getIntsance().getForce("A").drawSprite);
