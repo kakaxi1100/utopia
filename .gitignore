@@ -16,6 +16,10 @@ silverbolt/bin/
 silverbolt/bin-debug/
 silverbolt/bin-release/
 
+skywarp/bin/
+skywarp/bin-debug/
+skywarp/bin-release/
+
 experiment/bin/
 experiment/bin-debug/
 experiment/bin-release/
@@ -32,6 +36,9 @@ firtflight.~ml
 
 silverbolt/.settings/
 silverbolt.~ml
+
+skywarp/.settings/
+skywarp.~ml
 
 mirage/.settings/
 mirage.~ml

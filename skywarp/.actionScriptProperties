@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties analytics="false" mainApplicationPath="Test2.as" projectUUID="8a958913-91c8-4ef0-9215-40ff7dc439ce" version="11">
-  <compiler additionalCompilerArguments="-locale en_US" advancedTelemetry="true" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" useFlashSDK="false" verifyDigests="true" warn="true">
-    <compilerSourcePath>
-      <compilerSourcePathEntry kind="1" linkType="1" path="C:/Users/juli/Desktop/AdvancEDActionScriptAnimation/Chapter02/com"/>
-    </compilerSourcePath>
+<actionScriptProperties analytics="false" mainApplicationPath="skywarp.as" projectUUID="964b49c2-f5ec-4bb9-9b8c-a29f36ad3e72" version="11">
+  <compiler additionalCompilerArguments="-locale en_US" advancedTelemetry="false" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" useFlashSDK="true" verifyDigests="true" warn="true">
+    <compilerSourcePath/>
     <libraryPath defaultLinkType="0">
       <libraryPathEntry kind="4" path="">
         <excludedEntries>
@@ -34,21 +32,10 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
-    <application path="WanderTest.as"/>
-    <application path="ArriveTest.as"/>
-    <application path="SeekTest.as"/>
-    <application path="AutoTest.as"/>
-    <application path="FlyTest4.as"/>
-    <application path="FlyTest3.as"/>
-    <application path="Test2.as"/>
-    <application path="FlyTest2.as"/>
-    <application path="FlyTest.as"/>
-    <application path="Test.as"/>
-    <application path="eva.as"/>
+    <application path="skywarp.as"/>
   </applications>
   <modules/>
   <workers/>
   <buildCSSFiles/>
   <flashCatalyst validateFlashCatalystCompatibility="false"/>
 </actionScriptProperties>
-
