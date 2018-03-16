@@ -133,7 +133,6 @@ package
 //					trace(sX, sY);
 					var color:uint = sData.getPixel32(sX, sY);
 					
-					
 					data.setPixel32(i, j, color); 
 				}
 			}
