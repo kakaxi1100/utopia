@@ -105,6 +105,7 @@
  * 
  * 这个是取了原图的 一个直角三角形形状, 任意的情况请看 ArbitraryBitmapfillTransforms.as
  * 
+ * 
  */
 
 package
@@ -117,7 +118,7 @@ package
 	import flash.ui.Keyboard;
 	
 	[SWF(width="800", height="600", frameRate="120", backgroundColor="0")]
-	public class AffineTransformation extends Sprite
+	public class AffineTransformation2 extends Sprite
 	{
 		private var matrix:Matrix = new Matrix();
 		
@@ -132,41 +133,38 @@ package
 		
 		private var dest:Sprite = new Sprite();
 		
-		private var currentP:Sprite = p2;
+		private var currentP:Sprite;
 		private var plist:Array = [p0, p1, p2];
-		private var index:int = 2;
-		public function AffineTransformation()
+		private var index:int = 0;
+		public function AffineTransformation2()
 		{
 			super();
 			
-			cat.x = 100;
-			cat.y = 100;
-			addChild(cat);
-			
-			dest.x = cat.x + 300;
-			dest.y = cat.y;
+			dest.x = 100;
+			dest.y = 100;
+			dest.addChild(cat);
 			addChild(dest);
 			
 			p0.graphics.beginFill(0x00ff00);
 			p0.graphics.drawCircle(0,0,10);
 			p0.graphics.endFill();
-			p0.x = 0;
-			p0.y = 0;
-			dest.addChild(p0);
+			p0.x = dest.x;
+			p0.y = dest.y;
+			addChild(p0);
 			
 			p1.graphics.beginFill(0x00ff00);
 			p1.graphics.drawCircle(0,0,10);
 			p1.graphics.endFill();
-			p1.x = 256;
+			p1.x = dest.x + 256;
 			p1.y = 0;
-			dest.addChild(p1);
+			addChild(p1);
 			
 			p2.graphics.beginFill(0x00ff00);
 			p2.graphics.drawCircle(0,0,10);
 			p2.graphics.endFill();
 			p2.x = 0;
-			p2.y = 256;
-			dest.addChild(p2);
+			p2.y = dest.y + 256;
+			addChild(p2);
 			
 			matrix.a = (p1.x - p0.x) / 256;
 			matrix.b = (p1.y - p0.y) / 256;
@@ -175,11 +173,9 @@ package
 			matrix.tx = p0.x;
 			matrix.ty = p0.y;
 			
-			dest.graphics.lineStyle(2, 0xffffff);
-			dest.graphics.beginBitmapFill(cat.bitmapData, matrix, false, true);
-			dest.graphics.drawRect(0,0,256,256);
-			dest.graphics.endFill();
+			dest.transform.matrix = this.matrix;
 			
+			currentP = plist[index];
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		}
 		
@@ -192,11 +188,7 @@ package
 			matrix.tx = p0.x;
 			matrix.ty = p0.y;
 			
-			dest.graphics.clear();
-			dest.graphics.lineStyle(2, 0xffffff);
-			dest.graphics.beginBitmapFill(cat.bitmapData, matrix, false, true);
-			dest.graphics.drawRect(0,0,256,256);
-			dest.graphics.endFill();
+			dest.transform.matrix = this.matrix;
 		}
 		
 		protected function onKeyDown(event:KeyboardEvent):void
