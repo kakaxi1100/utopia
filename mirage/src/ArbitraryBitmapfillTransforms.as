@@ -104,75 +104,119 @@ package
 	[SWF(width="800", height="600", frameRate="120", backgroundColor="0")]
 	public class ArbitraryBitmapfillTransforms extends Sprite
 	{
-		private var matrix:Matrix = new Matrix();
 		
 		[Embed(source="assets/Cat256256.jpg")]
 		private var Cat:Class;
 		
 		private var cat:Bitmap = new Cat();
-		
-		private var p0:Sprite = new Sprite();
-		private var p1:Sprite = new Sprite();
-		private var p2:Sprite = new Sprite();
-		
+		private var src:Sprite = new Sprite();
 		private var dest:Sprite = new Sprite();
 		
+		private var in1:Sprite = new Sprite();
+		private var in2:Sprite = new Sprite();
+		private var in3:Sprite = new Sprite();
+		
+		private var out1:Sprite = new Sprite();		
+		private var out2:Sprite = new Sprite();		
+		private var out3:Sprite = new Sprite();		
+		
+		private var matrix:Matrix = new Matrix();
+		
 		private var currentP:Sprite;
-		private var plist:Array = [p0, p1, p2];
+		private var plist:Array = [in1, in2, in3, out1, out2, out3];
 		private var index:int = 0;
 		public function ArbitraryBitmapfillTransforms()
 		{
 			super();
+			src.x = 100;
+			src.y = 100;
+			addChild(src);
+			src.addChild(cat);
 			
-			dest.x = 100;
-			dest.y = 100;
-			dest.addChild(cat);
+			dest.graphics.lineStyle(2, 0xfffffff);
+			dest.graphics.drawRect(0,0,256,256);
+			dest.x = src.x + src.width + 40;
+			dest.y = src.y;
 			addChild(dest);
 			
-			p0.graphics.beginFill(0x00ff00);
-			p0.graphics.drawCircle(0,0,10);
-			p0.graphics.endFill();
-			p0.x = dest.x;
-			p0.y = dest.y;
-			addChild(p0);
+			in1.graphics.beginFill(0x00ff00);
+			in1.graphics.drawCircle(0,0,10);
+			in1.graphics.endFill();
+			in1.x = cat.x;
+			in1.y = cat.y;
+			src.addChild(in1);
 			
-			p1.graphics.beginFill(0x00ff00);
-			p1.graphics.drawCircle(0,0,10);
-			p1.graphics.endFill();
-			p1.x = dest.x + 256;
-			p1.y = 0;
-			addChild(p1);
+			in2.graphics.beginFill(0x00ff00);
+			in2.graphics.drawCircle(0,0,10);
+			in2.graphics.endFill();
+			in2.x = cat.x + 256;
+			in2.y = cat.y;
+			src.addChild(in2);
 			
-			p2.graphics.beginFill(0x00ff00);
-			p2.graphics.drawCircle(0,0,10);
-			p2.graphics.endFill();
-			p2.x = 0;
-			p2.y = dest.y + 256;
-			addChild(p2);
+			in3.graphics.beginFill(0x00ff00);
+			in3.graphics.drawCircle(0,0,10);
+			in3.graphics.endFill();
+			in3.x = cat.x;
+			in3.y = cat.y + 256;
+			src.addChild(in3);
 			
-			matrix.a = (p1.x - p0.x) / 256;
-			matrix.b = (p1.y - p0.y) / 256;
-			matrix.c = (p2.x - p0.x) / 256;
-			matrix.d = (p2.y - p0.y) / 256;
-			matrix.tx = p0.x;
-			matrix.ty = p0.y;
 			
-			dest.transform.matrix = this.matrix;
+			out1.graphics.beginFill(0x00ff00);
+			out1.graphics.drawCircle(0,0,10);
+			out1.graphics.endFill();
+			out1.x = 0;
+			out1.y = 0;
+			dest.addChild(out1);
+			
+			out2.graphics.beginFill(0x00ff00);
+			out2.graphics.drawCircle(0,0,10);
+			out2.graphics.endFill();
+			out2.x = 256;
+			out2.y = 0;
+			dest.addChild(out2);
+			
+			out3.graphics.beginFill(0x00ff00);
+			out3.graphics.drawCircle(0,0,10);
+			out3.graphics.endFill();
+			out3.x = 0;
+			out3.y = 256;
+			dest.addChild(out3);
+			
+			addjustMatrix();
 			
 			currentP = plist[index];
+			currentP.graphics.beginFill(0xff0000);
+			currentP.graphics.drawCircle(0,0,10);
+			currentP.graphics.endFill();
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		}
 		
 		private function addjustMatrix():void
 		{
-			matrix.a = (p1.x - p0.x) / 256;
-			matrix.b = (p1.y - p0.y) / 256;
-			matrix.c = (p2.x - p0.x) / 256;
-			matrix.d = (p2.y - p0.y) / 256;
-			matrix.tx = p0.x;
-			matrix.ty = p0.y;
+			var dIn32x:Number = in3.x - in2.x;
+			var dIn13x:Number = in1.x - in3.x;
+			var dIn21x:Number = in2.x - in1.x;
+			var dIn32y:Number = in3.y - in2.y;
+			var dIn13y:Number = in1.y - in3.y;
+			var dIn21y:Number = in2.y - in1.y;
 			
-			dest.transform.matrix = this.matrix;
+			var denomAB:Number = 1/((in1.x * dIn32y) + (in2.x * dIn13y) + (in3.x * dIn21y));
+			var denomCD:Number = 1/((in1.y * dIn32x) + (in2.y * dIn13x) + (in3.y * dIn21x));
+			
+			matrix.a = ((out1.x * dIn32y) + (out2.x * dIn13y) + (out3.x * dIn21y)) * denomAB;
+			matrix.b = ((out1.y * dIn32y) + (out2.y * dIn13y) + (out3.y * dIn21y)) * denomAB;
+			matrix.c = ((out1.x * dIn32x) + (out2.x * dIn13x) + (out3.x * dIn21x)) * denomCD;
+			matrix.d = ((out1.y * dIn32x) + (out2.y * dIn13x) + (out3.y * dIn21x)) * denomCD;
+			matrix.tx = out1.x - (matrix.a * in1.x) - (matrix.c * in1.y);
+			matrix.ty = out1.y - (matrix.b * in1.x) - (matrix.d * in1.y);
+			
+			dest.graphics.clear();
+			dest.graphics.beginBitmapFill(cat.bitmapData, matrix, true, true);
+			dest.graphics.moveTo(out1.x, out1.y);
+			dest.graphics.lineTo(out2.x, out2.y);
+			dest.graphics.lineTo(out3.x, out3.y);
+			dest.graphics.lineTo(out1.x, out1.y);
+			dest.graphics.endFill();
 		}
 		
 		protected function onKeyDown(event:KeyboardEvent):void
@@ -193,12 +237,18 @@ package
 					break;
 				case Keyboard.SPACE:
 					index++
+					currentP.graphics.beginFill(0x00ff00);
+					currentP.graphics.drawCircle(0,0,10);
+					currentP.graphics.endFill();
 					if(index >= plist.length)
-				{
-					index = 0;
-				}
+					{
+						index = 0;
+					}
 					
 					currentP = plist[index];
+					currentP.graphics.beginFill(0xff0000);
+					currentP.graphics.drawCircle(0,0,10);
+					currentP.graphics.endFill();
 					break;
 			}
 			
