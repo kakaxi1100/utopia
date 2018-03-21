@@ -211,7 +211,7 @@ package
 			matrix.ty = out1.y - (matrix.b * in1.x) - (matrix.d * in1.y);
 			
 			dest.graphics.clear();
-			dest.graphics.beginBitmapFill(cat.bitmapData, matrix, true, true);
+			dest.graphics.beginBitmapFill(cat.bitmapData, matrix, false, true);
 			dest.graphics.moveTo(out1.x, out1.y);
 			dest.graphics.lineTo(out2.x, out2.y);
 			dest.graphics.lineTo(out3.x, out3.y);
