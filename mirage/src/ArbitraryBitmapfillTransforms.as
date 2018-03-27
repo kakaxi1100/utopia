@@ -97,7 +97,6 @@ package
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
-	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.ui.Keyboard;
 	
