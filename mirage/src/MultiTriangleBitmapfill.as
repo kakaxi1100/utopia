@@ -168,7 +168,9 @@ package
 		
 		private var currentP:Sprite;
 		private var index:int = 0;
+		private var plist:Array = [];
 		
+		public static var dotRadius:Number = 2;
 		public function MultiTriangleBitmapfill()
 		{
 			super();
@@ -184,15 +186,15 @@ package
 			dest.y = src.y;
 			addChild(dest);
 			
-			this.rows = 2;
-			this.cols = 2;
+			this.rows = 16;
+			this.cols = 16;
 			this.gridsImage(cat.width, cat.height);
 			this.renderGrids();
 			this.renderDest();
 			
 			currentP = outList[index];
 			currentP.graphics.beginFill(0xff0000);
-			currentP.graphics.drawCircle(0,0,10);
+			currentP.graphics.drawCircle(0,0,dotRadius*2);
 			currentP.graphics.endFill();
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
@@ -218,20 +220,21 @@ package
 					index++
 					currentP.graphics.clear();
 					currentP.graphics.beginFill(0x00ff00);
-					currentP.graphics.drawCircle(0,0,5);
+					currentP.graphics.drawCircle(0,0,dotRadius);
 					currentP.graphics.endFill();
-					if(index >= outList.length)
+					if(index >= plist.length)
 					{
 						index = 0;
 					}
-					currentP = outList[index];
+					currentP = plist[index];
 					currentP.graphics.clear();
 					currentP.graphics.beginFill(0xff0000);
-					currentP.graphics.drawCircle(0,0,10);
+					currentP.graphics.drawCircle(0,0,dotRadius*2);
 					currentP.graphics.endFill();
 					break;
 			}
 			
+			addjustOutPoints();
 			this.renderDest();
 		}
 		
@@ -240,12 +243,39 @@ package
 		//那么根据什么计算呢
 		//1.算上边 进行线性插值 得到了一系列点
 		//2.算下边 进行线性插值 得到了一系列点
-		//3.算左边 进行线性插值 得到了一系列点
-		//4.算右边 进行线性插值 得到了一系列点
-		//5.算中间 进行线性插值 得到了一系列点
+		//3.算中间 进行线性插值 得到了一系列点
+		//Pu = (1 - tx) * Pul + tx * Pur;
+		//Pd = (1 - tx) * Pdl + tx * Pdr;
+		//P = (1 - ty) * Pux + ty * Pdx; 
+		//tx = ix * 1/c
+		//ty = iy * 1/r
+		
 		private function addjustOutPoints():void
 		{
+			var i:int, j:int;
+			var tx:Number, ty:Number;
+			var puxX:Number, puxY:Number; 
+			var pdxX:Number, pdxY:Number;
 			
+			var dot:Dot;
+			for(i = 0; i <= rows; i++)
+			{
+				for(j = 0; j <= cols; j++)
+				{
+					tx = j /cols;
+					ty = i / rows;
+					
+					puxX = (1 - tx)*outList[0].x + tx*outList[cols].x;
+					puxY = (1 - tx)*outList[0].y + tx*outList[cols].y;
+					
+					pdxX = (1 - tx)*outList[rows * (cols + 1)].x + tx*outList[rows * (cols + 1) + cols].x;
+					pdxY = (1 - tx)*outList[rows * (cols + 1)].y + tx*outList[rows * (cols + 1) + cols].y;
+					
+					dot = outList[i * (cols + 1) + j];
+					dot.x = (1 - ty) * puxX + ty * pdxX;
+					dot.y = (1 - ty) * puxY + ty * pdxY;
+				}
+			}
 		}
 		
 		/**
@@ -281,7 +311,7 @@ package
 					matrix.tx = out1.x - ((out2.x-out3.x) * j) - ((out3.x-out1.x) * i);
 					matrix.ty = out1.y - ((out2.y-out3.y) * j) - ((out3.y-out1.y) * i);
 					
-					dest.graphics.beginBitmapFill(cat.bitmapData, matrix, true, true);
+					dest.graphics.beginBitmapFill(cat.bitmapData, matrix, false, true);
 					dest.graphics.moveTo(out1.x, out1.y);
 					dest.graphics.lineTo(out2.x, out2.y);
 					dest.graphics.lineTo(out3.x, out3.y);
@@ -289,7 +319,7 @@ package
 					dest.graphics.endFill();
 					
 					out3 = outList[i * (cols + 1) + j + 1];
-					dest.graphics.beginBitmapFill(cat.bitmapData, matrix, true, true);
+					dest.graphics.beginBitmapFill(cat.bitmapData, matrix, false, true);
 					dest.graphics.moveTo(out1.x, out1.y);
 					dest.graphics.lineTo(out2.x, out2.y);
 					dest.graphics.lineTo(out3.x, out3.y);
@@ -336,17 +366,28 @@ package
 			{
 				for(j = 0; j <= cols; j++)
 				{
-					dot = new Dot();
+					dot = new Dot(dotRadius);
 					dot.x = j * pieceW;
 					dot.y = i * pieceH;
 					inList.push(dot);
 					
-					dot = new Dot();
+					dot = new Dot(dotRadius);
 					dot.x = j * pieceW;
 					dot.y = i * pieceH;
 					outList.push(dot);
+					dot.alpha = 0;
 				}
 			}
+			
+			plist = [];
+			plist[0] = outList[0];
+			plist[1] = outList[cols];
+			plist[2] = outList[rows * (cols + 1)];
+			plist[3] = outList[rows * (cols + 1) + cols];
+			plist[0].alpha = 1;
+			plist[1].alpha = 1;
+			plist[2].alpha = 1;
+			plist[3].alpha = 1;
 		}
 	}
 }
@@ -354,11 +395,11 @@ import flash.display.Sprite;
 
 class Dot extends Sprite
 {
-	public function Dot()
+	public function Dot(r:Number)
 	{
 		super();
 		this.graphics.beginFill(0x00ff00);
-		this.graphics.drawCircle(0,0,5);
+		this.graphics.drawCircle(0,0, r);
 		this.graphics.endFill();
 	}
 }
