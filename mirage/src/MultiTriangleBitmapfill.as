@@ -220,7 +220,7 @@ package
 					index++
 					currentP.graphics.clear();
 					currentP.graphics.beginFill(0x00ff00);
-					currentP.graphics.drawCircle(0,0,dotRadius);
+					currentP.graphics.drawCircle(0,0,dotRadius*2);
 					currentP.graphics.endFill();
 					if(index >= plist.length)
 					{
@@ -229,7 +229,7 @@ package
 					currentP = plist[index];
 					currentP.graphics.clear();
 					currentP.graphics.beginFill(0xff0000);
-					currentP.graphics.drawCircle(0,0,dotRadius*2);
+					currentP.graphics.drawCircle(0,0,dotRadius*4);
 					currentP.graphics.endFill();
 					break;
 			}
@@ -375,7 +375,7 @@ package
 					dot.x = j * pieceW;
 					dot.y = i * pieceH;
 					outList.push(dot);
-					dot.alpha = 0;
+					dot.alpha = 0.5;
 				}
 			}
 			
