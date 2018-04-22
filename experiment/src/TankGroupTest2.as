@@ -72,7 +72,7 @@ package
 			trace("#####--Object Info--#####\n", s,"\n#####################\n");
 			object4D = Base.parseObjective4D(s);
 			var wx:int,wz:int; 
-			for(var i:int = 0; i < 36; i++)
+			for(var i:int = 0; i < 5; i++)
 			{
 				objectList.push(object4D.clone());
 				wx = i % 6 * ObjectSpace;
