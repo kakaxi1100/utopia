@@ -124,7 +124,7 @@ class Player extends Sprite
 		var direction:Number;
 		for(var i:int = 0; i < projectWidth; i++)
 		{
-			direction = (dir - (fov * 0.5));
+			direction = dir - (fov * 0.5) + columnInterval * i;
 			ray = new Ray(this.posX, this.posY, direction);
 			this.parent.addChild(ray);
 		}
