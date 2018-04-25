@@ -27,36 +27,9 @@ package
 			root.x = 100;
 			root.y = 100;
 //-----------------------------1----------------------
-//			for(var j:int = 0; j < 8; j++)
-//			{
-//				for(var i:int = 0; i <8; i++)
-//				{
-//					var t:Tile;
-//					if(j == 7 && i == 7){
-//						t = new Tile(true);
-//					}else{
-//						t = new Tile();
-//					}
-//					t.x = 0;
-//					t.y = 5 * 40;
-//					t.dest.x = i * 40;
-//					t.dest.y = (5 - j) * 40;
-//					
-//					tiles.push(t);
-//					root.addChild(t);
-//					
-//					action.addTween(new BTweenBase(300 + timex, t, {x:t.dest.x}, BEasing.easeInOutElastic))
-//						  .addTween(new BTweenBase(300 + timey, t, {y:t.dest.y}, BEasing.easeInOutElastic));
-//					
-//					timex += 50;
-//					timey += 50;
-//				}
-//			}
-//----------------------------------------------------
-//-----------------------------2----------------------			
 			for(var j:int = 0; j < 8; j++)
 			{
-				for(var i:int = 0; i < 8; i++)
+				for(var i:int = 0; i <8; i++)
 				{
 					var t:Tile;
 					if(j == 7 && i == 7){
@@ -64,10 +37,10 @@ package
 					}else{
 						t = new Tile();
 					}
-					t.x = i * 40;
-					t.y = (5 - j) * 40;
-					t.dest.x = 0;
-					t.dest.y = 0;
+					t.x = 0;
+					t.y = 5 * 40;
+					t.dest.x = i * 40;
+					t.dest.y = (5 - j) * 40;
 					
 					tiles.push(t);
 					root.addChild(t);
@@ -79,6 +52,33 @@ package
 					timey += 50;
 				}
 			}
+//----------------------------------------------------
+//-----------------------------2----------------------			
+//			for(var j:int = 0; j < 8; j++)
+//			{
+//				for(var i:int = 0; i < 8; i++)
+//				{
+//					var t:Tile;
+//					if(j == 7 && i == 7){
+//						t = new Tile(true);
+//					}else{
+//						t = new Tile();
+//					}
+//					t.x = i * 40;
+//					t.y = (5 - j) * 40;
+//					t.dest.x = 0;
+//					t.dest.y = 0;
+//					
+//					tiles.push(t);
+//					root.addChild(t);
+//					
+//					action.addTween(new BTweenBase(300 + timex, t, {x:t.dest.x}, BEasing.easeInOutElastic))
+//						  .addTween(new BTweenBase(300 + timey, t, {y:t.dest.y}, BEasing.easeInOutElastic));
+//					
+//					timex += 50;
+//					timey += 50;
+//				}
+//			}
 //----------------------------------------------------	
 			
 			BTweenManger.getInstance().add(action);

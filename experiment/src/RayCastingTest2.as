@@ -69,29 +69,31 @@ package
 }
 import flash.display.Sprite;
 
+import vo.FFVector;
+
 class Ray extends Sprite
 {
 	public var dir:Number = 0;
 	public var startX:Number = 0;
 	public var startY:Number = 0;
-	
+	public var orientation:FFVector = new FFVector();
 	public function Ray(startX:Number, startY:Number, dir:Number)
 	{
 		super();
-		
-		var tempX:Number = 100;
-		var tempY:Number = dir * 100;
-		var destX:Number = 100 + startX;
-		var destY:Number = tempY + startY;
+			
+		var length:Number = 200;
 		
 		this.startX = startX;
 		this.startY = startY;
 		this.dir = dir;
+		this.orientation.x = Math.cos(dir);
+		this.orientation.y = Math.sin(dir);
+		trace("Ray orientation", this.orientation);
 		
 		this.graphics.clear();
 		this.graphics.lineStyle(1, 0xff0000);
 		this.graphics.moveTo(startX, startY);
-		this.graphics.lineTo(destX, destY);
+		this.graphics.lineTo(startX + orientation.x * length, startY + orientation.y * length);
 	}
 }
 
@@ -122,7 +124,7 @@ class Player extends Sprite
 	{
 		var ray:Ray;
 		var direction:Number;
-		for(var i:int = 0; i < projectWidth; i++)
+		for(var i:int = 0; i < projectWidth; i += 20)
 		{
 			direction = dir - (fov * 0.5) + columnInterval * i;
 			ray = new Ray(this.posX, this.posY, direction);
