@@ -60,6 +60,8 @@ package
 					grid = new Grid(map2d[i][j]);
 					grid.x = j * GridWidth;
 					grid.y = i * GridHeight;
+					grid.row = i;
+					grid.col = j;
 					root.addChild(grid);
 				}
 			}
@@ -95,6 +97,83 @@ class Ray extends Sprite
 		this.graphics.moveTo(startX, startY);
 		this.graphics.lineTo(startX + orientation.x * length, startY + orientation.y * length);
 	}
+	
+	//判断方位
+	// 1  2  3
+	//  \ | /
+	//8__\|/__4
+	//   /|\
+    //  / | \
+	// 7  6  5
+	public function getFaceup():int
+	{
+		var face:int = 0;
+		if(this.orientation.y < 0)
+		{
+			if(this.orientation.x < 0)
+			{
+				face = 1;
+			}else if(this.orientation.x == 0)
+			{
+				face = 2;
+			}else if(this.orientation.x > 0)
+			{
+				face = 3;
+			}
+		}else if(this.orientation.y == 0){
+			if(this.orientation.x > 0)
+			{
+				face = 4;
+			}else if(this.orientation.x < 0)
+			{
+				face = 8;
+			}
+		}else if(this.orientation.y > 0)
+		{
+			if(this.orientation.x > 0)
+			{
+				face = 5;
+			}else if(this.orientation.x == 0)
+			{
+				face = 6;
+			}else if(this.orientation.x < 0)
+			{
+				face = 7;
+			}
+		}
+		
+		return face;
+	}
+	
+	//用相似三角形可以得到这结论
+	//要取得的长度和归一化的做对比
+	public function getHorizonLen(y:Number):Number
+	{
+		var l:Number = y / this.orientation.y;
+		return l;
+	}
+	
+	public function getHorizonPoint(y:Number):FFVector
+	{
+		var v:FFVector = new FFVector(0, y);
+		var l:Number = this.getHorizonLen(y);
+		v.x = l * this.orientation.x;
+		return v;
+	}
+	
+	public function getVertiLen(x:Number):Number
+	{
+		var l:Number = x / this.orientation.x;
+		return l;
+	}
+	
+	public function getVertiPoint(x:Number):FFVector
+	{
+		var v:FFVector = new FFVector(x, 0);
+		var l:Number = this.getVertiLen(x);
+		v.y = l * this.orientation.y;
+		return v;
+	}
 }
 
 class Player extends Sprite
@@ -107,7 +186,7 @@ class Player extends Sprite
 	public var projectHeight:Number = 200;
 	public var distance:Number = (projectWidth * 0.5) / Math.tan(fov * 0.5);
 	public var columnInterval:Number = fov / projectWidth;
-	
+	public var rayList:Vector.<Ray> = new Vector.<Ray>();
 	public function Player(r:int = 0, c:int = 0)
 	{
 		super();
@@ -128,7 +207,26 @@ class Player extends Sprite
 		{
 			direction = dir - (fov * 0.5) + columnInterval * i;
 			ray = new Ray(this.posX, this.posY, direction);
+			rayList.push(ray);
 			this.parent.addChild(ray);
+		}
+	}
+	
+	
+	public function testCollisonPoint():void
+	{
+		var ray:Ray;
+		var face:int;
+		for(var i:int = 0; i < this.rayList.length; i++)
+		{
+			ray = this.rayList[i];
+			face = ray.getFaceup();
+			if(face == 1)
+			{
+				//左上方判断
+				//先判断左边这条线
+				//再判断上方这条线
+			}
 		}
 	}
 	
@@ -146,6 +244,8 @@ class Player extends Sprite
 class Grid extends Sprite
 {
 	public var type:int = 0;
+	public var row:int = 0;
+	public var col:int = 0;
 	public function Grid(type:int = 0)
 	{
 		super();
@@ -161,4 +261,24 @@ class Grid extends Sprite
 			this.graphics.endFill();
 		}
 	}	
+	
+	public function get left():Number
+	{
+		return this.col * RayCastingTest2.GridWidth;
+	}
+	
+	public function get right():Number
+	{
+		return (this.col + 1) * RayCastingTest2.GridWidth - 1
+	}
+	
+	public function get up():Number
+	{
+		return this.row * RayCastingTest2.GridHeight;
+	}
+	
+	public function get down():Number
+	{
+		return (this.row + 1) * RayCastingTest2.GridHeight - 1;
+	}
 }
