@@ -21,9 +21,12 @@ package
 								   [0,0,0,0,0],
 								   [0,0,0,0,0]];
 		
-		private var player:Player = new Player(2, 2);
+		private static var grids:Array = [];
+		
+		private var player:Player = new Player(4, 2);
 		
 		private var root:Sprite = new Sprite();
+		
 		public function RayCastingTest2()
 		{
 			super();
@@ -48,6 +51,7 @@ package
 			root.addChild(player);
 			
 			player.castRays();
+			player.testCollisonPoint();
 		}
 		
 		public function renderMap():void
@@ -62,14 +66,22 @@ package
 					grid.y = i * GridHeight;
 					grid.row = i;
 					grid.col = j;
+					grids.push(grid);
 					root.addChild(grid);
 				}
 			}
+		}
+		
+		public static function getGrid(row:int,col:int):Grid
+		{
+			return grids[row * 5 + col];
 		}
 			
 	}
 }
 import flash.display.Sprite;
+
+import graphics.Circle;
 
 import vo.FFVector;
 
@@ -83,7 +95,7 @@ class Ray extends Sprite
 	{
 		super();
 			
-		var length:Number = 200;
+		var length:Number = 1000;
 		
 		this.startX = startX;
 		this.startY = startY;
@@ -215,9 +227,16 @@ class Player extends Sprite
 	
 	public function testCollisonPoint():void
 	{
+		var tempFF:FFVector;
 		var ray:Ray;
 		var face:int;
-		for(var i:int = 0; i < this.rayList.length; i++)
+		var i:int, j:int;
+		var convertX:Number, convertY:Number;
+		var left:Number = RayCastingTest2.getGrid(this.row, this.col).left - 1;
+		var right:Number = RayCastingTest2.getGrid(this.row, this.col).right + 1;
+		var up:Number = RayCastingTest2.getGrid(this.row, this.col).up - 1;
+		var down:Number = RayCastingTest2.getGrid(this.row, this.col).down + 1;
+		for(i = 0; i < this.rayList.length; i++)
 		{
 			ray = this.rayList[i];
 			face = ray.getFaceup();
@@ -225,7 +244,24 @@ class Player extends Sprite
 			{
 				//左上方判断
 				//先判断左边这条线
+				for(j = left; j > 0; j -= RayCastingTest2.GridWidth)
+				{
+					//1.变换坐标,平移到玩家的坐标点
+					convertX = j - this.posX;
+					tempFF = ray.getVertiPoint(convertX);
+					//2.变回世界坐标
+					tempFF.x += this.posX;
+					tempFF.y += this.posY;
+					var c:Circle1 = new Circle1();
+					c.x = tempFF.x;
+					c.y = tempFF.y;
+					this.parent.addChild(c);
+				}
 				//再判断上方这条线
+				for(j = up; j > 0; j-= RayCastingTest2.GridHeight)
+				{
+					
+				}
 			}
 		}
 	}
@@ -280,5 +316,16 @@ class Grid extends Sprite
 	public function get down():Number
 	{
 		return (this.row + 1) * RayCastingTest2.GridHeight - 1;
+	}
+}
+
+class Circle1 extends Sprite
+{
+	public function Circle1(type:int = 0)
+	{
+		super();
+		this.graphics.clear();
+		this.graphics.lineStyle(1, 0xffff00);
+		this.graphics.drawCircle(0,0,2);
 	}
 }
