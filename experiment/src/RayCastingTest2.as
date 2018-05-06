@@ -9,7 +9,7 @@ package
 {
 	import flash.display.Sprite;
 	
-	[SWF(width="800", height="600", frameRate="60", backgroundColor="0xcccccc")]
+	[SWF(width="1000", height="600", frameRate="60", backgroundColor="0")]
 	public class RayCastingTest2 extends Sprite
 	{
 		public static const GridWidth:Number = 64;
@@ -17,8 +17,8 @@ package
 		
 		private var map2d:Array = [[1,1,1,1,1],
 								   [0,0,0,0,0],
-								   [0,0,0,0,0],
-								   [0,0,0,0,0],
+								   [0,0,1,0,0],
+								   [0,1,0,1,0],
 								   [0,0,0,0,0]];
 		
 		private static var grids:Array = [];
@@ -26,7 +26,9 @@ package
 		private var player:Player = new Player(4, 2);
 		
 		private var root:Sprite = new Sprite();
+		private var threeD:Sprite = new Sprite();
 		
+		private static var lengths:Array = [];
 		public function RayCastingTest2()
 		{
 			super();
@@ -34,6 +36,11 @@ package
 			root.x = 100;
 			root.y = 100;
 			addChild(root);
+			
+			threeD.x = 500;
+			threeD.y = 100;
+			addChild(threeD);
+			threeD.graphics.lineStyle(1, 0x00ff00);
 			
 			this.render();	
 		}
@@ -52,6 +59,7 @@ package
 			
 			player.castRays();
 			player.testCollisonPoint();
+			player.drawLine(threeD);
 		}
 		
 		public function renderMap():void
@@ -80,8 +88,6 @@ package
 	}
 }
 import flash.display.Sprite;
-
-import graphics.Circle;
 
 import vo.FFVector;
 
@@ -199,6 +205,7 @@ class Player extends Sprite
 	public var distance:Number = (projectWidth * 0.5) / Math.tan(fov * 0.5);
 	public var columnInterval:Number = fov / projectWidth;
 	public var rayList:Vector.<Ray> = new Vector.<Ray>();
+	public var lenList:Array = [];
 	public function Player(r:int = 0, c:int = 0)
 	{
 		super();
@@ -215,7 +222,7 @@ class Player extends Sprite
 	{
 		var ray:Ray;
 		var direction:Number;
-		for(var i:int = 0; i < projectWidth; i += 20)
+		for(var i:int = 0; i < projectWidth; i += 30)
 		{
 			direction = dir - (fov * 0.5) + columnInterval * i;
 			ray = new Ray(this.posX, this.posY, direction);
@@ -227,42 +234,152 @@ class Player extends Sprite
 	
 	public function testCollisonPoint():void
 	{
-		var tempFF:FFVector;
+		var horizonFF:FFVector = new FFVector(), vertiFF:FFVector = new FFVector();
+		var grid:Grid;
+		var cRow:int, cCol:int;
+		var ya:Number, xa:Number;
+		var invertX:int = 1, invertY:int = 1;
+		var c:Circle1;
 		var ray:Ray;
-		var face:int;
 		var i:int, j:int;
-		var convertX:Number, convertY:Number;
+		var latestV:Number, latestH:Number;//最近的垂直线, 最近的水平线
+		var lenV:Number, lenH:Number;
 		var left:Number = RayCastingTest2.getGrid(this.row, this.col).left - 1;
 		var right:Number = RayCastingTest2.getGrid(this.row, this.col).right + 1;
 		var up:Number = RayCastingTest2.getGrid(this.row, this.col).up - 1;
 		var down:Number = RayCastingTest2.getGrid(this.row, this.col).down + 1;
-		for(i = 0; i < this.rayList.length; i++)
+		var test:int = 2;
+//		for(i = 0; i < this.rayList.length; i++)
+		for(i = test; i < test + 1; i++)
 		{
 			ray = this.rayList[i];
-			face = ray.getFaceup();
-			if(face == 1)
+			//上下的最近线
+			if(ray.orientation.y < 0)
 			{
-				//左上方判断
-				//先判断左边这条线
-				for(j = left; j > 0; j -= RayCastingTest2.GridWidth)
+				latestH = up;
+				invertY = -1;
+				ya = -RayCastingTest2.GridHeight;
+			}
+			else if(ray.orientation.y > 0)
+			{
+				latestH = down;
+				invertY = 1;
+				ya = RayCastingTest2.GridHeight;
+			}
+			//左右的最近线
+			if(ray.orientation.x < 0)
+			{
+				latestV = left;
+				invertX = -1;
+				xa = -RayCastingTest2.GridWidth;
+			}
+			else if(ray.orientation.x > 0)
+			{
+				latestV = right;
+				invertX = 1;
+				xa = RayCastingTest2.GridWidth;
+			}
+
+			lenH = 0;
+			this.lenList[i] = 0;
+			//求水平线
+			for(j = latestH; j > 0 && j < RayCastingTest2.GridHeight * 5; j += ya)
+			{
+				horizonFF.x = ray.orientation.x * (j - this.posY) / ray.orientation.y;
+				horizonFF.x += this.posX;
+				horizonFF.y = j;
+				cRow = horizonFF.y / RayCastingTest2.GridHeight >> 0;
+				cCol = horizonFF.x / RayCastingTest2.GridWidth >> 0;
+				grid = RayCastingTest2.getGrid(cRow, cCol);
+				if(grid == null)//超出范围
 				{
-					//1.变换坐标,平移到玩家的坐标点
-					convertX = j - this.posX;
-					tempFF = ray.getVertiPoint(convertX);
-					//2.变回世界坐标
-					tempFF.x += this.posX;
-					tempFF.y += this.posY;
-					var c:Circle1 = new Circle1();
-					c.x = tempFF.x;
-					c.y = tempFF.y;
-					this.parent.addChild(c);
+					break;
 				}
-				//再判断上方这条线
-				for(j = up; j > 0; j-= RayCastingTest2.GridHeight)
+				if(grid != null && grid.type == 1)
 				{
-					
+//					lenH = Math.abs(ray.getHorizonLen(j - this.posY));
+					lenH = Math.abs(horizonFF.y - this.posY);
+
+//					c = new Circle1();
+//					c.x = horizonFF.x;
+//					c.y = horizonFF.y;
+//					this.parent.addChild(c);
+					break;
 				}
 			}
+			
+			lenV = 0;
+			//求垂直线
+			for(j = latestV; j > 0 && j < RayCastingTest2.GridWidth * 5; j += xa)
+			{
+				vertiFF.y = ray.orientation.y * (j - this.posX) / ray.orientation.x;
+				vertiFF.x = j;
+				vertiFF.y += this.posY;
+				cRow = vertiFF.y / RayCastingTest2.GridHeight >> 0;
+				cCol = vertiFF.x / RayCastingTest2.GridWidth >> 0;
+				grid = RayCastingTest2.getGrid(cRow, cCol);
+				if(grid == null)//超出范围
+				{
+					break;
+				}
+				if(grid != null && grid.type == 1)
+				{
+//					lenV = Math.abs(ray.getVertiLen(j - this.posX));
+					lenV = Math.abs(vertiFF.y - this.posY);
+						
+//					c = new Circle1();
+//					c.x = vertiFF.x;
+//					c.y = vertiFF.y;
+//					this.parent.addChild(c);
+					break;
+				}
+			}
+			
+			if(lenV == 0 && lenH != 0)
+			{
+				this.lenList[i] = lenH;
+				c = new Circle1();
+				c.x = horizonFF.x;
+				c.y = horizonFF.y;
+				this.parent.addChild(c);
+			}else if(lenH == 0 &&　lenV != 0)
+			{
+				this.lenList[i] = lenV;
+				c = new Circle1();
+				c.x = vertiFF.x;
+				c.y = vertiFF.y;
+				this.parent.addChild(c);
+			}else if(lenV == 0 && lenH == 0)
+			{
+				this.lenList[i] = 0;
+			}else if(lenV > lenH)
+			{
+				this.lenList[i] = lenH;
+				this.lenList[i] = lenH;
+				c = new Circle1();
+				c.x = horizonFF.x;
+				c.y = horizonFF.y;
+				this.parent.addChild(c);
+			}else{
+				this.lenList[i] = lenV;
+				c = new Circle1();
+				c.x = vertiFF.x;
+				c.y = vertiFF.y;
+				this.parent.addChild(c);
+			}
+		}
+		trace(this.lenList);
+	}
+	
+	public function drawLine(s:Sprite):void
+	{
+		for(var i:int = 0; i < this.lenList.length; i++)
+		{
+			var len:Number = this.lenList[i];
+			var proLen:Number = 64 * distance / len;
+			var moveY:Number = (projectHeight - proLen) * 0.5;
+			s.graphics.moveTo(i, moveY);
+			s.graphics.lineTo(i, moveY + proLen);
 		}
 	}
 	
@@ -292,7 +409,7 @@ class Grid extends Sprite
 		if(!type){
 			this.graphics.drawRect(0,0, RayCastingTest2.GridWidth, RayCastingTest2.GridHeight);
 		}else{
-			this.graphics.beginFill(0);
+			this.graphics.beginFill(0x0000ff);
 			this.graphics.drawRect(0,0, RayCastingTest2.GridWidth, RayCastingTest2.GridHeight);
 			this.graphics.endFill();
 		}
@@ -305,7 +422,7 @@ class Grid extends Sprite
 	
 	public function get right():Number
 	{
-		return (this.col + 1) * RayCastingTest2.GridWidth - 1
+		return (this.col + 1) * RayCastingTest2.GridWidth - 1;
 	}
 	
 	public function get up():Number
@@ -321,11 +438,11 @@ class Grid extends Sprite
 
 class Circle1 extends Sprite
 {
-	public function Circle1(type:int = 0)
+	public function Circle1(c:uint = 0xffff00)
 	{
 		super();
 		this.graphics.clear();
-		this.graphics.lineStyle(1, 0xffff00);
+		this.graphics.lineStyle(1, c);
 		this.graphics.drawCircle(0,0,2);
 	}
 }
