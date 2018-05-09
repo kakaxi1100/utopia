@@ -1,24 +1,24 @@
 /**
  *we need to know these attributes:
-
-1. Player/viewer’s height, player’s field of view (FOV), and player’s position.
-2. Projection plane’s dimension.
-3. Relationship between player and projection plane. 
+ 
+ 1. Player/viewer’s height, player’s field of view (FOV), and player’s position.
+ 2. Projection plane’s dimension.
+ 3. Relationship between player and projection plane. 
  */
 package
 {
 	import flash.display.Sprite;
 	
 	[SWF(width="1000", height="600", frameRate="60", backgroundColor="0")]
-	public class RayCastingTest2 extends Sprite
+	public class RayCastingTest3 extends Sprite
 	{
 		public static const GridWidth:Number = 64;
 		public static const GridHeight:Number = 64;
 		
 		private var map2d:Array = [[1,1,1,1,1],
-								   [0,0,0,0,0],
-								   [0,0,1,0,0],
+								   [0,0,0,1,0],
 								   [0,1,0,1,0],
+								   [1,0,0,0,1],
 								   [0,0,0,0,0]];
 		
 		private static var grids:Array = [];
@@ -29,7 +29,7 @@ package
 		private var threeD:Sprite = new Sprite();
 		
 		private static var lengths:Array = [];
-		public function RayCastingTest2()
+		public function RayCastingTest3()
 		{
 			super();
 			
@@ -84,7 +84,7 @@ package
 		{
 			return grids[row * 5 + col];
 		}
-			
+		
 	}
 }
 import flash.display.Sprite;
@@ -100,7 +100,7 @@ class Ray extends Sprite
 	public function Ray(startX:Number, startY:Number, dir:Number, color:uint = 0xff0000)
 	{
 		super();
-			
+		
 		var length:Number = 1000;
 		
 		this.startX = startX;
@@ -121,7 +121,7 @@ class Ray extends Sprite
 	//  \ | /
 	//8__\|/__4
 	//   /|\
-    //  / | \
+	//  / | \
 	// 7  6  5
 	public function getFaceup():int
 	{
@@ -222,7 +222,7 @@ class Player extends Sprite
 	{
 		var ray:Ray;
 		var direction:Number;
-//		for(var i:int = 0; i < projectWidth; i += 5)
+		//		for(var i:int = 0; i < projectWidth; i += 5)
 		for(var i:int = 0; i < projectWidth; i += 1)
 		{
 			direction = dir - (fov * 0.5) + columnInterval * i;
@@ -245,13 +245,13 @@ class Player extends Sprite
 		var i:int, j:int;
 		var latestV:Number, latestH:Number;//最近的垂直线, 最近的水平线
 		var lenV:Number, lenH:Number;
-		var left:Number = RayCastingTest2.getGrid(this.row, this.col).left - 1;
-		var right:Number = RayCastingTest2.getGrid(this.row, this.col).right + 1;
-		var up:Number = RayCastingTest2.getGrid(this.row, this.col).up - 1;
-		var down:Number = RayCastingTest2.getGrid(this.row, this.col).down + 1;
+		var left:Number = RayCastingTest3.getGrid(this.row, this.col).left;
+		var right:Number = RayCastingTest3.getGrid(this.row, this.col).right + 1;
+		var up:Number = RayCastingTest3.getGrid(this.row, this.col).up;
+		var down:Number = RayCastingTest3.getGrid(this.row, this.col).down + 1;
 		var test:int = 51;
 		for(i = 0; i < this.rayList.length; i++)
-//		for(i = test; i < test + 1; i++)
+			//		for(i = test; i < test + 1; i++)
 		{
 			ray = this.rayList[i];
 			//上下的最近线
@@ -259,81 +259,81 @@ class Player extends Sprite
 			{
 				latestH = up;
 				invertY = -1;
-				ya = -RayCastingTest2.GridHeight;
+				ya = -RayCastingTest3.GridHeight;
 			}
 			else if(ray.orientation.y > 0)
 			{
 				latestH = down;
 				invertY = 1;
-				ya = RayCastingTest2.GridHeight;
+				ya = RayCastingTest3.GridHeight;
 			}
 			//左右的最近线
 			if(ray.orientation.x < 0)
 			{
 				latestV = left;
 				invertX = -1;
-				xa = -RayCastingTest2.GridWidth;
+				xa = -RayCastingTest3.GridWidth;
 			}
 			else if(ray.orientation.x > 0)
 			{
 				latestV = right;
 				invertX = 1;
-				xa = RayCastingTest2.GridWidth;
+				xa = RayCastingTest3.GridWidth;
 			}
-
+			
 			lenH = 0;
 			this.lenList[i] = 0;
 			//求水平线
-			for(j = latestH; j > 0 && j < RayCastingTest2.GridHeight * 5; j += ya)
+			for(j = latestH; j > 0 && j < RayCastingTest3.GridHeight * 5; j += ya)
 			{
 				horizonFF.x = ray.orientation.x / ray.orientation.y * (j - this.posY) ;
 				horizonFF.x += this.posX;
-//				horizonFF.x = Math.floor(horizonFF.x);
-				horizonFF.y = j;
-				cRow = horizonFF.y / RayCastingTest2.GridHeight >> 0;
-				cCol = horizonFF.x / RayCastingTest2.GridWidth >> 0;
-				grid = RayCastingTest2.getGrid(cRow, cCol);
+				//				horizonFF.x = Math.floor(horizonFF.x);
+				horizonFF.y = j + invertY;
+				cRow = horizonFF.y / RayCastingTest3.GridHeight >> 0;
+				cCol = horizonFF.x / RayCastingTest3.GridWidth >> 0;
+				grid = RayCastingTest3.getGrid(cRow, cCol);
 				if(grid == null)//超出范围
 				{
 					break;
 				}
 				if(grid != null && grid.type == 1)
 				{
-//					lenH = Math.abs(ray.getHorizonLen(j - this.posY));
+					//					lenH = Math.abs(ray.getHorizonLen(j - this.posY));
 					lenH = Math.abs(horizonFF.y - this.posY);
-
-//					c = new Circle1();
-//					c.x = horizonFF.x;
-//					c.y = horizonFF.y;
-//					this.parent.addChild(c);
+					
+					//					c = new Circle1();
+					//					c.x = horizonFF.x;
+					//					c.y = horizonFF.y;
+					//					this.parent.addChild(c);
 					break;
 				}
 			}
 			
 			lenV = 0;
 			//求垂直线
-			for(j = latestV; j > 0 && j < RayCastingTest2.GridWidth * 5; j += xa)
+			for(j = latestV; j > 0 && j < RayCastingTest3.GridWidth * 5; j += xa)
 			{
 				vertiFF.y = ray.orientation.y / ray.orientation.x * (j - this.posX);
-				vertiFF.x = j;
+				vertiFF.x = j + invertX;
 				vertiFF.y += this.posY;
 				vertiFF.y = Math.floor(vertiFF.y);
-				cRow = vertiFF.y / RayCastingTest2.GridHeight >> 0;
-				cCol = vertiFF.x / RayCastingTest2.GridWidth >> 0;
-				grid = RayCastingTest2.getGrid(cRow, cCol);
+				cRow = vertiFF.y / RayCastingTest3.GridHeight >> 0;
+				cCol = vertiFF.x / RayCastingTest3.GridWidth >> 0;
+				grid = RayCastingTest3.getGrid(cRow, cCol);
 				if(grid == null)//超出范围
 				{
 					break;
 				}
 				if(grid != null && grid.type == 1)
 				{
-//					lenV = Math.abs(ray.getVertiLen(j - this.posX));
+					//					lenV = Math.abs(ray.getVertiLen(j - this.posX));
 					lenV = Math.abs(vertiFF.y - this.posY);
-						
-//					c = new Circle1();
-//					c.x = vertiFF.x;
-//					c.y = vertiFF.y;
-//					this.parent.addChild(c);
+					
+					//					c = new Circle1();
+					//					c.x = vertiFF.x;
+					//					c.y = vertiFF.y;
+					//					this.parent.addChild(c);
 					break;
 				}
 			}
@@ -386,12 +386,12 @@ class Player extends Sprite
 	
 	public function get posX():Number
 	{
-		return this.col * RayCastingTest2.GridWidth + RayCastingTest2.GridWidth * 0.5;
+		return this.col * RayCastingTest3.GridWidth + RayCastingTest3.GridWidth * 0.5;
 	}
 	
 	public function get posY():Number
 	{
-		return this.row * RayCastingTest2.GridHeight + RayCastingTest2.GridHeight * 0.5;
+		return this.row * RayCastingTest3.GridHeight + RayCastingTest3.GridHeight * 0.5;
 	}
 }
 
@@ -408,32 +408,32 @@ class Grid extends Sprite
 		this.graphics.clear();
 		this.graphics.lineStyle(1, 0xffffff);
 		if(!type){
-			this.graphics.drawRect(0,0, RayCastingTest2.GridWidth, RayCastingTest2.GridHeight);
+			this.graphics.drawRect(0,0, RayCastingTest3.GridWidth, RayCastingTest3.GridHeight);
 		}else{
 			this.graphics.beginFill(0x0000ff);
-			this.graphics.drawRect(0,0, RayCastingTest2.GridWidth, RayCastingTest2.GridHeight);
+			this.graphics.drawRect(0,0, RayCastingTest3.GridWidth, RayCastingTest3.GridHeight);
 			this.graphics.endFill();
 		}
 	}	
 	
 	public function get left():Number
 	{
-		return this.col * RayCastingTest2.GridWidth;
+		return this.col * RayCastingTest3.GridWidth;
 	}
 	
 	public function get right():Number
 	{
-		return (this.col + 1) * RayCastingTest2.GridWidth - 1;
+		return (this.col + 1) * RayCastingTest3.GridWidth - 1;
 	}
 	
 	public function get up():Number
 	{
-		return this.row * RayCastingTest2.GridHeight;
+		return this.row * RayCastingTest3.GridHeight;
 	}
 	
 	public function get down():Number
 	{
-		return (this.row + 1) * RayCastingTest2.GridHeight - 1;
+		return (this.row + 1) * RayCastingTest3.GridHeight - 1;
 	}
 }
 
