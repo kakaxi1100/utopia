@@ -7,11 +7,20 @@
  */
 package
 {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
+	import flash.display.StageScaleMode;
+	import flash.geom.Matrix;
 	
 	[SWF(width="1000", height="600", frameRate="60", backgroundColor="0")]
 	public class RayCastingTest3 extends Sprite
 	{
+		[Embed(source="assets/wolftextures.png")]
+		private var Wall:Class;
+		
+		private var wall:Bitmap = new Wall();
+		
 		public static const GridWidth:Number = 64;
 		public static const GridHeight:Number = 64;
 		
@@ -29,20 +38,39 @@ package
 		private var threeD:Sprite = new Sprite();
 		
 		private static var lengths:Array = [];
+		
+		private var threeDMapList:Array = [];
 		public function RayCastingTest3()
 		{
 			super();
+			
+			stage.scaleMode = StageScaleMode.NO_SCALE;
 			
 			root.x = 100;
 			root.y = 100;
 			addChild(root);
 			
-			threeD.x = 500;
-			threeD.y = 100;
+//			threeD.x = 500;
+//			threeD.y = 100;
 			addChild(threeD);
 			threeD.graphics.lineStyle(1, 0x00ff00);
 			
-			this.render();	
+			for(var i:int = 0; i < 320; i++)
+			{
+				this.threeDMapList[i] = new Sprite();
+				var b:Bitmap = Bitmap(new BitmapData(1, 64));
+				b.y = -32;
+				this.threeDMapList[i].addChild(b);
+				this.threeDMapList[i].x = i;
+				this.threeDMapList[i].y = 100;
+				threeD.addChild(this.threeDMapList[i]);	
+			}
+			
+//			this.render();
+//			wall.x = -wall.width / 2;
+//			wall.y = -wall.height / 2;
+//			threeD.addChild(wall);
+//			threeD.scaleX = threeD.scaleY = 2;
 		}
 		
 		public function render():void
@@ -206,6 +234,7 @@ class Player extends Sprite
 	public var columnInterval:Number = fov / projectWidth;
 	public var rayList:Vector.<Ray> = new Vector.<Ray>();
 	public var lenList:Array = [];
+	public var offsetList:Array = [];
 	public function Player(r:int = 0, c:int = 0)
 	{
 		super();
@@ -245,6 +274,7 @@ class Player extends Sprite
 		var i:int, j:int;
 		var latestV:Number, latestH:Number;//最近的垂直线, 最近的水平线
 		var lenV:Number, lenH:Number;
+		var offsetV:Number, offsetH:Number;
 		var left:Number = RayCastingTest3.getGrid(this.row, this.col).left;
 		var right:Number = RayCastingTest3.getGrid(this.row, this.col).right + 1;
 		var up:Number = RayCastingTest3.getGrid(this.row, this.col).up;
@@ -300,8 +330,8 @@ class Player extends Sprite
 				if(grid != null && grid.type == 1)
 				{
 					//					lenH = Math.abs(ray.getHorizonLen(j - this.posY));
-					lenH = Math.abs(horizonFF.y - this.posY);
-					
+					lenH = Math.abs(horizonFF.y - this.posY); //防止鱼眼效果
+					offsetH = -(grid.left - horizonFF.x);
 					//					c = new Circle1();
 					//					c.x = horizonFF.x;
 					//					c.y = horizonFF.y;
@@ -328,8 +358,8 @@ class Player extends Sprite
 				if(grid != null && grid.type == 1)
 				{
 					//					lenV = Math.abs(ray.getVertiLen(j - this.posX));
-					lenV = Math.abs(vertiFF.y - this.posY);
-					
+					lenV = Math.abs(vertiFF.y - this.posY);//防止鱼眼效果
+					offsetV = -(grid.up - horizonFF.y);
 					//					c = new Circle1();
 					//					c.x = vertiFF.x;
 					//					c.y = vertiFF.y;
@@ -341,6 +371,7 @@ class Player extends Sprite
 			if(lenV == 0 && lenH != 0)
 			{
 				this.lenList[i] = lenH;
+				this.offsetList[i] = offsetH;
 				c = new Circle1();
 				c.x = horizonFF.x;
 				c.y = horizonFF.y;
@@ -348,6 +379,7 @@ class Player extends Sprite
 			}else if(lenH == 0 &&　lenV != 0)
 			{
 				this.lenList[i] = lenV;
+				this.offsetList[i] = offsetV;
 				c = new Circle1();
 				c.x = vertiFF.x;
 				c.y = vertiFF.y;
@@ -358,12 +390,14 @@ class Player extends Sprite
 			}else if(lenV > lenH)
 			{
 				this.lenList[i] = lenH;
+				this.offsetList[i] = offsetH;
 				c = new Circle1();
 				c.x = horizonFF.x;
 				c.y = horizonFF.y;
 				this.parent.addChild(c);
 			}else{
 				this.lenList[i] = lenV;
+				this.offsetList[i] = offsetV;
 				c = new Circle1();
 				c.x = vertiFF.x;
 				c.y = vertiFF.y;
@@ -373,6 +407,18 @@ class Player extends Sprite
 	}
 	
 	public function drawLine(s:Sprite):void
+	{
+		for(var i:int = 0; i < this.lenList.length; i++)
+		{
+			var len:Number = this.lenList[i];
+			var proLen:Number = 64 * distance / len;
+			var moveY:Number = (projectHeight - proLen) * 0.5;
+			s.graphics.moveTo(i, moveY);
+			s.graphics.lineTo(i, moveY + proLen);
+		}
+	}
+	
+	public function drawBitmap(s:Sprite):void
 	{
 		for(var i:int = 0; i < this.lenList.length; i++)
 		{
