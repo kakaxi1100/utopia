@@ -32,7 +32,7 @@ package
 		
 		private static var grids:Array = [];
 		
-		private var player:Player = new Player(4, 2);
+		private var player:Player = new Player(4, 3);
 		
 		private var root:Sprite = new Sprite();
 		private var threeD:Sprite = new Sprite();
@@ -40,6 +40,7 @@ package
 		private static var lengths:Array = [];
 		
 		private var threeDMapList:Array = [];
+		private var threeDmapBitmapList:Array = [];
 		public function RayCastingTest3()
 		{
 			super();
@@ -50,27 +51,24 @@ package
 			root.y = 100;
 			addChild(root);
 			
-//			threeD.x = 500;
-//			threeD.y = 100;
+			threeD.x = 500;
+			threeD.y = 100;
 			addChild(threeD);
 			threeD.graphics.lineStyle(1, 0x00ff00);
 			
 			for(var i:int = 0; i < 320; i++)
 			{
 				this.threeDMapList[i] = new Sprite();
-				var b:Bitmap = Bitmap(new BitmapData(1, 64));
+				var b:Bitmap = new Bitmap(new BitmapData(1, 64));
 				b.y = -32;
+				threeDmapBitmapList[i] = b;
 				this.threeDMapList[i].addChild(b);
 				this.threeDMapList[i].x = i;
 				this.threeDMapList[i].y = 100;
 				threeD.addChild(this.threeDMapList[i]);	
 			}
 			
-//			this.render();
-//			wall.x = -wall.width / 2;
-//			wall.y = -wall.height / 2;
-//			threeD.addChild(wall);
-//			threeD.scaleX = threeD.scaleY = 2;
+			this.render();
 		}
 		
 		public function render():void
@@ -87,7 +85,8 @@ package
 			
 			player.castRays();
 			player.testCollisonPoint();
-			player.drawLine(threeD);
+//			player.drawLine(threeD);
+			player.drawBitmap(threeDMapList, threeDmapBitmapList, wall);
 		}
 		
 		public function renderMap():void
@@ -115,7 +114,10 @@ package
 		
 	}
 }
+import flash.display.Bitmap;
 import flash.display.Sprite;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import vo.FFVector;
 
@@ -359,7 +361,7 @@ class Player extends Sprite
 				{
 					//					lenV = Math.abs(ray.getVertiLen(j - this.posX));
 					lenV = Math.abs(vertiFF.y - this.posY);//防止鱼眼效果
-					offsetV = -(grid.up - horizonFF.y);
+					offsetV = -(grid.up - vertiFF.y);
 					//					c = new Circle1();
 					//					c.x = vertiFF.x;
 					//					c.y = vertiFF.y;
@@ -418,15 +420,21 @@ class Player extends Sprite
 		}
 	}
 	
-	public function drawBitmap(s:Sprite):void
+	public function drawBitmap(list1:Array, list2:Array, source:Bitmap):void
 	{
 		for(var i:int = 0; i < this.lenList.length; i++)
 		{
 			var len:Number = this.lenList[i];
+			var offset:Number = this.offsetList[i];
+			var b:Bitmap = list2[i];
+			b.bitmapData.copyPixels(source.bitmapData, new Rectangle(offset, 0, 1, 64), new Point(0,0));
+			var s:Sprite = list1[i];
 			var proLen:Number = 64 * distance / len;
-			var moveY:Number = (projectHeight - proLen) * 0.5;
-			s.graphics.moveTo(i, moveY);
-			s.graphics.lineTo(i, moveY + proLen);
+			s.scaleY = proLen / 64;
+			
+//			var moveY:Number = (projectHeight - proLen) * 0.5;
+//			s.graphics.moveTo(i, moveY);
+//			s.graphics.lineTo(i, moveY + proLen);
 		}
 	}
 	
