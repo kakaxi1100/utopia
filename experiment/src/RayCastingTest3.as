@@ -29,21 +29,21 @@ package
 		private var wall:Bitmap = new Wall();
 		private var floor:Bitmap = new Bitmap(new BitmapData(64,64));
 		private var cell:Bitmap = new Bitmap(new BitmapData(64,64));
-		private var theOneRowWall:Bitmap = new Bitmap(new BitmapData(320,64));
+		private var theOneRowFloor:Bitmap = new Bitmap(new BitmapData(320,64));
 		private var theOneRowCell:Bitmap = new Bitmap(new BitmapData(320,64));
 		
 		public static const GridWidth:Number = 64;
 		public static const GridHeight:Number = 64;
 		
 		private var map2d:Array = [[1,1,1,1,1],
-								   [0,0,0,0,0],
-								   [0,0,0,0,0],
-								   [0,1,0,0,0],
-								   [0,0,0,0,0]];
+								   [1,0,0,0,1],
+								   [1,0,0,1,1],
+								   [1,1,0,0,1],
+								   [1,1,1,1,1]];
 		
 		private static var grids:Array = [];
 		
-		private var player:Player = new Player(4, 2);
+		private var player:Player = new Player(1, 2);
 		
 		private var root:Sprite = new Sprite();
 		private var threeD:Sprite = new Sprite();
@@ -66,11 +66,11 @@ package
 			stage.align = StageAlign.TOP_LEFT;
 			
 			floor.bitmapData.copyPixels(alltiles.bitmapData, new Rectangle(64, 0, 64, 64), new Point(0,0));
-			cell.bitmapData.copyPixels(alltiles.bitmapData, new Rectangle(64 * 2, 0, 64, 64), new Point(0,0));
+			cell.bitmapData.copyPixels(alltiles.bitmapData, new Rectangle(64 * 6, 0, 64, 64), new Point(0,0));
 //			addChild(cell);
 			for(var k:int = 0; k < 5; k++)
 			{
-				theOneRowWall.bitmapData.copyPixels(floor.bitmapData, 
+				theOneRowFloor.bitmapData.copyPixels(floor.bitmapData, 
 					new Rectangle(0,0,floor.width,floor.height),
 													new Point(k*64,0));
 			}
@@ -159,8 +159,8 @@ package
 			player.testCollisonPoint();
 //			player.drawLine(threeD);
 			player.drawBitmap(threeDMapList, threeDmapBitmapList, wall);
-			player.drawFloor(floorList, floorBitmapList, theOneRowWall);
-			player.drawCell(cellList, cellBitmapList, theOneRowCell);
+			player.drawFloor(floorList, floorBitmapList, theOneRowCell);
+			player.drawCell(cellList, cellBitmapList, theOneRowFloor);
 		}
 		
 		public function renderMap():void
@@ -303,7 +303,7 @@ class Player extends Sprite
 	public var row:int;
 	public var col:int;
 	public var fov:Number = Math.PI / 3;
-	public var dir:Number = -Math.PI / 2;
+	public var dir:Number = 2 * Math.PI / 3;
 	public var projectWidth:Number = 320;
 	public var projectHeight:Number = 200;
 	public var distance:Number = (projectWidth * 0.5) / Math.tan(fov * 0.5);
