@@ -13,6 +13,7 @@ package
 		public function ColorTest()
 		{
 			super();
+			
 //------------图像反转---------------------------------------------			
 			var b:Bitmap = new Surge();
 			addChild(b);
