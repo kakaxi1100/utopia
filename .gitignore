@@ -52,6 +52,12 @@ blurr/bin/
 blurr/bin-debug/
 blurr/bin-release/
 
+coo/AS/.settings/
+coo/AS.~ml
+coo/AS/bin/
+coo/AS/bin-debug/
+coo/AS/bin-release/
+
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.
