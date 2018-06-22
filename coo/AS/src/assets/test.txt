@@ -1,5 +1,4 @@
-1. Go to http://www.pogodev.pogo.com/game/landing.do?game=stackem_h5#game
-2. Use the cheat tool to fill up 9 rows
-3. Move a tile around until a new line is added
-Results - With all rows filled the user is faced with a deadlock and can not continue
-Expected Results - When a new line is added and fills all rows 5 consecutive pieces are added to avoid a deadlock
+while(i>0)
+{
+	j = 10
+}
