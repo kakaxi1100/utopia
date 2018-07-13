@@ -59,6 +59,10 @@ coo/AS/bin-debug/
 coo/AS/bin-release/
 coo/1/
 
+SFML/practice/practice/Debug/
+SFML/practice/practice/practice/Debug/
+SFML/practice/practice/.vs/
+
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.
