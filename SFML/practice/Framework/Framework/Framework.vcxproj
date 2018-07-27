@@ -141,9 +141,10 @@
   <ItemGroup>
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="test2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CustomEvent.h" />
+    <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="EventBase.h" />
     <ClInclude Include="EventManager.h" />
   </ItemGroup>

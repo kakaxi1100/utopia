@@ -21,6 +21,9 @@
     <ClCompile Include="EventManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="test2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventManager.h">
@@ -29,7 +32,7 @@
     <ClInclude Include="EventBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomEvent.h">
+    <ClInclude Include="EventDispatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
