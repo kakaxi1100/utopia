@@ -17,7 +17,7 @@ EventManager & EventManager::getInstance()
 	return *mInstance;
 }
 
-void EventManager::addEventListener(const EventType& type, std::function<void(const EventBase&)> foo, const std::string& name = "")
+void EventManager::addEventListener(const EventType& type, std::function<void(const EventBase&)> foo, const std::string name)
 {
 	auto tempPair = std::make_pair(name, foo);
 	eventMap.insert({type, tempPair});
@@ -53,18 +53,23 @@ void EventManager::removeEventListener(const EventType & type)
 	}
 }
 
-void EventManager::removeEventListener(const EventType & type, const std::string name)
+void EventManager::removeEventListener(const EventType & type, std::string name)
 {
 	auto it = eventMap.find(type);
-	while (it != eventMap.end())
+	auto end = eventMap.end();
+	while (it != end)
 	{
-		auto tempPair = it->second;
-		
-		if (tempPair.first == name)
+		if (it->second.first == name)
 		{
+			//执行删除之后it不知道指向哪里去了,所以要重新指派一下
 			eventMap.erase(it);
+			it = eventMap.find(type);
+			end = eventMap.end();
 		}
-		++it;
+		else
+		{
+			++it;
+		}
 	}
 }
 

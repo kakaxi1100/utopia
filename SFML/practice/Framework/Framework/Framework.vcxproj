@@ -88,10 +88,13 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_DYNAMIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\keep\JuLi\Ares\newProject\utopia\SFML\SFML-2.5.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>D:\keep\JuLi\Ares\newProject\utopia\SFML\SFML-2.5.0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-window-d.lib;sfml-graphics-d.lib;sfml-system-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -142,11 +145,39 @@
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test2.cpp" />
+    <ClCompile Include="test3.cpp" />
+    <ClCompile Include="test4.cpp" />
+    <ClCompile Include="UpdateManager.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="EventBase.h" />
     <ClInclude Include="EventManager.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="UpdateManager.h" />
+    <ClInclude Include="WindowManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Images\staxChicken_01.png" />
+    <Image Include="Assets\Images\staxChicken_04.png" />
+    <Image Include="Assets\Images\staxCow_01.png" />
+    <Image Include="Assets\Images\staxCow_04.png" />
+    <Image Include="Assets\Images\staxDog_01.png" />
+    <Image Include="Assets\Images\staxDog_04.png" />
+    <Image Include="Assets\Images\staxDuck_01.png" />
+    <Image Include="Assets\Images\staxDuck_04.png" />
+    <Image Include="Assets\Images\staxPig_01.png" />
+    <Image Include="Assets\Images\staxPig_04.png" />
+    <Image Include="Assets\Images\staxSheep_01.png" />
+    <Image Include="Assets\Images\staxSheep_04.png" />
+    <Image Include="Assets\Images\staxTiles-frozen_01.png" />
+    <Image Include="Assets\Images\staxTiles-frozen_02.png" />
+    <Image Include="Assets\Images\staxTiles-frozen_03.png" />
+    <Image Include="Assets\Images\staxTiles-frozen_04.png" />
+    <Image Include="Assets\Images\staxTiles-frozen_05.png" />
+    <Image Include="Assets\Images\staxTiles-frozen_06.png" />
+    <Image Include="Assets\Images\staxTiles-special.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

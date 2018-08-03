@@ -13,16 +13,37 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Test">
+      <UniqueIdentifier>{eaa824cc-4e5f-4cdb-b51e-b6ee34079b7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{eed36f10-cfeb-47aa-b835-44130decd40e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Images">
+      <UniqueIdentifier>{27563b51-9785-44dd-9905-58c0b814df8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EventManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="test.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
     <ClCompile Include="test2.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="test3.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowManager.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test4.cpp">
+      <Filter>Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -35,5 +56,73 @@
     <ClInclude Include="EventDispatcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WindowManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UpdateManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Images\staxChicken_01.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxChicken_04.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxCow_01.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxCow_04.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxDog_01.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxDog_04.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxDuck_01.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxDuck_04.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxPig_01.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxPig_04.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxSheep_01.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxSheep_04.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxTiles-frozen_01.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxTiles-frozen_02.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxTiles-frozen_03.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxTiles-frozen_04.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxTiles-frozen_05.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxTiles-frozen_06.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\Images\staxTiles-special.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
   </ItemGroup>
 </Project>
