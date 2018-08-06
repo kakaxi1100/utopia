@@ -5,19 +5,21 @@
 #include "WindowManager.h";
 
 using namespace std;
-using namespace std::experimental::filesystem::v1;
+using namespace std::experimental::filesystem;
 int main()
-{
-	//UpdateManager::getInstance(1).update();
-	
-	directory_entry t;
-
-	path testPath("Assets/Images/staxCow_04.png");
-	int i = 0;
-	for (path::iterator itr = testPath.begin(); itr != testPath.end(); ++itr)
+{	
+	for (auto &p : recursive_directory_iterator("Assets/Images"))
 	{
-		cout << "path part: " << i++ << " = " << *itr << endl;
+		if (is_regular_file(p))
+		{
+			//cout << p.path()<< endl;
+			//cout << p.path().filename() << endl;
+			cout << p.path().stem() << endl;
+			//cout << p.path().extension() << endl;
+		}
 	}
+
+	sf::Texture t;
 
 	system("pause");
 	return 0;

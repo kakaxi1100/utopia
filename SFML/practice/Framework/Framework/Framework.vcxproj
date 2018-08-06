@@ -143,6 +143,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="Loader.cpp" />
+    <ClCompile Include="LoaderManager.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test2.cpp" />
     <ClCompile Include="test3.cpp" />
@@ -154,6 +156,8 @@
     <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="EventBase.h" />
     <ClInclude Include="EventManager.h" />
+    <ClInclude Include="Loader.h" />
+    <ClInclude Include="LoaderManager.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="UpdateManager.h" />
     <ClInclude Include="WindowManager.h" />

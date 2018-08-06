@@ -11,7 +11,8 @@ enum class EventType
 {
 	TEST1,
 	TEST2,
-	TEST3
+	TEST3,
+	LoadCompleted
 };
 
 class EventManager
@@ -24,7 +25,8 @@ public:
 	void addEventListener(const EventType& type, std::function<void(const EventBase&)> foo, const std::string name = "");
 	//void addEventListener(const EventType& name, const EventDispatcher& target, void(EventDispatcher::*foo)(const EventBase&));
 	
-	void dispatch(const EventType& name, EventBase& evt);
+	void dispatch(const EventType& type, EventBase& evt);
+	void dispatch(const EventType& type, EventBase& evt, std::string name);
 	void removeEventListener(const EventType& type);
 	void removeEventListener(const EventType& type, std::string name);
 	bool hasEvent(const EventType& type);

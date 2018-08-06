@@ -45,6 +45,21 @@ void EventManager::dispatch(const EventType & type, EventBase & evt)
 	}
 }
 
+void EventManager::dispatch(const EventType & type, EventBase & evt, std::string name)
+{
+	if (hasEvent(type) == true)
+	{
+		//equal_range 返回一个迭代器 pair, 第一个元素 是第一个与关键字匹配的元素, 第二个元素是最后一个与关键字匹配的元素
+		for (auto pos = eventMap.equal_range(type); pos.first != pos.second; ++pos.first)
+		{
+			if (pos.first->second.first == name) 
+			{
+				pos.first->second.second(evt);
+			}
+		}
+	}
+}
+
 void EventManager::removeEventListener(const EventType & type)
 {
 	if (hasEvent(type) == true)
