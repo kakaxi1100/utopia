@@ -12,7 +12,8 @@ enum class EventType
 	TEST1,
 	TEST2,
 	TEST3,
-	LoadCompleted
+	LoadCompleted,
+	LoadError
 };
 
 class EventManager

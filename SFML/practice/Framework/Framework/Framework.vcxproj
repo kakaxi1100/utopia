@@ -149,6 +149,7 @@
     <ClCompile Include="test2.cpp" />
     <ClCompile Include="test3.cpp" />
     <ClCompile Include="test4.cpp" />
+    <ClCompile Include="test5.cpp" />
     <ClCompile Include="UpdateManager.cpp" />
     <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>

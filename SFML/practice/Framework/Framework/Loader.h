@@ -8,7 +8,7 @@ public:
 	~Loader() = default;
 
 	void load(const std::string& url);
-	void completed();
+	const std::string getName();
 private:
 	std::string mURL;
 	std::string mName;
