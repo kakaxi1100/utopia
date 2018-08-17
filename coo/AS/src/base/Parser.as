@@ -60,7 +60,7 @@ package base
 						currentToken = lexer.getNextToken();
 						if(testSemicolon())
 						{
-							
+							trace("符合语法规则");	
 						}
 					}
 				}

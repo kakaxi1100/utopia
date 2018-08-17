@@ -18,7 +18,8 @@ package
 			var request:URLRequest = new URLRequest("assets/test.txt");
 			uloader = new URLLoader();
 			uloader.addEventListener(Event.COMPLETE, onLoaderComplete);
-			uloader.load(request);
+//			uloader.load(request);
+			trace(0.99999999999999999 == 1);
 		}
 		
 		protected function onLoaderComplete(event:Event):void
