@@ -54,6 +54,9 @@
     <ClCompile Include="test5.cpp">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="test6.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventManager.h">
