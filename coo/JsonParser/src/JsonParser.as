@@ -5,7 +5,9 @@ package
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
+	import flash.utils.Dictionary;
 	
+	import base.Excuter;
 	import base.Lexer;
 	import base.Parser;
 	
@@ -16,6 +18,7 @@ package
 		
 		private var lexer:Lexer;
 		private var parser:Parser;
+		private var excuter:Excuter;
 		public function JsonParser()
 		{
 			file = File.applicationDirectory;	
@@ -24,8 +27,9 @@ package
 			stream.open(file, FileMode.READ);
 			lexer = new Lexer(stream);		
 			parser = new Parser(lexer);
+			excuter = new Excuter(parser);
 			run();
-			
+
 			//test();
 		}
 
@@ -34,6 +38,9 @@ package
 			lexer.read();
 			trace(lexer);
 			parser.parse();
+			trace(parser);
+			excuter.excute();
+			trace(excuter);
 		}
 		
 		public function test():void

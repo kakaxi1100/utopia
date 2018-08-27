@@ -58,6 +58,10 @@ coo/AS/bin/
 coo/AS/bin-debug/
 coo/AS/bin-release/
 coo/1/
+coo/JsonParser/.settings/
+coo/JsonParser.~ml
+coo/JsonParser/bin-debug/
+coo/JsonParser/bin-release/
 
 SFML/practice/practice/Debug/
 SFML/practice/practice/practice/Debug/
