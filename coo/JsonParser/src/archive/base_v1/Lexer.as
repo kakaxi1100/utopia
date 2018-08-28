@@ -1,7 +1,6 @@
-package base
+package archive.base_v1
 {
 	import flash.filesystem.FileStream;
-
 
 	/**
 	 *

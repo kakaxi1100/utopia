@@ -1,10 +1,10 @@
 package base
 {
+
 	public class ASTree
 	{
 		public var info:Token;
-		public var left:ASTree;
-		public var right:ASTree;
+		public var children:Vector.<ASTree>;
 		
 		private var mString:String;
 		public function ASTree(token:Token = null)
@@ -12,33 +12,9 @@ package base
 			info = token;
 		}
 		
-		public function insert(left:ASTree, right:ASTree):void
+		public function insert(child:ASTree):void
 		{
-			
-		}
-		
-		public function get value():String
-		{
-			return info.value;
-		}
-		
-		public function traverseSelf():String
-		{
-			mString = "";
-			traverseMid(this);
-			
-			return mString;
-		}
-		
-		private function traverseMid(node:ASTree):void
-		{
-			if(node == null)
-			{
-				return;
-			}
-			traverseMid(node.left);
-			mString += node.toString() + " ";
-			traverseMid(node.right);
+			children.push(child);
 		}
 
 		public function toString():String

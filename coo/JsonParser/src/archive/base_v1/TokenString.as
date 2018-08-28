@@ -1,4 +1,4 @@
-package base
+package archive.base_v1
 {
 
 	public class TokenString extends Token
