@@ -42,141 +42,124 @@ package base
 				throw Error("line" + token.linNo + " :格式错误!必须以 { 开头");
 			}
 			
-			mASTree = nestedCurlyValue();
+			mASTree = new Composite(token);
+			
+			nestedCurlyValue(mASTree);
 			
 			token = getToken();
 			if(token.type != TokenType.CLOSE_CURLY)
 			{
 				throw Error("line" + token.linNo + " :格式错误!必须以 } 结尾");
 			}
-			
-			trace("解析成功!");
 		}
 		
-		public function nestedCurlyValue():ASTree
+		public function nestedCurlyValue(rootNode:ASTree):ASTree
 		{
-			var nodeList:Vector.<ASTree> = new Vector.<ASTree>();
-			var commaList:Vector.<Token> = new Vector.<Token>();
+			var nestNode:ASTree = rootNode;
 			var node:ASTree;
 			var hasMore:Boolean = false;
 			var token:Token;
 			do{
 				node = item();
-				nodeList.push(node);
+				nestNode.insert(node);
+				
 				token = getToken(true);
-				//trace(token);
 				if(token && token.type == TokenType.COMMA)
 				{
 					var comma:Token = getToken();//跳过逗号
-					commaList.push(comma);
 					hasMore = true;
 				}else{
 					hasMore = false;
 				}
 			}while(hasMore)
-			//开始构建语法树
-			while(nodeList.length > 1)
-			{
-				var left:ASTree = nodeList.shift();
-				var right:ASTree = nodeList.shift();
-				var tree:ASTree = new ASTree(commaList.shift());
-				tree.left = left;
-				tree.right = right;
-				nodeList.unshift(tree);
-			}
 			
-			return nodeList[0];
+			return nestNode;
 		}
 		
 		public function item():ASTree
 		{
-			var left:ASTree;
-			var right:ASTree;
-			var tree:ASTree;
+			var keyNode:ASTree;
+			var valueNode:ASTree;
+			var node:ASTree;
+			var token:Token;
+			
 			var key:Token = getToken();
-
 			if(key.type != TokenType.STRING)
 			{
-				throw Error("line" + key.linNo + " Key 必须为字符串类型!当前类型为: " + key.value);
+				throw Error("line" + key.linNo + " Key必须为字符串类型!当前类型为: " + key.value);
 			}
-			left = new Leaf(key);
+			if(key.value == "")
+			{
+				throw Error("line" + key.linNo + " Key不能为空!");
+			}
+			keyNode = new Leaf(key);
 			
-			var token:Token = getToken();
-
+			token = getToken();
 			if(token.type != TokenType.COLON)
 			{
 				throw Error("line" + token.linNo + "缺少冒号!");
 			}
-			tree = new ASTree(token);
+			node = new BinaryNode(token);// :
 			
-			right = parseValue();
+			valueNode = parseValue();
 			
-			tree.left = left;
-			tree.right = right;
+			node.insert(keyNode);
+			node.insert(valueNode);
 			
-			return tree;
+			return node;
 		}
 		
-		private function nestedBracketValue():ASTree
+		private function nestedBracketValue(rootNode:ASTree):ASTree
 		{
-			var nodeList:Vector.<ASTree> = new Vector.<ASTree>();
-			var commaList:Vector.<Token> = new Vector.<Token>();
+			var nestNode:ASTree = rootNode;
 			var node:ASTree;
 			var hasMore:Boolean = false;
 			var token:Token;
 			do{
 				node = parseValue();
-				nodeList.push(node);
+				nestNode.insert(node);
+				
 				token = getToken(true);
-				//trace(token);
 				if(token && token.type == TokenType.COMMA)
 				{
 					var comma:Token = getToken();//跳过逗号
-					commaList.push(comma);
 					hasMore = true;
 				}else{
 					hasMore = false;
 				}
 			}while(hasMore)
-			//开始构建语法树
-			while(nodeList.length > 1)
-			{
-				var left:ASTree = nodeList.shift();
-				var right:ASTree = nodeList.shift();
-				var tree:ASTree = new ASTree(commaList.shift());
-				tree.left = left;
-				tree.right = right;
-				nodeList.unshift(tree);
-			}
 			
-			return nodeList[0];
+			return nestNode;
 		}
 		
 		private function parseValue():ASTree
 		{
-			var right:ASTree;
+			var valueNode:ASTree;
+			
 			var token:Token = getToken();
-
 			if(token.type == TokenType.STRING)
 			{
-				right = new Leaf(token);
+				valueNode = new Leaf(token);
 			}else if(token.type == TokenType.NUMBER)
 			{
-				right = new Leaf(token);
+				valueNode = new Leaf(token);
 			}else if(token.type == TokenType.OPEN_CURLY)
 			{
-				right = nestedCurlyValue();
-				token = getToken();
+				valueNode = new Composite(token);
 				
+				nestedCurlyValue(valueNode);
+				
+				token = getToken();
 				if(token.type != TokenType.CLOSE_CURLY)
 				{
 					throw Error("line" + token.linNo + "格式错误!必须以 } 结尾");
 				}
 			}else if(token.type == TokenType.OPEN_BRACKET)
 			{
-				right = nestedBracketValue();
-				token = getToken();
+				valueNode = new Composite(token);
+				nestedBracketValue(valueNode);
 				
+				token = getToken();
 				if(token.type != TokenType.CLOSE_BRACKET)
 				{
 					throw Error("line" + token.linNo + "格式错误!必须以 ] 结尾");
@@ -186,7 +169,7 @@ package base
 				throw Error("line" + token.linNo + "错误的值格式!");
 			}
 			
-			return right;
+			return valueNode;
 		}
 		
 		private function  getToken(peek:Boolean = false):Token
@@ -209,7 +192,7 @@ package base
 		
 		public function toString():String
 		{
-			return mASTree.traverseSelf();
+			return mASTree.toString();
 		}
 
 		public function get ast():ASTree

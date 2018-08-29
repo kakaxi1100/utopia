@@ -12,5 +12,10 @@ package base
 		{
 			throw Error("叶子节点不可以插入子节点");
 		}
+		
+		override public function toString():String
+		{
+			return info.value;
+		}
 	}
 }

@@ -9,7 +9,6 @@ package
 	
 	import base.Excuter;
 	import base.JsonArray;
-	import base.JsonObject;
 	import base.Lexer;
 	import base.Parser;
 	
@@ -31,6 +30,8 @@ package
 			parser = new Parser(lexer);
 			excuter = new Excuter(parser);
 			run();
+
+			//test();
 		}
 
 		public function run():void
@@ -42,9 +43,23 @@ package
 			excuter.excute();
 			trace("语义执行成功:", excuter);
 			
-			var jo:JsonObject = excuter.jsonObject;
-			var temp:Array = jo.searchArray("a");
-			trace(temp);
+			var temp:Array = (excuter.jsonObject.getValue("a") as JsonArray).getValue();
+		}
+		
+		public function test():void
+		{
+			var s, t;
+			s = stream.readByte();//\t 9
+			t = String.fromCharCode(s);
+			trace(s, String.fromCharCode(s));
+//			s = stream.readByte();//\r 13
+//			trace(s, String.fromCharCode(s));
+//			s = stream.readByte();//\n 10
+//			trace(s, String.fromCharCode(s),s == " ");
+//			s = stream.readByte();
+////			s = stream.readUTFBytes(1);
+//			trace(s, String.fromCharCode(s));
+//			trace(stream.position,stream.bytesAvailable);
 		}
 	}
 }

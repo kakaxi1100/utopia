@@ -1,10 +1,7 @@
 package base
-{
-	import flash.utils.Dictionary;
-	
+{	
 	public class Composite extends ASTree
 	{
-		private var mDictionary:Dictionary = new Dictionary();
 		public function Composite(token:Token = null)
 		{
 			super(token);
@@ -19,7 +16,24 @@ package base
 		override public function toString():String
 		{
 			var s:String = "";
+			var last:String = "";
+			if(info.type == TokenType.OPEN_CURLY)
+			{
+				s = "{";
+				last = "}";
+			}else if(info.type == TokenType.OPEN_BRACKET)
+			{
+				s = "[";
+				last = "]";
+			}
 
+			for(var i:int = 0; i < children.length - 1; i++)
+			{
+				s += children[i].toString() + ",";
+			}
+			
+			s += children[i].toString() + last;
+			
 			return s;
 		}
 	}

@@ -3,7 +3,7 @@ package base
 
 	public class Excuter
 	{
-		private var mJsonObj:ASTree;
+		private var mJsonObj:JsonObject;
 		private var mParser:Parser;
 		public function Excuter(parser:Parser)
 		{
@@ -12,33 +12,75 @@ package base
 		
 		public function excute():void
 		{
-			mJsonObj = generate(mParser.ast);
+			mJsonObj = excuteNCV(mParser.ast);
 		}
 		
-		private function generate(node:ASTree):ASTree
+		//执行 nestCulyValue
+		public function excuteNCV(node:ASTree):JsonObject
 		{
-			//采用中序遍历
-			if(node == null)
+			var jsonObj:JsonObject = new JsonObject();
+			var i:int;
+			for(i = 0; i < node.children.length; i++)
 			{
-				return null;
+				excuteItem(node.children[i], jsonObj);
 			}
 			
-			var left:ASTree;
-			var right:ASTree;
-			var composite:ASTree;
+			return jsonObj;
+		}
+		
+		public function excuteItem(node:ASTree, parent:JsonObject):void
+		{
+			var jsonKey:JsonKey;
+			var jsonValue:JsonValue;
+			jsonKey = excuteKey(node.getFirst());
+			jsonValue = excuteValue(node.getLast());
 			
-			left = generate(node.left);
-			right = generate(node.right);
-			//这个node是叶子节点
-			if(left == null && right == null)
+			parent.insert(jsonKey, jsonValue);
+		}
+
+		private function excuteKey(node:ASTree):JsonKey
+		{
+			var jsonKey:JsonKey = new JsonKey(node.info.value);
+			
+			return jsonKey;
+		}		
+		
+		private function excuteValue(node:ASTree):JsonValue
+		{
+			var jsonValue:JsonValue;
+			if(node.info.type == TokenType.STRING)
 			{
-				return node;
+				jsonValue = new JsonString(node.info.value);
+			}else if(node.info.type == TokenType.NUMBER)
+			{
+				jsonValue = new JsonNumber(parseFloat(node.info.value));
+			}else if(node.info.type == TokenType.OPEN_CURLY)
+			{
+				jsonValue = excuteNCV(node);
+			}else if(node.info.type == TokenType.OPEN_BRACKET)
+			{
+				jsonValue = excuteArray(node);
 			}
 			
-			composite = new Composite();
-			composite.insert(left, right);
+			return jsonValue;
+		}
+		
+		private function excuteArray(node:ASTree):JsonValue
+		{
+			var jsonArray:JsonValue = new JsonArray();
+			var i:int;
+			for(i = 0; i < node.children.length; i++)
+			{
+				var value:JsonValue = excuteValue(node.children[i]);
+				(jsonArray as JsonArray).insert(value)
+			}
 			
-			return composite;
+			return jsonArray;
+		}
+		
+		public function get jsonObject():JsonObject
+		{
+			return mJsonObj;
 		}
 		
 		public function toString():String
