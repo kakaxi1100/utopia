@@ -42,8 +42,6 @@ package
 			trace("语法解析成功:", parser);
 			excuter.excute();
 			trace("语义执行成功:", excuter);
-			
-			var temp:Array = (excuter.jsonObject.getValue("a") as JsonArray).getValue();
 		}
 		
 		public function test():void

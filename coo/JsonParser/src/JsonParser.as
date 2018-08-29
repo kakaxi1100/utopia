@@ -43,8 +43,9 @@ package
 			trace("语义执行成功:", excuter);
 			
 			var jo:JsonObject = excuter.jsonObject;
-			var temp:Array = jo.searchArray("a");
-			trace(temp);
+			var testObj:Array = jo.searchArray("stax.gm.staxDuck.dead");
+			var obj:Dictionary = testObj[0];
+			trace(obj["texture"]);
 		}
 	}
 }

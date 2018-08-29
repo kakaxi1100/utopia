@@ -68,7 +68,7 @@ package base
 				if(mDict[key] is Array)
 				{
 					ob = "[";
-					cb = "]"
+					cb = "]";
 				}
 				s += key +":"+ ob + mDict[key].toString() + cb + ",";
 			}

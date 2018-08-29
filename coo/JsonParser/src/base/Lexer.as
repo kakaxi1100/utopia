@@ -46,6 +46,7 @@ package base
 		private static const DOT_CODE:uint = 46;// .
 		private static const ZERO_CODE:uint = 48;// 0
 		private static const NINE_CODE:uint = 57;// 9
+		private static const NEGATIVE_CODE:uint = 45;// -
 		
 		
 		public function Lexer(stream:FileStream)
@@ -144,6 +145,11 @@ package base
 				{
 					//进入引号状态
 					stateQuotation();
+				}else if(char == NEGATIVE_CODE)
+				{
+					//进入负号状态
+					mCharBuff.push(char);
+					stateNegative();
 				}else if(char >= ZERO_CODE && char <= NINE_CODE)
 				{
 					//进入数字状态
@@ -197,6 +203,18 @@ package base
 			}
 			
 			return char;
+		}
+		
+		private function stateNegative():void
+		{
+			var char:uint = mStream.readByte();
+			mCharBuff.push(char);
+			if(char >= ZERO_CODE && char <= NINE_CODE)
+			{
+				stateInt();
+			}else{
+				stateNormal();
+			}
 		}
 		
 		private function stateInt():void
@@ -337,7 +355,8 @@ package base
 		
 		public function toString():String
 		{
-			return mTokenList.join(" ");
+			//return mTokenList.join(" ");
+			return mLineNo.toString();
 		}
 	}
 }

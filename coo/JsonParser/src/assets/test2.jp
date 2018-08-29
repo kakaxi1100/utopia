@@ -1,0 +1,22 @@
+{
+"stax.gm.staxPig.dead":[{"texture":"pig_flip_0001", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0002", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0003", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0004", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0005", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0006", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0007", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0008", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0009", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0010", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0011", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0012", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0013", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0014", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0015", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0016", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0017", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0018", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0019", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"},
+								{"texture":"pig_flip_0020", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"}]
+}
