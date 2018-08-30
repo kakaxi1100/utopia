@@ -1,14 +1,12 @@
 package
 {
 	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
 	import flash.utils.Dictionary;
 	
 	import base.Excuter;
-	import base.JsonArray;
 	import base.JsonObject;
 	import base.Lexer;
 	import base.Parser;
@@ -21,6 +19,7 @@ package
 		private var lexer:Lexer;
 		private var parser:Parser;
 		private var excuter:Excuter;
+		
 		public function JsonParser()
 		{
 			file = File.applicationDirectory;	
@@ -30,15 +29,16 @@ package
 			lexer = new Lexer(stream);		
 			parser = new Parser(lexer);
 			excuter = new Excuter(parser);
+			
 			run();
 		}
 
 		public function run():void
 		{
 			lexer.read();
-			trace("词法解析成功:", lexer);
+			trace("词法解析成功!");
 			parser.parse();
-			trace("语法解析成功:", parser);
+			trace("语法解析成功!");
 			excuter.excute();
 			trace("语义执行成功:", excuter);
 			

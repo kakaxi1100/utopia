@@ -105,8 +105,10 @@ package base
 		public function read():void
 		{
 			stateNormal();
-			clearCharBuff();
-			mStream.close();
+			if(mStream.bytesAvailable == 0)
+			{
+				mStream.close();
+			}
 		}
 		
 		public function length():uint
@@ -119,7 +121,7 @@ package base
 			var char:uint;
 			var token:Token;
 			var value:String;
-			while(mStream.bytesAvailable > 0)
+			while(mStream.bytesAvailable > 0 || mCharBuff.length > 0)
 			{
 				//1.先排除空白 即空格和制表符
 				char = getChar();
@@ -213,7 +215,7 @@ package base
 			{
 				stateInt();
 			}else{
-				stateNormal();
+				//stateNormal();
 			}
 		}
 		
@@ -242,7 +244,8 @@ package base
 					
 					//最后一个字符要读入
 					mCharBuff.push(char);
-					stateNormal();
+					//stateNormal();
+					break;
 				}
 			}
 		}
@@ -268,7 +271,8 @@ package base
 					
 					//最后一个字符要读入
 					mCharBuff.push(char);
-					stateNormal();
+					//stateNormal();
+					break;
 				}
 			}
 		}
@@ -281,7 +285,13 @@ package base
 				char = mStream.readByte();
 				if(char != QUOTATION_CODE)// "
 				{
-					mCharBuff.push(char);
+					if(char == ENDOFLINE_CODE){
+						
+					}else if(char == NEWLINE_CODE){
+						
+					}else{
+						mCharBuff.push(char);
+					}
 				}else{
 					//生成字符串token
 					var value:String="";
@@ -292,7 +302,8 @@ package base
 					var token:Token = new TokenString(mLineNo, TokenType.STRING, value);
 					mTokenList.push(token);
 					
-					stateNormal();
+					//stateNormal();
+					break;
 				}
 			}
 		}
@@ -308,7 +319,8 @@ package base
 					char = getChar();
 					if(char == SLASH_CODE)// /
 					{
-						stateNormal();
+						//stateNormal();
+						break;
 					}
 				}
 			}
@@ -339,7 +351,7 @@ package base
 			{
 				//新的一行
 				++mLineNo;
-				stateNormal();
+				//stateNormal();
 			}else{
 				throw Error("line"+mLineNo+ ": 未识别的行尾!");
 			}
@@ -355,8 +367,8 @@ package base
 		
 		public function toString():String
 		{
-			//return mTokenList.join(" ");
-			return mLineNo.toString();
+			return mTokenList.join(" ");
+//			return mLineNo.toString();
 		}
 	}
 }
