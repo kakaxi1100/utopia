@@ -19,7 +19,7 @@ package
 		private var lexer:Lexer;
 		private var parser:Parser;
 		private var excuter:Excuter;
-		
+		private var jsonObject:JsonObject;
 		public function JsonParser()
 		{
 			file = File.applicationDirectory;	
@@ -41,9 +41,14 @@ package
 			trace("语法解析成功!");
 			excuter.excute();
 			trace("语义执行成功:", excuter);
+			jsonObject = excuter.jsonObject;
 			
-			var jo:JsonObject = excuter.jsonObject;
-			var testObj:Array = jo.searchArray("stax.gm.staxDuck.dead");
+			test();
+		}
+		
+		private function test():void
+		{
+			var testObj:Array = jsonObject.searchArray("stax.gm.staxDuck.dead");
 			var obj:Dictionary = testObj[0];
 			trace(obj["texture"]);
 		}

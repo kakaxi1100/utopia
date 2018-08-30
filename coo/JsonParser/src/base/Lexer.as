@@ -105,10 +105,7 @@ package base
 		public function read():void
 		{
 			stateNormal();
-			if(mStream.bytesAvailable == 0)
-			{
-				mStream.close();
-			}
+			mStream.close();
 		}
 		
 		public function length():uint
@@ -189,6 +186,7 @@ package base
 				}else
 				{
 					clearCharBuff();
+					mStream.close();
 					throw Error("line"+mLineNo+ ": 未识别的标识符 "+ String.fromCharCode(char) +" 码值: " + char);
 				}
 			}

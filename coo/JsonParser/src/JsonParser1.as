@@ -12,7 +12,7 @@ package
 	import base.Lexer;
 	import base.Parser;
 	
-	public class JsonParser extends Sprite
+	public class JsonParser1 extends Sprite
 	{
 		private var file:File;
 		private var stream:FileStream;
@@ -20,7 +20,7 @@ package
 		private var lexer:Lexer;
 		private var parser:Parser;
 		private var excuter:Excuter;
-		public function JsonParser()
+		public function JsonParser1()
 		{
 			file = File.applicationDirectory;	
 			file = file.resolvePath("assets/test.jp");
