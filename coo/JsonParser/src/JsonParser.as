@@ -23,7 +23,7 @@ package
 		public function JsonParser()
 		{
 			file = File.applicationDirectory;	
-			file = file.resolvePath("assets/test.jp");
+			file = file.resolvePath("assets/test2.jp");
 			stream = new FileStream();
 			stream.open(file, FileMode.READ);
 			lexer = new Lexer(stream);		
@@ -36,9 +36,9 @@ package
 		public function run():void
 		{
 			lexer.read();
-			trace("词法解析成功!");
+			trace("词法解析成功!", lexer);
 			parser.parse();
-			trace("语法解析成功!");
+			trace("语法解析成功1!", parser);
 			excuter.excute();
 			trace("语义执行成功:", excuter);
 			jsonObject = excuter.jsonObject;
@@ -48,9 +48,9 @@ package
 		
 		private function test():void
 		{
-			var testObj:Array = jsonObject.searchArray("stax.gm.staxDuck.dead");
-			var obj:Dictionary = testObj[0];
-			trace(obj["texture"]);
+			var testObj:Array = jsonObject.searchArray("a");
+			var obj:Array = testObj[0];
+			trace(obj[0]);
 		}
 	}
 }
