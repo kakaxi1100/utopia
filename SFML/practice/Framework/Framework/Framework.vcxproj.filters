@@ -22,6 +22,12 @@
     <Filter Include="Assets\Images">
       <UniqueIdentifier>{27563b51-9785-44dd-9905-58c0b814df8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\JsonParser">
+      <UniqueIdentifier>{927650b1-4fe4-4e27-8492-095f6b920f53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Text">
+      <UniqueIdentifier>{93162fc5-13dd-4c98-850a-7f3ed6f6011f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EventManager.cpp">
@@ -57,6 +63,9 @@
     <ClCompile Include="test6.cpp">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="Lexer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventManager.h">
@@ -82,6 +91,12 @@
     </ClInclude>
     <ClInclude Include="Loader.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lexer.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Token.h">
+      <Filter>Header Files\JsonParser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -142,5 +157,10 @@
     <Image Include="Assets\Images\staxTiles-special.png">
       <Filter>Assets\Images</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\Text\test.txt">
+      <Filter>Assets\Text</Filter>
+    </Text>
   </ItemGroup>
 </Project>

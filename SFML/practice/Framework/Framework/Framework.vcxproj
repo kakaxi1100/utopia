@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="LoaderManager.cpp" />
     <ClCompile Include="test.cpp" />
@@ -158,9 +159,11 @@
     <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="EventBase.h" />
     <ClInclude Include="EventManager.h" />
+    <ClInclude Include="Lexer.h" />
     <ClInclude Include="Loader.h" />
     <ClInclude Include="LoaderManager.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Token.h" />
     <ClInclude Include="UpdateManager.h" />
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>
@@ -184,6 +187,9 @@
     <Image Include="Assets\Images\staxTiles-frozen_05.png" />
     <Image Include="Assets\Images\staxTiles-frozen_06.png" />
     <Image Include="Assets\Images\staxTiles-special.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\Text\test.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
