@@ -23,7 +23,7 @@ package
 		public function JsonParser()
 		{
 			file = File.applicationDirectory;	
-			file = file.resolvePath("assets/test2.jp");
+			file = file.resolvePath("assets/test.jp");
 			stream = new FileStream();
 			stream.open(file, FileMode.READ);
 			lexer = new Lexer(stream);		
@@ -38,12 +38,12 @@ package
 			lexer.read();
 			trace("词法解析成功!", lexer);
 			parser.parse();
-			trace("语法解析成功1!", parser);
+			trace("语法解析成功!", parser);
 			excuter.excute();
 			trace("语义执行成功:", excuter);
 			jsonObject = excuter.jsonObject;
 			
-			test();
+			//test();
 		}
 		
 		private function test():void

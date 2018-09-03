@@ -115,7 +115,7 @@ package base
 		
 		private function stateNormal():void
 		{
-			var char:uint;
+			var char:int;
 			var token:Token;
 			var value:String;
 			while(mStream.bytesAvailable > 0 || mCharBuff.length > 0)
@@ -192,14 +192,21 @@ package base
 			}
 		}
 		
-		private function getChar():uint
+		private function getChar():int
 		{
-			var char:uint;
+			var char:int;
 			if(mCharBuff.length > 0)
 			{
 				char = mCharBuff.pop();
 			}else{
-				char = mStream.readByte();
+				if(mStream.bytesAvailable > 0)
+				{
+					char = mStream.readByte();
+				}else
+				{
+					char = -1;
+					mCharBuff.push(char);
+				}
 			}
 			
 			return char;
@@ -207,7 +214,16 @@ package base
 		
 		private function stateNegative():void
 		{
-			var char:uint = mStream.readByte();
+			var char:int;
+			if(mStream.bytesAvailable > 0)
+			{
+				char = mStream.readByte();
+			}else
+			{
+				char = -1;
+				mCharBuff.push(char);
+				return;
+			}
 			mCharBuff.push(char);
 			if(char >= ZERO_CODE && char <= NINE_CODE)
 			{
@@ -219,7 +235,7 @@ package base
 		
 		private function stateInt():void
 		{
-			var char:uint;
+			var char:int;
 			while(mStream.bytesAvailable > 0)
 			{
 				char = mStream.readByte();
@@ -250,7 +266,7 @@ package base
 		
 		private function stateFloat():void
 		{
-			var char:uint;
+			var char:int;
 			while(mStream.bytesAvailable > 0)
 			{
 				char = mStream.readByte();
@@ -277,7 +293,7 @@ package base
 		
 		private function stateQuotation():void
 		{
-			var char:uint;
+			var char:int;
 			while(mStream.bytesAvailable > 0)
 			{
 				char = mStream.readByte();
@@ -308,7 +324,7 @@ package base
 		
 		private function stateMutipleLinesComment():void
 		{
-			var char:uint;
+			var char:int;
 			while(mStream.bytesAvailable > 0)
 			{
 				char = getChar();
@@ -331,7 +347,7 @@ package base
 		 */		
 		private function stateOneLineComment():void
 		{
-			var char:uint;
+			var char:int;
 			while(mStream.bytesAvailable > 0)
 			{
 				char = getChar();
@@ -344,7 +360,7 @@ package base
 		
 		private function stateEndOfLine():void
 		{
-			var char:uint = getChar();
+			var char:int = getChar();
 			if(char == NEWLINE_CODE)
 			{
 				//新的一行

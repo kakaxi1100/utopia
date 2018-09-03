@@ -23,14 +23,15 @@ public:
 	void stateOneLineComment();
 	void stateEndOfLine();
 
-	unsigned int getCharCode();
+	int getCharCode();
+	std::string toString();
 private:
 	std::ifstream& mStream;
 	int mLineNo = 1;
 	int mIndex = 0;
 	unsigned int mPeekIndex = 0;
-	std::vector<Token> mTokenList;
-	std::list<unsigned int> mCharBuff;
+	std::vector<std::shared_ptr<Token>> mTokenList;
+	std::list<int> mCharBuff;
 
 	static const unsigned int TABLE_CODE = 9;// \t
 	static const unsigned int ENDOFLINE_CODE = 13; // \r
