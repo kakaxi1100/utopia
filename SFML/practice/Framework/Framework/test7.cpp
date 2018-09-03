@@ -10,7 +10,7 @@ int main()
 	Lexer l(readFile);
 	l.stateNormal();
 
-	wcout << "词法解析成功!" << endl;
+	wcout << L"词法解析成功!" << endl;
 
 	system("pause");
 	return 0;
