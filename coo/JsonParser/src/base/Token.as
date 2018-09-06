@@ -18,7 +18,7 @@ package base
 			return pType;
 		}
 		
-		public function get linNo():uint
+		public function get lineNo():uint
 		{
 			return pLineNo;
 		}

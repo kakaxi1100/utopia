@@ -11,6 +11,8 @@ Lexer::Lexer(ifstream & stream):mStream(stream)
 
 void Lexer::read()
 {
+	stateNormal();
+	mStream.close();
 }
 
 void Lexer::stateNormal()
@@ -160,7 +162,7 @@ void Lexer::stateInt()
 				*value += char(mCharBuff.front());
 				mCharBuff.pop_front();
 			}
-			shared_ptr<Token> token = make_shared<Token>(mLineNo, Token::NUMBER, value);
+			shared_ptr<Token> token = make_shared<Token>(mLineNo, Token::INT, value);
 			mTokenList.push_back(token);
 
 			//最后一个字符要读入
@@ -189,7 +191,7 @@ void Lexer::stateFloat()
 				*value += char(mCharBuff.front());
 				mCharBuff.pop_front();
 			}
-			shared_ptr<Token> token = make_shared<Token>(mLineNo, Token::NUMBER, value);
+			shared_ptr<Token> token = make_shared<Token>(mLineNo, Token::FLOAT, value);
 			mTokenList.push_back(token);
 
 			//最后一个字符要读入
@@ -289,6 +291,42 @@ int Lexer::getCharCode()
 		}
 	}
 	return charCode;
+}
+
+std::shared_ptr<Token> Lexer::next()
+{
+	if (mIndex >= mTokenList.size())
+	{
+		return nullptr;
+	}
+
+	auto token = mTokenList.at(mIndex);
+	mPeekIndex = mIndex;
+	++mIndex;
+
+	return token;
+}
+
+std::shared_ptr<Token> Lexer::peek()
+{
+	size_t tempIndex = mPeekIndex + 1;
+	if (tempIndex >= mTokenList.size())
+	{
+		return nullptr;
+	}
+
+	auto token = mTokenList.at(mIndex);
+
+	return token;
+}
+
+std::shared_ptr<Token> Lexer::lookLast()
+{
+	if (mTokenList.size() == 0)
+	{
+		throw L"空白文件无法解析!";
+	}
+	return mTokenList[mTokenList.size() - 1];
 }
 
 std::string Lexer::toString()

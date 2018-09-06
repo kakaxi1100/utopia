@@ -142,10 +142,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ASTree.cpp" />
+    <ClCompile Include="BinaryNode.cpp" />
+    <ClCompile Include="Composite.cpp" />
     <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="Excuter.cpp" />
+    <ClCompile Include="JsonArray.cpp" />
+    <ClCompile Include="JsonFloat.cpp" />
+    <ClCompile Include="JsonInt.cpp" />
+    <ClCompile Include="JsonKey.cpp" />
+    <ClCompile Include="JsonObject.cpp" />
+    <ClCompile Include="JsonString.cpp" />
+    <ClCompile Include="JsonValue.cpp" />
+    <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="LoaderManager.cpp" />
+    <ClCompile Include="Parser.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test2.cpp" />
     <ClCompile Include="test3.cpp" />
@@ -153,17 +166,31 @@
     <ClCompile Include="test5.cpp" />
     <ClCompile Include="test6.cpp" />
     <ClCompile Include="test7.cpp" />
+    <ClCompile Include="test8.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="UpdateManager.cpp" />
     <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ASTree.h" />
+    <ClInclude Include="BinaryNode.h" />
+    <ClInclude Include="Composite.h" />
     <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="EventBase.h" />
     <ClInclude Include="EventManager.h" />
+    <ClInclude Include="Excuter.h" />
+    <ClInclude Include="JsonArray.h" />
+    <ClInclude Include="JsonFloat.h" />
+    <ClInclude Include="JsonKey.h" />
+    <ClInclude Include="JsonInt.h" />
+    <ClInclude Include="JsonObject.h" />
+    <ClInclude Include="JsonString.h" />
+    <ClInclude Include="JsonValue.h" />
+    <ClInclude Include="Leaf.h" />
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="Loader.h" />
     <ClInclude Include="LoaderManager.h" />
+    <ClInclude Include="Parser.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="UpdateManager.h" />

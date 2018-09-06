@@ -39,7 +39,7 @@ package base
 			var token:Token = getToken();
 			if(token.type != TokenType.OPEN_CURLY)
 			{
-				throw Error("line" + token.linNo + " :格式错误!必须以 { 开头");
+				throw Error("line" + token.lineNo + " :格式错误!必须以 { 开头");
 			}
 			
 			mASTree = new Composite(token);
@@ -49,11 +49,11 @@ package base
 			token = getToken();
 			if(token.type != TokenType.CLOSE_CURLY)
 			{
-				throw Error("line" + token.linNo + " :格式错误!必须以 } 结尾");
+				throw Error("line" + token.lineNo + " :格式错误!必须以 } 结尾");
 			}
 		}
 		
-		public function nestedCurlyValue(rootNode:ASTree):ASTree
+		private function nestedCurlyValue(rootNode:ASTree):ASTree
 		{
 			var nestNode:ASTree = rootNode;
 			var node:ASTree;
@@ -76,7 +76,7 @@ package base
 			return nestNode;
 		}
 		
-		public function item():ASTree
+		private function item():ASTree
 		{
 			var keyNode:ASTree;
 			var valueNode:ASTree;
@@ -86,18 +86,18 @@ package base
 			var key:Token = getToken();
 			if(key.type != TokenType.STRING)
 			{
-				throw Error("line" + key.linNo + " Key必须为字符串类型!当前类型为: " + key.value);
+				throw Error("line" + key.lineNo + " Key必须为字符串类型!当前类型为: " + key.value);
 			}
 			if(key.value == "")
 			{
-				throw Error("line" + key.linNo + " Key不能为空!");
+				throw Error("line" + key.lineNo + " Key不能为空!");
 			}
 			keyNode = new Leaf(key);
 			
 			token = getToken();
 			if(token.type != TokenType.COLON)
 			{
-				throw Error("line" + token.linNo + "缺少冒号!");
+				throw Error("line" + token.lineNo + "缺少冒号!");
 			}
 			node = new BinaryNode(token);// :
 			
@@ -152,7 +152,7 @@ package base
 				token = getToken();
 				if(token.type != TokenType.CLOSE_CURLY)
 				{
-					throw Error("line" + token.linNo + "格式错误!必须以 } 结尾");
+					throw Error("line" + token.lineNo + "格式错误!必须以 } 结尾");
 				}
 			}else if(token.type == TokenType.OPEN_BRACKET)
 			{
@@ -162,11 +162,11 @@ package base
 				token = getToken();
 				if(token.type != TokenType.CLOSE_BRACKET)
 				{
-					throw Error("line" + token.linNo + "格式错误!必须以 ] 结尾");
+					throw Error("line" + token.lineNo + "格式错误!必须以 ] 结尾");
 				}
 			}else
 			{
-				throw Error("line" + token.linNo + "错误的值格式!");
+				throw Error("line" + token.lineNo + "错误的值格式!");
 			}
 			
 			return valueNode;
@@ -184,7 +184,7 @@ package base
 			}
 			if(token == null)
 			{
-				throw Error("line" + mLexer.lookLast().linNo + "单词未定义!");
+				throw Error("line" + mLexer.lookLast().lineNo + "单词未定义!");
 			}
 			
 			return token;

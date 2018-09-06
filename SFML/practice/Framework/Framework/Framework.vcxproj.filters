@@ -72,6 +72,48 @@
     <ClCompile Include="test7.cpp">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="Parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ASTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Composite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Leaf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonValue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonKey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonInt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonFloat.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Excuter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test8.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventManager.h">
@@ -102,6 +144,45 @@
       <Filter>Header Files\JsonParser</Filter>
     </ClInclude>
     <ClInclude Include="Token.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="ASTree.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Composite.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Leaf.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryNode.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="Excuter.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonKey.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonValue.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonArray.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonObject.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonString.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonInt.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonFloat.h">
       <Filter>Header Files\JsonParser</Filter>
     </ClInclude>
   </ItemGroup>

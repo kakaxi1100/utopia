@@ -5,6 +5,22 @@
 #include <memory>
 #include "Token.h"
 
+/**
+*
+* 合法的单词有
+*
+* { } => 花括号
+* [ ] => 中括号
+* // => 单行注释
+* / * * / => 多少注释
+* 整型和浮点 => 数字
+* " " => 字符串
+* , => 逗号
+* : => 冒号
+*
+* @author Ares
+*
+*/
 class Lexer
 {
 public:
@@ -24,11 +40,15 @@ public:
 	void stateEndOfLine();
 
 	int getCharCode();
+	std::shared_ptr<Token> next();
+	std::shared_ptr<Token> peek();
+	std::shared_ptr<Token> lookLast();
+
 	std::string toString();
 private:
 	std::ifstream& mStream;
 	int mLineNo = 1;
-	int mIndex = 0;
+	size_t mIndex = 0;
 	unsigned int mPeekIndex = 0;
 	std::vector<std::shared_ptr<Token>> mTokenList;
 	std::list<int> mCharBuff;

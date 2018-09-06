@@ -25,7 +25,7 @@ UpdateManager & UpdateManager::getInstance(float frameRate)
 
 void UpdateManager::setFrameRate(float frameRate)
 {
-	mFrameTime = 1.0 / static_cast<float>(frameRate);
+	mFrameTime = static_cast<float>(1.0 / static_cast<float>(frameRate));
 }
 
 void UpdateManager::updateCore()
