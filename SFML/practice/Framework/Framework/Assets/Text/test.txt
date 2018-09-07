@@ -1,3 +1,9 @@
+// one line comment
+/*
+muti line 
+comments
+*/
+
 {
 	"stax.gm.staxChicken.normal":[{"texture":"chick_selected_start_0001", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"}],
 	"stax.gm.staxCow.normal":[{"texture":"cow_selected_start_0001", "width":"116.4", "height":"116.4", "offsetX":"-35.56", "offsetY":"-10.93"}],

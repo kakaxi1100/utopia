@@ -19,6 +19,7 @@ public:
 	std::shared_ptr<JsonValue> excuteArray(std::shared_ptr<ASTree> node);
 
 	std::shared_ptr<JsonObject> getJsonObj();
+	std::string toString();
 private:
 	std::shared_ptr<JsonObject> mJsonObj;
 	Parser& mParser;

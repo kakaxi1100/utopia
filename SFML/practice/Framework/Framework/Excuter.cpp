@@ -90,3 +90,8 @@ std::shared_ptr<JsonObject> Excuter::getJsonObj()
 {
 	return mJsonObj;
 }
+
+std::string Excuter::toString()
+{
+	return mJsonObj->toString();
+}

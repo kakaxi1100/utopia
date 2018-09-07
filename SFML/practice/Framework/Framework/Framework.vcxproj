@@ -160,6 +160,7 @@
     <ClCompile Include="LoaderManager.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="test.cpp" />
+    <ClCompile Include="test10.cpp" />
     <ClCompile Include="test2.cpp" />
     <ClCompile Include="test3.cpp" />
     <ClCompile Include="test4.cpp" />
@@ -167,6 +168,7 @@
     <ClCompile Include="test6.cpp" />
     <ClCompile Include="test7.cpp" />
     <ClCompile Include="test8.cpp" />
+    <ClCompile Include="test9.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="UpdateManager.cpp" />
     <ClCompile Include="WindowManager.cpp" />
@@ -219,6 +221,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\Text\test.txt" />
+    <Text Include="Assets\Text\test2.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

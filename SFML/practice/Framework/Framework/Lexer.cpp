@@ -4,9 +4,9 @@
 
 using namespace	std;
 
-Lexer::Lexer(ifstream & stream):mStream(stream)
+Lexer::Lexer(ifstream & stream) :mStream(stream)
 {
-	
+
 }
 
 void Lexer::read()
@@ -31,43 +31,39 @@ void Lexer::stateNormal()
 		{
 			continue;
 		}
-		else if (charCode == NEWLINE_CODE)
+		else if (charCode == NEWLINE_CODE)// \n
 		{
 			stateEndOfLine();
 		}
-		else if (charCode == SLASH_CODE) 
+		else if (charCode == SLASH_CODE)// /
 		{
 			charCode = getCharCode();
-			if (charCode == SLASH_CODE)
+			if (charCode == SLASH_CODE)// /
 			{
-				charCode = getCharCode();
-				if (charCode == SLASH_CODE)// /
-				{
-					stateOneLineComment();
-				}
-				else if (charCode == STAR_CODE)// *
-				{
-					stateMutipleLinesComment();
-				}
+				stateOneLineComment();
 
 			}
+			else if (charCode == STAR_CODE)// *
+			{
+				stateMutipleLinesComment();
+			}
 		}
-		else if (charCode == QUOTATION_CODE)
+		else if (charCode == QUOTATION_CODE)// "
 		{
 			stateQuotation();
 		}
-		else if (charCode == NEGATIVE_CODE)
+		else if (charCode == NEGATIVE_CODE)// -
 		{
 			mCharBuff.push_back(charCode);
 			stateNegative();
 		}
-		else if (charCode >= ZERO_CODE && charCode <= NINE_CODE)
+		else if (charCode >= ZERO_CODE && charCode <= NINE_CODE)// 0-9
 		{
 			//进入数字状态
 			mCharBuff.push_back(charCode);
 			stateInt();
 		}
-		else if (charCode == DOT_CODE)
+		else if (charCode == DOT_CODE)// .
 		{
 			//浮点状态
 			mCharBuff.push_back(charCode);
@@ -220,7 +216,7 @@ void Lexer::stateQuotation()
 		else {
 			//生成字符串token
 			shared_ptr<string> value = make_shared<string>("");
-			
+
 			while (mCharBuff.size() > 0)
 			{
 				*value += char(mCharBuff.front());
@@ -259,6 +255,7 @@ void Lexer::stateOneLineComment()
 		if (charCode == NEWLINE_CODE)
 		{
 			stateEndOfLine();
+			break;
 		}
 	}
 }
@@ -280,7 +277,7 @@ int Lexer::getCharCode()
 	}
 	else
 	{
-		if (mStream.peek() != EOF) 
+		if (mStream.peek() != EOF)
 		{
 			charCode = mStream.get();
 		}

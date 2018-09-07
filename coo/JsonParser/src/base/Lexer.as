@@ -354,6 +354,7 @@ package base
 				if(char == ENDOFLINE_CODE)
 				{
 					stateEndOfLine();
+					break;
 				}
 			}
 		}

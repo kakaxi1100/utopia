@@ -114,6 +114,12 @@
     <ClCompile Include="test8.cpp">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="test9.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="test10.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventManager.h">
@@ -247,6 +253,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\Text\test.txt">
+      <Filter>Assets\Text</Filter>
+    </Text>
+    <Text Include="Assets\Text\test2.txt">
       <Filter>Assets\Text</Filter>
     </Text>
   </ItemGroup>
