@@ -120,6 +120,12 @@
     <ClCompile Include="test10.cpp">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="JsonRunner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test11.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventManager.h">
@@ -189,6 +195,9 @@
       <Filter>Header Files\JsonParser</Filter>
     </ClInclude>
     <ClInclude Include="JsonFloat.h">
+      <Filter>Header Files\JsonParser</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonRunner.h">
       <Filter>Header Files\JsonParser</Filter>
     </ClInclude>
   </ItemGroup>

@@ -29,7 +29,12 @@ public:
 	~Lexer() = default;
 
 	void read();
-public:
+	std::shared_ptr<Token> next();
+	std::shared_ptr<Token> peek();
+	std::shared_ptr<Token> lookLast();
+	std::string toString();
+
+private:
 	void stateNormal();
 	void stateNegative();
 	void stateInt();
@@ -38,13 +43,7 @@ public:
 	void stateMutipleLinesComment();
 	void stateOneLineComment();
 	void stateEndOfLine();
-
 	int getCharCode();
-	std::shared_ptr<Token> next();
-	std::shared_ptr<Token> peek();
-	std::shared_ptr<Token> lookLast();
-
-	std::string toString();
 private:
 	std::ifstream& mStream;
 	int mLineNo = 1;

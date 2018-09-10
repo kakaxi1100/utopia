@@ -152,6 +152,7 @@
     <ClCompile Include="JsonInt.cpp" />
     <ClCompile Include="JsonKey.cpp" />
     <ClCompile Include="JsonObject.cpp" />
+    <ClCompile Include="JsonRunner.cpp" />
     <ClCompile Include="JsonString.cpp" />
     <ClCompile Include="JsonValue.cpp" />
     <ClCompile Include="Leaf.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test10.cpp" />
+    <ClCompile Include="test11.cpp" />
     <ClCompile Include="test2.cpp" />
     <ClCompile Include="test3.cpp" />
     <ClCompile Include="test4.cpp" />
@@ -186,6 +188,7 @@
     <ClInclude Include="JsonKey.h" />
     <ClInclude Include="JsonInt.h" />
     <ClInclude Include="JsonObject.h" />
+    <ClInclude Include="JsonRunner.h" />
     <ClInclude Include="JsonString.h" />
     <ClInclude Include="JsonValue.h" />
     <ClInclude Include="Leaf.h" />
