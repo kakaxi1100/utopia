@@ -28,6 +28,9 @@
     <Filter Include="Assets\Text">
       <UniqueIdentifier>{93162fc5-13dd-4c98-850a-7f3ed6f6011f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Properties">
+      <UniqueIdentifier>{d5ae0009-4336-46d2-9405-12693d9bd50d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EventManager.cpp">
@@ -126,6 +129,9 @@
     <ClCompile Include="test11.cpp">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EventManager.h">
@@ -200,6 +206,12 @@
     <ClInclude Include="JsonRunner.h">
       <Filter>Header Files\JsonParser</Filter>
     </ClInclude>
+    <ClInclude Include="LoaderTextureEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoaderJsonEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Images\staxChicken_01.png">
@@ -267,5 +279,13 @@
     <Text Include="Assets\Text\test2.txt">
       <Filter>Assets\Text</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Properties\1.ppty">
+      <Filter>Assets\Properties</Filter>
+    </None>
+    <None Include="Assets\Properties\2.ppty">
+      <Filter>Assets\Properties</Filter>
+    </None>
   </ItemGroup>
 </Project>

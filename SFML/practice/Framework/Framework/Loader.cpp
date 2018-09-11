@@ -2,26 +2,48 @@
 #include <SFML\Graphics.hpp>
 #include "Loader.h"
 #include "EventManager.h"
+#include "LoaderTextureEvent.h"
+#include "LoaderJsonEvent.h"
+#include "JsonRunner.h"
 
 
-void Loader::load(const std::string & url)
+void Loader::loadTexture(const std::string & url)
 {
 	mURL = url;
 
-	sf::Texture	 temTexture;
-	EventBase tempEvt;
-	if (!temTexture.loadFromFile(url))
+	std::shared_ptr<sf::Texture> texture = std::make_shared<sf::Texture>();
+	LoaderTextureEvent tempEvt;
+	if (!texture->loadFromFile(url))
 	{
-		std::cout<<"未找到对应文件: "<<url<<std::endl;
+		std::cout<<"Texture文件加载失败: "<<url<<std::endl;
 		//error
 		EventManager::getInstance().dispatch(EventType::LoadError, tempEvt, mName);
 	}
 	else
 	{
+		tempEvt.data = texture;
 		//completed
-		std::cout << "成功加载文件: " << url << std::endl;
+		std::cout << "Texture文件加载成功: " << url << std::endl;
 		EventManager::getInstance().dispatch(EventType::LoadCompleted, tempEvt, mName);
 	}
+}
+
+void Loader::loadProperty(const std::string & url)
+{
+	std::shared_ptr<JsonObject> obj = JsonRunner::decode(url);
+	LoaderJsonEvent tempEvt;
+	if (obj == nullptr)
+	{
+		std::cout << "Json文件加载失败: " << url << std::endl;
+		EventManager::getInstance().dispatch(EventType::LoadError, tempEvt, mName);
+	}
+	else 
+	{
+		tempEvt.data = obj;
+		std::cout << "Json文件加载成功: " << url << std::endl;
+		EventManager::getInstance().dispatch(EventType::LoadCompleted, tempEvt, mName);
+	}
+
 }
 
 const std::string Loader::getName()
@@ -31,4 +53,5 @@ const std::string Loader::getName()
 
 Loader::Loader(const std::string & name):mName(name)
 {
+
 }

@@ -103,11 +103,8 @@ void Lexer::stateNormal()
 		{
 			mCharBuff.clear();
 			mStream.close();
-			wstring err = L"第";
-			err += to_wstring(mLineNo);
-			err += L"行: 未识别的标识符 ";
-			err += char(charCode);
-			wcout << err << endl;
+
+			throw "Json format error!";
 		}
 	}
 }

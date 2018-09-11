@@ -160,6 +160,7 @@
     <ClCompile Include="Loader.cpp" />
     <ClCompile Include="LoaderManager.cpp" />
     <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test10.cpp" />
     <ClCompile Include="test11.cpp" />
@@ -194,6 +195,8 @@
     <ClInclude Include="Leaf.h" />
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="Loader.h" />
+    <ClInclude Include="LoaderJsonEvent.h" />
+    <ClInclude Include="LoaderTextureEvent.h" />
     <ClInclude Include="LoaderManager.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="ResourceManager.h" />
@@ -225,6 +228,10 @@
   <ItemGroup>
     <Text Include="Assets\Text\test.txt" />
     <Text Include="Assets\Text\test2.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Properties\1.ppty" />
+    <None Include="Assets\Properties\2.ppty" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

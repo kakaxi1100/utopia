@@ -7,7 +7,9 @@ public:
 	Loader(const std::string& name = "");
 	~Loader() = default;
 
-	void load(const std::string& url);
+	void loadTexture(const std::string& url);
+	void loadProperty(const std::string& url);
+
 	const std::string getName();
 private:
 	std::string mURL;
