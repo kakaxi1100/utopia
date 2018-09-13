@@ -1,7 +1,10 @@
 #pragma once
 #include <iostream>
 #include "EventBase.h"
-
+/*
+* 此类已无作用
+*
+*/
 class EventDispatcher
 {
 public:
@@ -10,9 +13,4 @@ public:
 	virtual void testFun(const EventBase& evt) {
 		std::cout<<"BASE testFun"<<std::endl;
 	};
-
-	virtual void loadTextureError(const EventBase& e) {};
-	virtual void loadTextureCompleted(const EventBase& e) {};
-	virtual void loadPropertyError(const EventBase& e) {};
-	virtual void loadPropertyCompleted(const EventBase& e) {};
 };

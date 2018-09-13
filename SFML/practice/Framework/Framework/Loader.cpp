@@ -22,10 +22,12 @@ void Loader::loadTexture(const std::string & url)
 	else
 	{
 		tempEvt.data = texture;
+		tempEvt.path = url;
 		//completed
 		std::cout << "Texture文件加载成功: " << url << std::endl;
 		EventManager::getInstance().dispatch(EventType::LoadCompleted, tempEvt, mName);
 	}
+	std::cout << "what the fuck" << std::endl;
 }
 
 void Loader::loadProperty(const std::string & url)
@@ -40,6 +42,7 @@ void Loader::loadProperty(const std::string & url)
 	else 
 	{
 		tempEvt.data = obj;
+		tempEvt.path = url;
 		std::cout << "Json文件加载成功: " << url << std::endl;
 		EventManager::getInstance().dispatch(EventType::LoadCompleted, tempEvt, mName);
 	}

@@ -3,8 +3,11 @@
 #include <string>
 #include "EventDispatcher.h"
 #include "EventBase.h"
+#include <unordered_map>
+#include "JsonObject.h"
+#include "SFML\Graphics.hpp"
 
-class ResourceManager : public EventDispatcher
+class ResourceManager
 {
 public:
 	ResourceManager() = default;
@@ -15,11 +18,16 @@ public:
 	void loaderTextures(const std::string& url);
 
 
-	void loadTextureError(const EventBase& e);
 	void loadTextureCompleted(const EventBase& e);
+	void loadTextureError(const EventBase& e);
 
-	void loadPropertyError(const EventBase& e);
 	void loadPropertyCompleted(const EventBase& e);
+	void loadPropertyError(const EventBase& e);
+
+	std::unordered_map<std::string, std::shared_ptr<JsonObject>> getPropeties();
+	std::unordered_map<std::string, std::shared_ptr<sf::Texture>> getTextures();
 private:
 	static std::unique_ptr<ResourceManager> mInstance;
+	std::unordered_map<std::string, std::shared_ptr<sf::Texture>> mTextures;
+	std::unordered_map<std::string, std::shared_ptr<JsonObject>> mProperties;
 };

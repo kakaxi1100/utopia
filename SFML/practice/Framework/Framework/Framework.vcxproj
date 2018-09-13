@@ -142,6 +142,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="AnimationFrame.cpp" />
     <ClCompile Include="ASTree.cpp" />
     <ClCompile Include="BinaryNode.cpp" />
     <ClCompile Include="Composite.cpp" />
@@ -164,6 +166,7 @@
     <ClCompile Include="test.cpp" />
     <ClCompile Include="test10.cpp" />
     <ClCompile Include="test11.cpp" />
+    <ClCompile Include="test12.cpp" />
     <ClCompile Include="test2.cpp" />
     <ClCompile Include="test3.cpp" />
     <ClCompile Include="test4.cpp" />
@@ -177,6 +180,8 @@
     <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
+    <ClInclude Include="AnimationFrame.h" />
     <ClInclude Include="ASTree.h" />
     <ClInclude Include="BinaryNode.h" />
     <ClInclude Include="Composite.h" />

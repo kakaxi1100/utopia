@@ -10,5 +10,6 @@ public:
 	~LoaderTextureEvent() = default;
 
 	std::shared_ptr<sf::Texture> data;
+	std::string path;
 private:
 };

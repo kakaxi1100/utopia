@@ -10,6 +10,7 @@ public:
 	~LoaderJsonEvent() = default;
 
 	std::shared_ptr<JsonObject> data;
+	std::string path;
 private:
 
 };
