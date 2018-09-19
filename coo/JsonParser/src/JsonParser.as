@@ -23,7 +23,7 @@ package
 		public function JsonParser()
 		{
 			file = File.applicationDirectory;	
-			file = file.resolvePath("assets/test.jp");
+			file = file.resolvePath("assets/test2.jp");
 			stream = new FileStream();
 			stream.open(file, FileMode.READ);
 			lexer = new Lexer(stream);		
@@ -39,18 +39,21 @@ package
 			trace("词法解析成功!", lexer);
 			parser.parse();
 			trace("语法解析成功!", parser);
+			trace(parser);
 			excuter.excute();
 			trace("语义执行成功:", excuter);
 			jsonObject = excuter.jsonObject;
 			
-			//test();
+			test();
 		}
 		
 		private function test():void
 		{
-			var testObj:Array = jsonObject.searchArray("a");
-			var obj:Array = testObj[0];
-			trace(obj[0]);
+			var testValue:int = jsonObject.searchNumber("a");
+			trace(testValue);
+//			var testObj:Array = jsonObject.searchArray("stax.gm.staxChicken.warning");
+//			var obj:Object = testObj[0];
+//			trace(obj["texture"]);
 		}
 	}
 }
