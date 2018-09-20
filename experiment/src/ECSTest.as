@@ -9,8 +9,11 @@ package
 		{
 			super();
 			
-			var com:ComponentBase = new ComponentMoveLeft();
-			em.addEntity();
+			var com:ComponentBase = new ComponentMoveX();
+			var com2:ComponentBase = new ComponentMoveY();
+			var entity:int = em.addEntity();
+			em.addComponent(entity, com);
+			em.addComponent(entity, com2);
 		}
 	}
 }
@@ -25,9 +28,10 @@ class EntityManager
 		
 	}
 	
-	public function addEntity():void
+	public function addEntity():int
 	{
 		entityID++;
+		return entityID;
 	}
 	
 	public function addComponent(id:int, com:ComponentBase):void
@@ -52,17 +56,26 @@ class ComponentBase
 	}
 }
 
-class ComponentMoveLeft extends ComponentBase
+class ComponentMoveX extends ComponentBase
 {
-	public function ComponentMoveLeft()
+	public var posX:Number;
+	public var speedX:Number = 1;
+	public function ComponentMoveX()
 	{
 		super();
 	}
+	
+	public function moveLeft():void
+	{
+		posX -= speedX;
+	}
 }
 
-class ComponentMoveRight extends ComponentBase
+class ComponentMoveY extends ComponentBase
 {
-	public function ComponentMoveRight()
+	public var posY:Number;
+	public var speedY:Number = 1;
+	public function ComponentMoveY()
 	{
 		super();
 	}
