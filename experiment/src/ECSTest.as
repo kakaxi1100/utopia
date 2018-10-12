@@ -4,135 +4,157 @@ package
 	
 	public class ECSTest extends Sprite
 	{
-		private var em:EntityManager = new EntityManager();
 		public function ECSTest()
 		{
 			super();
-			
-			var com:ComponentBase = new ComponentMoveX();
-			var com2:ComponentBase = new ComponentMoveY();
+
+			trace(12);
+			var entity:Entity = EntityManager.create();
+			var compnent:ComponentBase = new ComponentTransform();
+			ComponentManager.addComponent(entity.uuid, ComponentManager.COMPONENT_TYPE_TRANSFOR);
+			ComponentManager.addComponent(entity.uuid, ComponentManager.COMPONENT_TYPE_TEST);
 		}
 	}
 }
 import flash.utils.Dictionary;
 
-class ComponentManager
+class SystemBase
 {
-	public static const CPositionX:uint = 1 << 0;
-	public static const CPositionY:uint = 1 << 1;
-	
-	public static function createComponent(id:uint):ComponentBase
+	public var componentTypeList:Vector.<int> = new Vector.<int>();
+	public var entityList:Vector.<Entity> = new Vector.<Entity>();
+	public function update():void
 	{
-		var com:ComponentBase;
-		switch(id)
+		
+	}
+	
+	public function hasCompnent(type:int):Boolean
+	{
+		for each(var t:int in componentTypeList)
 		{
-			case CPositionX:
-				com = new ComponentMoveX();
-				break;
-			case CPositionY:
-				com = new ComponentMoveY();
-				break;
+			if(t == type)
+			{
+				return true;
+			}
 		}
-		return com;
+		
+		return false;
+	}
+	
+	public function registerEntity(uuid:int):void
+	{
+		this.entityList.push(this);
+	}
+	
+	public function removeEntity(uuid:int):void
+	{
+		var e:Entity;
+		for(var i:int = 0; i < entityList.length; i++)
+		{
+			e = entityList[i];
+			if(e.uuid == uuid)
+			{
+				entityList.splice(i, 1);
+			}
+		}
 	}
 }
 
 
+class SystemMovement extends SystemBase
+{
+	public function SystemMovement()
+	{
+		componentTypeList.push(ComponentManager.COMPONENT_TYPE_TEST);
+		componentTypeList.push(ComponentManager.COMPONENT_TYPE_TRANSFOR);
+	}
+
+	
+	
+	override public function update():void
+	{
+		var e:Entity;
+		for(var i:int = 0; i < entityList.length; i++)
+		{
+			e = entityList[i];
+			
+		}
+	}
+}
+
+class ComponentBase
+{
+	public var list:Vector.<ComponentBase> = new Vector.<ComponentBase>();
+	//entity id = component index
+	public var map:Dictionary = new Dictionary();	
+	
+	public function registerEntity(uuid:int):void
+	{
+		this.list.push(this);
+		map[uuid] = this.list.length - 1;
+	}
+	
+	public function removeEntity(uuid:int):void
+	{
+		if(map[uuid] != null)
+		{
+			list.splice(map[uuid],1);
+		}
+	}
+}
+
+class CompnentTest extends ComponentBase
+{
+	
+}
+
+class ComponentTransform extends ComponentBase
+{
+	public var xPos:Number;
+	public var yPos:Number;
+}
+
+class ComponentManager
+{
+	public static const COMPONENT_TYPE_TEST:int = 0;
+	public static const COMPONENT_TYPE_TRANSFOR:int = 1;
+	
+	public static var componentTypeList:Vector.<ComponentBase> = new <ComponentBase>[new ComponentTransform()]
+	
+	public static function getComponent(type:int):ComponentBase
+	{
+		return componentTypeList[type];
+	}
+	
+	public static function addComponent(uuid:int, type:int):void
+	{
+		var temp:ComponentBase = getComponent(type);
+		temp.registerEntity(uuid);
+	}
+	
+	//public static function getEntityComponents(uuid:int)
+}
+
 class Entity
 {
 	public var uuid:int;
-	public var componentDict:Dictionary = new Dictionary();
 	public function Entity(id:int)
 	{
 		uuid = id;
-	}
-	
-	public function addComponent(comID:uint):void	
-	{
-		var temp:ComponentBase = ComponentManager.createComponent(comID);
-		componentDict[comID] = temp;
-	}
-	
-	//How to remove this component
-	public function removeComponent(comID:uint):void
-	{
-		componentDict[comID] = null;
-		delete componentDict[comID];
-	}
-	
-	//How to get component if use Vector structure.
-	public function getComponent(comID:uint):ComponentBase
-	{
-		return componentDict[comID];
 	}
 }
 
 class EntityManager
 {
 	private static var entityID:int = 0;
-	private var entityList:Vector.<Entity> = new Vector.<Entity>();
+	private static var entityList:Vector.<Entity> = new Vector.<Entity>();
 	public function EntityManager()
 	{
 		
 	}
 	
-	public function addEntity():Entity
+	public static function create():Entity
 	{
 		entityList.push(new Entity(entityID++));
 		return entityList[entityList.length - 1];
-	}
-}
-
-class ComponentBase
-{
-	public function ComponentBase()
-	{
-		
-	}
-}
-
-class ComponentMoveX extends ComponentBase
-{
-	public var posX:Number = 0;
-	public var speedX:Number = 1;
-	public function ComponentMoveX()
-	{
-		super();
-	}
-	
-	public function moveLeft():void
-	{
-		posX -= speedX;
-	}
-}
-
-class ComponentMoveY extends ComponentBase
-{
-	public var posY:Number = 0;
-	public var speedY:Number = 1;
-	public function ComponentMoveY()
-	{
-		super();
-	}
-} 
-
-class MoveNode
-{
-	public var positionX:ComponentMoveX;
-	public var positionY:ComponentMoveY;
-}
-
-class MoveSystem
-{
-	private var targets:Vector.<MoveNode>;
-	
-	
-	public function update():void
-	{
-		for each(var target:MoveNode in targets)
-		{
-			target.positionX.posX += 1;
-			target.positionY.posY += 1;
-		}
 	}
 }
