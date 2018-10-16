@@ -48,15 +48,19 @@ class ComponentData
 	
 }
 
-//如何实现data与base绑定？？？
 class ComponentBase
 {
 	protected var dataset:Vector.<ComponentData> = new Vector.<ComponentData>();
 	protected var entityset:Vector.<Entity> = new Vector.<Entity>();
 	
+	protected function createData():ComponentData //需要由子类实现
+	{
+		return null;
+	}
+	
 	public function registerEntity(e:Entity):void
 	{
-		this.dataset.push(this);//错误，应该是data
+		this.dataset.push(this.createData());
 		this.entityset.push(e);
 	}
 	
@@ -73,12 +77,13 @@ class ComponentBase
 	}
 }
 
-class CompnentManager
+
+class ComponentManager
 {
-	private static var instance:CompnentManager = null;
-	public static function getInstance():CompnentManager
+	private static var instance:ComponentManager = null;
+	public static function getInstance():ComponentManager
 	{
-		return instance ||= new CompnentManager();
+		return instance ||= new ComponentManager();
 	}
 }
 
