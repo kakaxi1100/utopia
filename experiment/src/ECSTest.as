@@ -8,7 +8,7 @@ package
 		{
 			super();
 
-			trace(12);
+			trace(123);
 			var entity:Entity = EntityManager.create();
 			var compnent:ComponentBase = new ComponentTransform();
 			ComponentManager.addComponent(entity.uuid, ComponentManager.COMPONENT_TYPE_TRANSFOR);
@@ -76,7 +76,10 @@ class SystemMovement extends SystemBase
 		for(var i:int = 0; i < entityList.length; i++)
 		{
 			e = entityList[i];
-			
+			//e components
+			var temp:ComponentTransform = ComponentManager.getComponent(e.uuid, ComponentManager.COMPONENT_TYPE_TRANSFOR) as ComponentTransform;
+			temp.xPos += 3;
+			temp.yPos += 3;
 		}
 	}
 }
@@ -100,6 +103,16 @@ class ComponentBase
 			list.splice(map[uuid],1);
 		}
 	}
+	
+	public function getComponent(uuid:int):ComponentBase
+	{
+		if(map[uuid])
+		{
+			return list[map[uuid]];
+		}
+		
+		return null;
+	}
 }
 
 class CompnentTest extends ComponentBase
@@ -118,19 +131,24 @@ class ComponentManager
 	public static const COMPONENT_TYPE_TEST:int = 0;
 	public static const COMPONENT_TYPE_TRANSFOR:int = 1;
 	
-	public static var componentTypeList:Vector.<ComponentBase> = new <ComponentBase>[new ComponentTransform()]
+	public static var componentTypeList:Vector.<ComponentBase> = new <ComponentBase>[new CompnentTest(), new ComponentTransform()];
 	
-	public static function getComponent(type:int):ComponentBase
+	public static function getComponentType(type:int):ComponentBase
 	{
 		return componentTypeList[type];
 	}
 	
 	public static function addComponent(uuid:int, type:int):void
 	{
-		var temp:ComponentBase = getComponent(type);
+		var temp:ComponentBase = getComponentType(type);
 		temp.registerEntity(uuid);
 	}
 	
+	public static function getComponent(uuid:int, type:int):ComponentBase
+	{
+		var temp:ComponentBase = getComponentType(type);
+		return temp.getComponent(uuid);
+	}
 	//public static function getEntityComponents(uuid:int)
 }
 
@@ -156,5 +174,18 @@ class EntityManager
 	{
 		entityList.push(new Entity(entityID++));
 		return entityList[entityList.length - 1];
+	}
+	
+	public static function destory(uuid:int):void
+	{
+		for (var i:int = 0; i < entityList.length; i++) 
+		{
+			if(entityList[i].uuid == uuid)
+			{
+				entityList.splice(i, 1);
+				break;
+			}
+		}
+		
 	}
 }
