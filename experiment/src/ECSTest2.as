@@ -7,6 +7,7 @@ package
 		public function ECSTest2()
 		{
 			super();
+			trace(1<<0, 1<<1, 1<<3);
 		}
 	}
 }
@@ -15,6 +16,36 @@ package
 class Entity
 {
 	public var uuid:uint;	
+}
+
+class EntityHandler
+{
+	public var entity:Entity;
+	public var componentMask:uint;
+	public function EntityHandler()
+	{
+		entity = EntityManager.getInstance().create();
+	}
+	
+	//添加组件
+	public function addComponent(mask:uint):void
+	{
+		componentMask |= mask;
+		ComponentManager.getInstance().addComponent(entity, mask);
+	}
+	
+	//移除组件
+	public function removeComponent(mask:uint):void
+	{
+		componentMask ^= mask;
+		ComponentManager.getInstance().removeComponent(entity, mask);
+	}
+	
+	//是否包含这些组件
+	public function hasComponent(mask:uint):Boolean
+	{
+		return (componentMask | mask) == componentMask; 
+	}
 }
 
 class EntityManager
@@ -28,12 +59,12 @@ class EntityManager
 		return instance ||= new EntityManager();
 	}
 	
-	public function create():EntityManager
+	public function create():Entity
 	{
 		var e:Entity = new Entity();
 		e.uuid = UUID;
 		++UUID;
-		return instance;
+		return e;
 	}
 	
 	public function destory():void
@@ -77,20 +108,84 @@ class ComponentBase
 	}
 }
 
+class ComponentType
+{
+	public static const COMPONENT_TYPE_1:uint = 1 << 0;
+	public static const COMPONENT_TYPE_2:uint = 1 << 1;
+}
+
+class ComponentHandler
+{
+	public var data:ComponentData;
+	public var component:ComponentBase;
+	public function ComponentHandler()
+	{
+		
+	}
+}
+
+class ComponentData1 extends ComponentData
+{
+	
+}
+class Component1 extends ComponentBase
+{
+	
+}
+
+class ComponentData2 extends ComponentData
+{
+	
+}
+class Component2 extends ComponentBase
+{
+	
+}
 
 class ComponentManager
 {
 	private static var instance:ComponentManager = null;
+	public function ComponentManager()
+	{
+		
+	}
 	public static function getInstance():ComponentManager
 	{
 		return instance ||= new ComponentManager();
 	}
+	
+	public function addComponent(e:Entity, mask:uint):void
+	{
+		var type:uint;
+		for(var bit:uint = 1; bit <= mask; bit = bit << 1)
+		{
+			type = bit & mask;
+			if(type != 0)
+			{
+				
+			}
+		}
+	}
+	
+	public function removeComponent(e:Entity, mask:uint):void
+	{
+		
+	}
+	
+	public function getComponent(type:uint):void
+	{
+		
+	}
 }
+
+//test component
+
 
 //系统其实是一系列组件的集合
 class SystemBase
 {
-	
+	public var mask:uint;
+	//public var entities:Vector.<
 }
 
 class SystemManager
