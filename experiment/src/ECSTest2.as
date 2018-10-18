@@ -11,6 +11,7 @@ package
 		}
 	}
 }
+import flash.utils.Dictionary;
 
 //实体是用来包含一系列组件实例的
 class Entity
@@ -46,6 +47,11 @@ class EntityHandler
 	{
 		return (componentMask | mask) == componentMask; 
 	}
+	
+	public function destory():void
+	{
+		EntityManager.getInstance().destory(entity);
+	}
 }
 
 class EntityManager
@@ -64,12 +70,20 @@ class EntityManager
 		var e:Entity = new Entity();
 		e.uuid = UUID;
 		++UUID;
+		entities.push(e);
 		return e;
 	}
 	
-	public function destory():void
+	public function destory(e:Entity):void
 	{
-		
+		for(var i:int = 0; i < entities.length; i++)
+		{
+			if(e == entities[i])
+			{
+				entities.splice(i, 1);
+				break;
+			}
+		}
 	}
 }
 
@@ -84,6 +98,7 @@ class ComponentBase
 	protected var dataset:Vector.<ComponentData> = new Vector.<ComponentData>();
 	protected var entityset:Vector.<Entity> = new Vector.<Entity>();
 	
+	protected var canMuti:Boolean = false;
 	protected function createData():ComponentData //需要由子类实现
 	{
 		return null;
@@ -91,6 +106,13 @@ class ComponentBase
 	
 	public function registerEntity(e:Entity):void
 	{
+		if(canMuti == false)
+		{
+			if(hasEntity(e) == true)
+			{
+				return;
+			}
+		}
 		this.dataset.push(this.createData());
 		this.entityset.push(e);
 	}
@@ -105,6 +127,18 @@ class ComponentBase
 				this.dataset.splice(i, 1);
 			}
 		}
+	}
+	
+	public function hasEntity(e:Entity):Boolean
+	{
+		for (var i:int = 0; i < entityset.length; i++) 
+		{
+			if (e == entityset[i]) 
+			{
+				return true;
+			} 
+		}
+		return false;
 	}
 }
 
@@ -130,7 +164,10 @@ class ComponentData1 extends ComponentData
 }
 class Component1 extends ComponentBase
 {
-	
+	override protected function createData():ComponentData
+	{
+		return new ComponentData1();
+	}
 }
 
 class ComponentData2 extends ComponentData
@@ -139,15 +176,20 @@ class ComponentData2 extends ComponentData
 }
 class Component2 extends ComponentBase
 {
-	
+	override protected function createData():ComponentData
+	{
+		return new ComponentData2();
+	}
 }
 
 class ComponentManager
 {
 	private static var instance:ComponentManager = null;
+	private var typeDic:Dictionary = new Dictionary();
 	public function ComponentManager()
 	{
-		
+		typeDic[ComponentType.COMPONENT_TYPE_1] = new Component1();
+		typeDic[ComponentType.COMPONENT_TYPE_2] = new Component2();
 	}
 	public static function getInstance():ComponentManager
 	{
@@ -157,19 +199,31 @@ class ComponentManager
 	public function addComponent(e:Entity, mask:uint):void
 	{
 		var type:uint;
+		var base:ComponentBase;
 		for(var bit:uint = 1; bit <= mask; bit = bit << 1)
 		{
 			type = bit & mask;
 			if(type != 0)
 			{
-				
+				base = typeDic[type];
+				base.registerEntity(e);
 			}
 		}
 	}
 	
 	public function removeComponent(e:Entity, mask:uint):void
 	{
-		
+		var type:uint;
+		var base:ComponentBase;
+		for(var bit:uint = 1; bit <= mask; bit = bit << 1)
+		{
+			type = bit & mask;
+			if(type != 0)
+			{
+				base = typeDic[type];
+				base.removeEntity(e);
+			}
+		}
 	}
 	
 	public function getComponent(type:uint):void
@@ -194,6 +248,54 @@ class SystemManager
 	public static function getInstance():SystemManager
 	{
 		return instance ||= new SystemManager();
+	}
+}
+
+//事件系统
+
+class EventData
+{
+	
+}
+
+class EventBase
+{
+	public var data:EventData;
+	public var callback:Function;
+	
+	public function execute():void
+	{
+		callback.call(null, data);
+	}
+}
+
+class EventManager
+{
+	public static const EVENT_TYPE_TEST:String = "EVENT_TYPE_TEST";
+	
+	
+	public var eventDic:Dictionary = new Dictionary();
+	
+	private static var instance:EventManager = null;
+	public static function getInstance():EventManager
+	{
+		return instance ||= new EventManager();
+	}
+	
+	public function addEventListener(type:String, callBack:Function):void
+	{
+		
+	}
+	
+	public function removeEventListener():void
+	{
+		
+	}
+	
+	//执行函数
+	public function dispatchEvent():void
+	{
+		
 	}
 }
 
