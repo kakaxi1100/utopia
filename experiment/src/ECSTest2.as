@@ -13,7 +13,6 @@ package
 	}
 }
 
-import flash.events.Event;
 import flash.utils.Dictionary;
 
 class Entity
@@ -27,6 +26,8 @@ class EntityHandler
 	public var componentMask:uint;
 	private var mEventHandler:EventHandler;
 	private	var mEvent:EventEntityModify = new EventEntityModify();
+	
+	private var mSystemList:Vector.<uint> = new Vector.<uint>();
 	public function EntityHandler()
 	{
 		entity = EntityManager.getInstance().create();
@@ -39,8 +40,7 @@ class EntityHandler
 		componentMask |= mask;
 		ComponentManager.getInstance().addComponent(entity, mask);
 		//删除之后要通知系统重新做匹配,所有的系统都要做一次计算
-		mEvent.entity = this.entity;
-		mEvent.mask = this.componentMask;
+		mEvent.entityHandler = this;
 		mEventHandler.dispatchEvent(EventType.ENTITY_MODIFY, mEvent);
 	}
 	
@@ -50,8 +50,7 @@ class EntityHandler
 		componentMask ^= mask;
 		ComponentManager.getInstance().removeComponent(entity, mask);
 		//删除之后要通知系统重新做匹配,所有的系统都要做一次计算
-		mEvent.entity = this.entity;
-		mEvent.mask = this.componentMask;
+		mEvent.entityHandler = this;
 		mEventHandler.dispatchEvent(EventType.ENTITY_MODIFY, mEvent);
 	}
 	
@@ -67,9 +66,44 @@ class EntityHandler
 		
 		return ComponentManager.getInstance().getComponent(type).getData(this.entity);
 	}
+	/***************没有办法解决时序问题, 因此还是采用第一种方法**********************/
+//	public function addSystem(systemType:uint):void
+//	{
+//		if(!hasSystemType(systemType))
+//		{
+//			mSystemList.push(systemType);
+//		}
+//	}
+//	
+//	public function removeSystem(systemType:uint):void
+//	{
+//		for(var i:int = 0; i < mSystemList.length; i++)
+//		{
+//			if(mSystemList[i] == systemType)
+//			{
+//				mSystemList.splice(i, 1);
+//				break;
+//			}
+//		}
+//	}
+//	
+//	//是否包含这些组件
+//	public function hasSystemType(systemType:uint):Boolean
+//	{
+//		for(var i:int = 0; i < mSystemList.length; i++)
+//		{
+//			if(mSystemList[i] == systemType)
+//			{
+//				return true;
+//			}
+//		}
+//		
+//		return false;
+//	}
 	
 	public function destory():void
 	{
+		//这里也需要告诉系统,实体冇得了
 		EntityManager.getInstance().destory(entity);
 	}
 }
@@ -104,6 +138,11 @@ class EntityManager
 				break;
 			}
 		}
+	}
+	
+	public function update():void
+	{
+		
 	}
 }
 
@@ -281,8 +320,11 @@ class SystemBase
 	public var entities:Vector.<Entity> = new Vector.<Entity>();
 	
 	private var mEventHandler:EventHandler;
+	//用于添加和删除
+	private var mTypeID:uint;
 	public function SystemBase(mask:uint)
 	{
+		mTypeID = SystemType.newType;
 		requires = mask;	
 		mEventHandler = new EventHandler(this);
 		mEventHandler.addEventListener(EventType.ENTITY_MODIFY, onEntityModified);
@@ -290,16 +332,21 @@ class SystemBase
 	
 	public function onEntityModified(e:EventEntityModify):void
 	{
-		if(fitsRequirements(e.mask) == false)
+		if(fitsRequirements(e.entityHandler.componentMask) == false)
 		{
-			removeEntity(e.entity);
+			removeEntity(e.entityHandler.entity);
 		}else
 		{
-			if(hasEntity(e.entity) == false)
+			if(hasEntity(e.entityHandler.entity) == false)
 			{
-				registerEntity(e.entity);
+				registerEntity(e.entityHandler.entity);
 			}
 		}
+	}
+	
+	public function isEmpty():void
+	{
+		
 	}
 	
 	public function fitsRequirements(mask:uint):Boolean
@@ -355,12 +402,55 @@ class SystemBase
 	}
 }
 
+class SystemType
+{
+	private static var mID:uint = 1;
+	
+	public static function get newType():uint
+	{
+		var temp:uint = mID;
+		mID = mID + 1;
+		return mID;
+	}
+}
+
+//由这里可以看出system的执行顺序实际上是由systems的添加顺序决定的
+//如果需要不同的执行顺序, 则需要自定义system来实现, 即script system
+//所以还需要根据component的添加来指示那些system被注册了
+//有个很严重的问题这个种结构没办法解决优先级的问题
+//比如 实体1的实行顺序是 system1->system2， 而实体2的执行顺序是system2->system1  这就没办法解决
+//因为system是按照固定的顺序去执行的, 那么采用ECSTest1的方法看看是否能够解决
 class SystemManager
 {
+	//现在运行中的system
+	private var systems:Vector.<SystemBase> = new Vector.<SystemBase>();
+	
 	private static var instance:SystemManager = null;
 	public static function getInstance():SystemManager
 	{
 		return instance ||= new SystemManager();
+	}
+	
+	public function addSystemType():void
+	{
+		//typeDic[SystemType.newType] = component;
+	}
+	
+	public function init():void
+	{
+		for (var i:int = 0; i < systems.length; i++) 
+		{
+			systems[i].init();
+		}
+	}
+	
+	public function update(dt:Number):void
+	{
+		for (var i:int = 0; i < systems.length; i++) 
+		{
+			systems[i].update(dt);
+		}
+		
 	}
 }
 
@@ -373,8 +463,7 @@ class EventData
 
 class EventEntityModify extends EventData
 {
-	public var entity:Entity;
-	public var mask:uint;
+	public var entityHandler:EntityHandler;
 }
 
 class EventBase

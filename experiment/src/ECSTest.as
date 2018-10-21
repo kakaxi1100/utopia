@@ -1,7 +1,15 @@
 package
 {
 	import flash.display.Sprite;
-	
+	/**
+	 *为了解决system执行的时序问题
+	 * 所以采用这种结构试一试看是否更好
+	 * 当然执行效率肯定是不如ECSTest2的 
+	 * 这个的弱点是 component 难以与 Entity结合起来
+	 * 
+	 * @author juli
+	 * 
+	 */	
 	public class ECSTest extends Sprite
 	{
 		public function ECSTest()
@@ -9,29 +17,56 @@ package
 			super();
 
 			trace(123);
-			var entity:Entity = EntityManager.create();
-			var compnent:ComponentBase = new ComponentTransform();
-			ComponentManager.addComponent(entity.uuid, ComponentManager.COMPONENT_TYPE_TRANSFOR);
-			ComponentManager.addComponent(entity.uuid, ComponentManager.COMPONENT_TYPE_TEST);
+			
 		}
 	}
 }
 import flash.utils.Dictionary;
 
-class SystemBase
+class EntityBase
 {
-	public var componentTypeList:Vector.<int> = new Vector.<int>();
-	public var entityList:Vector.<Entity> = new Vector.<Entity>();
-	public function update():void
+	public var uuid:uint;	
+	
+	//type -> data
+	public var components:Dictionary = new Dictionary();
+//	public var componentList:Vector.<ComponentBase> = new Vector.<ComponentBase>();
+	public var systemList:Vector.<SystemBase> = new Vector.<SystemBase>();
+	public function EntityBase()
 	{
 		
 	}
 	
-	public function hasCompnent(type:int):Boolean
+	public function addComponent(type:uint):void
 	{
-		for each(var t:int in componentTypeList)
+		for(var key:uint in components)
 		{
-			if(t == type)
+			if(key == type)
+			{
+				return;
+			}
+		}
+		
+		components[key] = ComponentManager.getInstance().getComponent(key).createData();
+	}
+	
+	public function removeComponent(type:uint):void
+	{
+		for(var key:uint in components)
+		{
+			if(key == type)
+			{
+				components[key] = null;
+				delete components[key];
+				return;
+			}
+		}
+	}
+	
+	public function hasComponent(type:uint):Boolean
+	{
+		for(var key:uint in components)
+		{
+			if(key == type)
 			{
 				return true;
 			}
@@ -40,152 +75,125 @@ class SystemBase
 		return false;
 	}
 	
-	public function registerEntity(uuid:int):void
+	public function getComponentData(type:uint):ComponentData
 	{
-		this.entityList.push(this);
+		for(var key:uint in components)
+		{
+			if(key == type)
+			{
+				return components[key];
+			}
+		}
+		return null;
 	}
 	
-	public function removeEntity(uuid:int):void
+	//system是可以复用的,所以system本身是一个单例
+	public function addSystem(system:SystemBase):void
 	{
-		var e:Entity;
-		for(var i:int = 0; i < entityList.length; i++)
+		systemList.push(system);	
+	}
+	
+	public function removeSystem(name:String):void
+	{
+		for(var i:int = 0; i < systemList.length; i++)
 		{
-			e = entityList[i];
-			if(e.uuid == uuid)
+			if(systemList[i].name == name)
 			{
-				entityList.splice(i, 1);
+				systemList.splice(i, 1);
+				break;
 			}
 		}
 	}
-}
-
-
-class SystemMovement extends SystemBase
-{
-	public function SystemMovement()
-	{
-		componentTypeList.push(ComponentManager.COMPONENT_TYPE_TEST);
-		componentTypeList.push(ComponentManager.COMPONENT_TYPE_TRANSFOR);
-	}
-
 	
-	
-	override public function update():void
+	public function update(dt:Number):void
 	{
-		var e:Entity;
-		for(var i:int = 0; i < entityList.length; i++)
+		for(var i:int = 0; i < systemList.length; i++)
 		{
-			e = entityList[i];
-			//e components
-			var temp:ComponentTransform = ComponentManager.getComponent(e.uuid, ComponentManager.COMPONENT_TYPE_TRANSFOR) as ComponentTransform;
-			temp.xPos += 3;
-			temp.yPos += 3;
+			systemList[i].update(dt);
 		}
-	}
-}
-
-class ComponentBase
-{
-	public var list:Vector.<ComponentBase> = new Vector.<ComponentBase>();
-	//entity id = component index
-	public var map:Dictionary = new Dictionary();	
-	
-	public function registerEntity(uuid:int):void
-	{
-		this.list.push(this);
-		map[uuid] = this.list.length - 1;
-	}
-	
-	public function removeEntity(uuid:int):void
-	{
-		if(map[uuid] != null)
-		{
-			list.splice(map[uuid],1);
-		}
-	}
-	
-	public function getComponent(uuid:int):ComponentBase
-	{
-		if(map[uuid])
-		{
-			return list[map[uuid]];
-		}
-		
-		return null;
-	}
-}
-
-class CompnentTest extends ComponentBase
-{
-	
-}
-
-class ComponentTransform extends ComponentBase
-{
-	public var xPos:Number;
-	public var yPos:Number;
-}
-
-class ComponentManager
-{
-	public static const COMPONENT_TYPE_TEST:int = 0;
-	public static const COMPONENT_TYPE_TRANSFOR:int = 1;
-	
-	public static var componentTypeList:Vector.<ComponentBase> = new <ComponentBase>[new CompnentTest(), new ComponentTransform()];
-	
-	public static function getComponentType(type:int):ComponentBase
-	{
-		return componentTypeList[type];
-	}
-	
-	public static function addComponent(uuid:int, type:int):void
-	{
-		var temp:ComponentBase = getComponentType(type);
-		temp.registerEntity(uuid);
-	}
-	
-	public static function getComponent(uuid:int, type:int):ComponentBase
-	{
-		var temp:ComponentBase = getComponentType(type);
-		return temp.getComponent(uuid);
-	}
-	//public static function getEntityComponents(uuid:int)
-}
-
-class Entity
-{
-	public var uuid:int;
-	public function Entity(id:int)
-	{
-		uuid = id;
 	}
 }
 
 class EntityManager
 {
-	private static var entityID:int = 0;
-	private static var entityList:Vector.<Entity> = new Vector.<Entity>();
-	public function EntityManager()
+	private static var instance:EntityManager = null;
+	public static function getInstance():EntityManager
 	{
-		
+		return instance ||= new EntityManager();
+	}
+}
+
+class ComponentData
+{
+	
+}
+
+class ComponentBase
+{
+	public var name:String;
+	public var type:uint;
+	public var data:ComponentData;
+	
+	public function createData():ComponentData
+	{
+		return null;
 	}
 	
-	public static function create():Entity
+	public function getData():ComponentData
 	{
-		entityList.push(new Entity(entityID++));
-		return entityList[entityList.length - 1];
+		return data;
+	}
+}
+
+class ComponentType
+{
+	private static var mTypeID:uint;
+	
+	public static function createType():uint
+	{
+		return ++mTypeID;
+	}
+}
+
+class ComponentManager
+{
+	private var mTypeDic:Dictionary = new Dictionary();
+
+	private static var instance:ComponentManager = null;
+	public static function getInstance():ComponentManager
+	{
+		return instance ||= new ComponentManager();
 	}
 	
-	public static function destory(uuid:int):void
+	public function addComponent(com:ComponentBase):void
 	{
-		for (var i:int = 0; i < entityList.length; i++) 
-		{
-			if(entityList[i].uuid == uuid)
-			{
-				entityList.splice(i, 1);
-				break;
-			}
-		}
+		var type:uint = ComponentType.createType();
+		com.type = type;
+		mTypeDic[type] = com;
+	}
+	
+	public function getComponent(type:uint):ComponentBase
+	{
+		return mTypeDic[type];
+	}
+}
+
+class SystemBase
+{
+	public var name:String;
+	
+	public function update(dt:Number):void
+	{
 		
 	}
 }
+
+class SystemManager
+{
+	private static var instance:SystemManager = null;
+	public static function getInstance():SystemManager
+	{
+		return instance ||= new SystemManager();
+	}
+}
+
