@@ -66,40 +66,40 @@ class EntityHandler
 		
 		return ComponentManager.getInstance().getComponent(type).getData(this.entity);
 	}
-	/***************没有办法解决时序问题, 因此还是采用第一种方法**********************/
-//	public function addSystem(systemType:uint):void
-//	{
-//		if(!hasSystemType(systemType))
-//		{
-//			mSystemList.push(systemType);
-//		}
-//	}
-//	
-//	public function removeSystem(systemType:uint):void
-//	{
-//		for(var i:int = 0; i < mSystemList.length; i++)
-//		{
-//			if(mSystemList[i] == systemType)
-//			{
-//				mSystemList.splice(i, 1);
-//				break;
-//			}
-//		}
-//	}
-//	
-//	//是否包含这些组件
-//	public function hasSystemType(systemType:uint):Boolean
-//	{
-//		for(var i:int = 0; i < mSystemList.length; i++)
-//		{
-//			if(mSystemList[i] == systemType)
-//			{
-//				return true;
-//			}
-//		}
-//		
-//		return false;
-//	}
+
+	public function addSystem(systemType:uint):void
+	{
+		if(!hasSystemType(systemType))
+		{
+			mSystemList.push(systemType);
+		}
+	}
+	
+	public function removeSystem(systemType:uint):void
+	{
+		for(var i:int = 0; i < mSystemList.length; i++)
+		{
+			if(mSystemList[i] == systemType)
+			{
+				mSystemList.splice(i, 1);
+				break;
+			}
+		}
+	}
+	
+	//是否包含这些组件
+	public function hasSystemType(systemType:uint):Boolean
+	{
+		for(var i:int = 0; i < mSystemList.length; i++)
+		{
+			if(mSystemList[i] == systemType)
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	public function destory():void
 	{

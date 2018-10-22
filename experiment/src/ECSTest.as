@@ -7,6 +7,23 @@ package
 	 * 当然执行效率肯定是不如ECSTest2的 
 	 * 这个的弱点是 component 难以与 Entity结合起来
 	 * 
+	 * system 添加的顺序是和component添加的顺序绑定的
+	 * 
+	 * 比如 
+	 * system1 包含组件 component1 component2
+	 * sysmte2 包含组件 component2 component3
+	 * 
+	 * Entity.addComponent(component1);
+	 * Entity.addComponent(comopnent2);
+	 * Entity.addComponent(component3);
+	 * 这时system的顺序为 system1->system2
+	 * 
+	 * Entity.addComponent(component3);
+	 * Entity.addComponent(comopnent2);
+	 * Entity.addComponent(component1);
+	 * 这时system的顺序为 system2->system1
+	 * 
+	 * 
 	 * @author juli
 	 * 
 	 */	
@@ -15,9 +32,9 @@ package
 		public function ECSTest()
 		{
 			super();
-
-			trace(123);
-			
+			var b:BitMask = new BitMask();
+			b.setMask(3);
+			b.removeMask(1);	
 		}
 	}
 }
@@ -109,17 +126,26 @@ class EntityBase
 	{
 		for(var i:int = 0; i < systemList.length; i++)
 		{
-			systemList[i].update(dt);
+			systemList[i].update(this, dt);
 		}
 	}
 }
 
 class EntityManager
 {
+	private var mEntities:Vector.<EntityBase> = new Vector.<EntityBase>();
 	private static var instance:EntityManager = null;
 	public static function getInstance():EntityManager
 	{
 		return instance ||= new EntityManager();
+	}
+	
+	public function update(dt:Number):void
+	{
+		for(var i:int = 0; i < mEntities.length; i++)
+		{
+			mEntities[i].update(dt);
+		}
 	}
 }
 
@@ -145,13 +171,16 @@ class ComponentBase
 	}
 }
 
+//最多只能有32个component, 需要以后改进
 class ComponentType
 {
-	private static var mTypeID:uint;
+	private static var mTypeID:uint = 1;
 	
 	public static function createType():uint
 	{
-		return ++mTypeID;
+		var id:uint = mTypeID;
+		mTypeID = mTypeID << 1;
+		return id;
 	}
 }
 
@@ -182,7 +211,9 @@ class SystemBase
 {
 	public var name:String;
 	
-	public function update(dt:Number):void
+	public var entites:Vector.<EntityBase> = new Vector.<EntityBase>();
+	//子类实现
+	public function update(entity:EntityBase, dt:Number):void
 	{
 		
 	}
@@ -194,6 +225,37 @@ class SystemManager
 	public static function getInstance():SystemManager
 	{
 		return instance ||= new SystemManager();
+	}
+	
+	public function addSystem():void
+	{
+		
+	}
+}
+
+//最多只能mask 32位
+class BitMask
+{
+	private var mMask:uint;
+	
+	public function setMask(m:uint):void
+	{
+		mMask |= m;
+	}
+	
+	public function removeMask(m:uint):void
+	{
+		mMask ^= m;
+	}
+	
+	public function hasMask(m:uint):Boolean
+	{
+		return ((mMask | m) == mMask);
+	}
+	
+	public function toString():String
+	{
+		return mMask.toString(2);
 	}
 }
 
