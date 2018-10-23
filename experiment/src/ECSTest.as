@@ -23,6 +23,15 @@ package
 	 * Entity.addComponent(component1);
 	 * 这时system的顺序为 system2->system1
 	 * 
+	 * 当然也可以由用户来指定顺序
+	 * 如果由用户指定顺序的话那么所有系统都必须由用户提供
+	 * 类似与cocos里面的添加用户脚本组件(当然这就不是真正意义上的ECS了)
+	 * 
+	 * 
+	 * 可能还需要添加state
+	 * 比如 MovementSystem里面 有两个方法 一个是向前移动，一个是向后移动，那么应该执行那一个方法，
+	 * 那么可能需要看Entity处于哪个state
+	 * 不知道有没有更好的解决方案
 	 * 
 	 * @author juli
 	 * 
