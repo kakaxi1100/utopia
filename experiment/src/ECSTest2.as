@@ -63,7 +63,6 @@ class EntityHandler
 	//取得组件
 	public function getCompnentData(type:uint):ComponentData
 	{
-		
 		return ComponentManager.getInstance().getComponent(type).getData(this.entity);
 	}
 

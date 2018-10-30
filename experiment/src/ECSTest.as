@@ -42,7 +42,7 @@ package
 		{
 			super();
 			var b:BitMask = new BitMask();
-			b.setMask(3);
+			b.addMask(3);
 			b.removeMask(1);	
 		}
 	}
@@ -53,6 +53,7 @@ class EntityBase
 {
 	public var uuid:uint;	
 	
+	public var componentMask:BitMask;//组件掩码
 	//type -> data
 	public var components:Dictionary = new Dictionary();
 //	public var componentList:Vector.<ComponentBase> = new Vector.<ComponentBase>();
@@ -71,8 +72,10 @@ class EntityBase
 				return;
 			}
 		}
-		
+		componentMask.addMask(type);
 		components[key] = ComponentManager.getInstance().getComponent(key).createData();
+		
+		SystemManager.getInstance().entityModify(this);
 	}
 	
 	public function removeComponent(type:uint):void
@@ -83,6 +86,8 @@ class EntityBase
 			{
 				components[key] = null;
 				delete components[key];
+				componentMask.removeMask(key);
+				SystemManager.getInstance().entityModify(this);
 				return;
 			}
 		}
@@ -219,8 +224,73 @@ class ComponentManager
 class SystemBase
 {
 	public var name:String;
+	public var type:uint;
 	
-	public var entites:Vector.<EntityBase> = new Vector.<EntityBase>();
+	//这里还是需要去注册每一个满足系统条件的实体的
+	private var mEntities:Vector.<EntityBase> = new Vector.<EntityBase>();
+	//mask就代表了这个系统需要哪些组件
+	private var mRequires:uint = 0;
+	
+	public function SystemBase(mask:uint)
+	{
+		mRequires = mask;
+	}
+	
+	public function fitsRequirements(mask:uint):Boolean
+	{
+		if(mRequires == mask)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public function onEntityModified(e:EntityBase):void
+	{
+		if(fitsRequirements(e.componentMask.getMask()) == false)
+		{
+			removeEntity(e);
+		}else
+		{
+			if(hasEntity(e) == false)
+			{
+				registerEntity(e);
+			}
+		}
+	}
+	
+	public function registerEntity(e:EntityBase):void
+	{
+		if(hasEntity(e) == false)
+		{
+			mEntities.push(e);
+		}
+	}
+	
+	public function removeEntity(e:EntityBase):void
+	{
+		for (var i:int = 0; i < mEntities.length; i++) 
+		{
+			if(mEntities[i] == e)
+			{
+				mEntities.splice(i, 1);
+			}
+		}
+	}
+	
+	public function hasEntity(e:EntityBase):Boolean
+	{
+		for (var i:int = 0; i < mEntities.length; i++) 
+		{
+			if(mEntities[i] == e)
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	//子类实现
 	public function update(entity:EntityBase, dt:Number):void
 	{
@@ -228,17 +298,47 @@ class SystemBase
 	}
 }
 
+//最多只能有32个component, 需要以后改进
+class SystemType
+{
+	private static var mTypeID:uint = 1;
+	
+	public static function createType():uint
+	{
+		var id:uint = mTypeID;
+		mTypeID = mTypeID << 1;
+		return id;
+	}
+}
+
 class SystemManager
 {
+	private var mTypeDic:Dictionary = new Dictionary();
+
 	private static var instance:SystemManager = null;
 	public static function getInstance():SystemManager
 	{
 		return instance ||= new SystemManager();
 	}
 	
-	public function addSystem():void
+	public function entityModify(e:EntityBase):void
 	{
-		
+		for each (var sys:SystemBase in mTypeDic) 
+		{
+			sys.onEntityModified(e);
+		}
+	}
+	
+	public function addSystem(sys:SystemBase):void
+	{
+		var type:uint = SystemType.createType();
+		sys.type = type;
+		mTypeDic[type] = sys;
+	}
+	
+	public function getComponent(type:uint):SystemBase
+	{
+		return mTypeDic[type];
 	}
 }
 
@@ -248,6 +348,16 @@ class BitMask
 	private var mMask:uint;
 	
 	public function setMask(m:uint):void
+	{
+		mMask = m;
+	}
+	
+	public function getMask():uint
+	{
+		return mMask;
+	}
+	
+	public function addMask(m:uint):void
 	{
 		mMask |= m;
 	}
