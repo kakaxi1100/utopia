@@ -21,20 +21,24 @@ package
 	 * @author juli
 	 * 
 	 */	
+	[SWF(width="800", height="600", frameRate="30", backgroundColor="0")]
 	public class GUITest extends Sprite
 	{
 		public function GUITest()
 		{
+			
 			super();
 			
 			var text:ElementText = new ElementText();
-			text.setState(TextDefaultState.getInstace(), new StyleText());
-			text.changeState(TextDefaultState.getInstace());
+			var style:StyleText = new StyleText();
+			style.color = 0xff0000;
+			text.setState(TextMouseOverState.getInstace(), style);
 			addChild(text);
 		}
 	}
 }
 import flash.display.Sprite;
+import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.utils.Dictionary;
 
@@ -206,6 +210,27 @@ class TextDefaultState implements IElementState
 	}
 }
 
+class TextMouseOverState implements IElementState
+{
+	public static var instance:TextMouseOverState = null;
+	public static function getInstace():TextMouseOverState
+	{
+		return instance ||= new TextMouseOverState();
+	}
+	public function enter(e:Element):void
+	{
+		var temp:ElementText = e as ElementText;
+		temp.text.textColor = (temp.getStyle(instance) as StyleText).color;
+	}
+	public function exit(e:Element):void
+	{
+		
+	}
+	public function update(e:Element, dt:Number):void
+	{
+		
+	}
+}
 //-------------文本实现-------------------------------------
 class ElementText extends StaticElement
 {
@@ -214,8 +239,24 @@ class ElementText extends StaticElement
 	public function ElementText()
 	{
 		super();
+		setState(TextDefaultState.getInstace(), new StyleText());
+		changeState(TextDefaultState.getInstace());
+		
 		text.text = "aaaaa";
 		addChild(text);
+		
+		addEventListener(MouseEvent.MOUSE_OVER, onMouseOverHandler);
+		addEventListener(MouseEvent.MOUSE_OUT, onMouseOutHandler);
+	}
+	
+	protected function onMouseOutHandler(event:MouseEvent):void
+	{
+		changeState(TextDefaultState.getInstace());
+	}
+	
+	protected function onMouseOverHandler(event:MouseEvent):void
+	{
+		changeState(TextMouseOverState.getInstace());
 	}
 }
 
