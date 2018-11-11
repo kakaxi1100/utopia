@@ -325,7 +325,7 @@ class SystemBase
 	{
 		mTypeID = SystemType.newType;
 		requires = mask;	
-		mEventHandler = new EventHandler(this);
+		mEventHandler = new EventHandler(this);//这里有问题, 不能用到this
 		mEventHandler.addEventListener(EventType.ENTITY_MODIFY, onEntityModified);
 	}
 	

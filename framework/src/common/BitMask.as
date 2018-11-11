@@ -1,5 +1,12 @@
 package common
 {
+	/**
+	 * 由于采用的 uint 所以只能  bitmask 32位
+	 * 如果你要更多位的话,你可以用一个BitMask数组
+	 * 
+	 * @author juli
+	 * 
+	 */	
 	public class BitMask
 	{
 		private var mMask:uint;

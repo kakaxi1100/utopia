@@ -4,6 +4,7 @@ package common.event
 	{
 		public function EventData()
 		{
+			
 		}
 	}
 }

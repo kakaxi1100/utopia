@@ -2,7 +2,6 @@ package common.event
 {
 	public class EventType
 	{
-		public static const TEST:String = "TEST";
-		public static const ENTITY_MODIFY:String = "ENTITY_MODIFY";	
+		public static const MOUSE_UP_EVENT:String = "MOUSE_UP_EVENT";
 	}
 }
