@@ -7,6 +7,7 @@ package common.event
 		protected var mDic:Dictionary;//用来存储对象和对应的函数
 		public function EventSubject()
 		{
+			mDic = new Dictionary();
 		}
 		
 		public function addEventListener(owner:Object, listener:Function):void

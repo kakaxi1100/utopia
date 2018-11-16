@@ -1,5 +1,7 @@
 package ecs
 {
+	import common.BitMask;
+
 	public class SystemBase
 	{
 		//mask就代表了这个系统需要哪些组件

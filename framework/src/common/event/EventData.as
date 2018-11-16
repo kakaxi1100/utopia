@@ -2,9 +2,10 @@ package common.event
 {
 	public class EventData
 	{
-		public function EventData()
+		public var type:String;
+		public function EventData(t:String)
 		{
-			
+			type = t;
 		}
 	}
 }

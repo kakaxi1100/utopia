@@ -4,14 +4,10 @@ package display
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 
-	public class DrawObject implements IMoveable, ISortable, IDrawable
+	public class DrawObject extends DrawBase
 	{
-		private var mPosX:Number;
-		private var mPosY:Number;
 		private var mBitmapData:BitmapData;
 		//它的层次顺序
-		private var mZOrder:int;
-		private var mLayer:Layer;
 		//四个值分别表示 x从哪里开始画, x到哪里结束, y从哪里开始画, y从哪里结束
 		//也就是说这里面储存的是DrawObject的本地坐标
 		private var mDrawRectangle:Rectangle;
@@ -19,34 +15,44 @@ package display
 		public function DrawObject(data:BitmapData = null)
 		{
 			mBitmapData = data;
-			mPosX = 0;
-			mPosY = 0;
+
 			mDrawRectangle = new Rectangle();
 			mDestPoint = new Point();
 		}
 		
-		public function setData(data:BitmapData):void
+		override public function draw():void
 		{
-			mBitmapData = data;
-		}
-		
-		public function draw():void
-		{
-			var screenX:Number = mDrawRectangle.x + mPosX + mLayer.x;
-			var screenY:Number = mDrawRectangle.y + mPosY + mLayer.y;
+			var screenX:Number = mDrawRectangle.x + mPosX;
+			var screenY:Number = mDrawRectangle.y + mPosY;
+			var curtParent:IDrawable = mParent;
+			while(curtParent != null) 
+			{
+				if(curtParent is Screen)
+				{
+					break;
+				}
+				
+				screenX += curtParent.x;
+				screenY += curtParent.y;
+				curtParent = curtParent.parent;
+			}
+			//screen的偏移值不用添加, Screen的一定是最上层的
+			screenX -= curtParent.x;
+			screenY -= curtParent.y;
+			
 			mDestPoint.setTo(screenX, screenY);
-			mLayer.screen.canvasData.copyPixels(mBitmapData, mDrawRectangle, mDestPoint, null, null, true);
+			mCanvasData.copyPixels(mBitmapData, mDrawRectangle, mDestPoint, null, null, true);
 		}
 		
-		public function hitTestPoint(xfromstage:Number, yfromstage:Number, shapeFlag:Boolean = true):Boolean
+		override public function hitTestPoint(xfromstage:Number, yfromstage:Number, shapeFlag:Boolean = true):Boolean
 		{
 			//转化成本地坐标
 			var curt:IDrawable = this;
 			//把这个点转化成本地坐标, screen是没有parent的, 因为stage的坐标就是0
 			while(curt != null)
 			{
-				xfromstage -= (curt as IMoveable).x;
-				yfromstage -= (curt as IMoveable).y;
+				xfromstage -= curt.x;
+				yfromstage -= curt.y;
 				curt = curt.parent;
 			}
 			
@@ -58,7 +64,7 @@ package display
 				{
 					var pixel:uint = mBitmapData.getPixel32(xfromstage, yfromstage);
 					var alpha:uint = pixel >> 24 & 0xFF;
-					if(!alpha)//假如alpha不是0
+					if(alpha != 0)//假如alpha不是0
 					{
 						return true;
 					}
@@ -70,80 +76,35 @@ package display
 			return false;
 		}
 		
-		public function get zOrder():int
+		
+		public function set data(data:BitmapData):void
 		{
-			return mZOrder;
+			mBitmapData = data;
 		}
+		
+//		public function get data():BitmapData
+//		{
+//			return mBitmapData;
+//		}
 
-		public function set zOrder(value:int):void
-		{
-			mZOrder = value;
-		}
-		
-		public function get x():Number
-		{
-			return mPosX;
-		}
-		
-		public function set x(value:Number):void
-		{
-			mPosX = value;
-		}
-		
-		public function get y():Number
-		{
-			return mPosY;
-		}
-		
-		public function set y(value:Number):void
-		{
-			mPosY = value;
-		}
-
-		public function get width():Number
+		override public function get width():Number
 		{
 			return mBitmapData.width;
 		}
 		
-		public function get height():Number
+		override public function get height():Number
 		{
 			return mBitmapData.height;
 		}
-		
-		public function get layer():Layer
-		{
-			return mLayer;
-		}
-		
-		public function set layer(layer:Layer):void
-		{
-			mLayer = layer;
-		}
 
-		public function get maxX():Number
-		{
-			return mPosX + mBitmapData.width;
-		}
-
-		public function get maxY():Number
-		{
-			return mPosY + mBitmapData.height;
-		}
-
-		public function get drawRectangle():Rectangle
+		override public function get drawRectangle():Rectangle
 		{
 			return mDrawRectangle;
 		}
 
-		public function set drawRectangle(value:Rectangle):void
+		override public function set drawRectangle(value:Rectangle):void
 		{
 			mDrawRectangle = value;
 		}
-
-		public function get parent():IDrawable
-		{
-			return mLayer;
-		}
-			
 	}
 }

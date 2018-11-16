@@ -2,49 +2,53 @@ package ui.base
 {
 	import flash.display.Sprite;
 	import flash.utils.Dictionary;
+	
+	import display.Layer;
 
 	/**
 	 *元素的基类
 	 * 由于UI肯定是可见的, 所以继承了sprite
 	 * 每个元素都有很多状态
 	 * 每个状态都有对应的处理类和对应的style
-	 * 处理的类已strategy命名
+	 * 处理的类已state命名
 	 * 
 	 * @author juli
 	 * 
 	 */	
-	public class Element extends Sprite
+	public class Element extends Layer
 	{
-		protected var pStrategyMachine:StrategyMachine;
+		protected var pStateMachine:StateMachine;
 		protected var pStateDic:Dictionary;
+		protected var pCurrentStateType:String;
 		public function Element()
 		{
 			super();
-			pStrategyMachine = new StrategyMachine(this);
+			pStateMachine = new StateMachine(this);
 			pStateDic = new Dictionary();
 		}
 		
-		public function addState(type:String, strategy:IStrategy, style:Style):void
+		public function addState(type:String, state:IState, style:Style):void
 		{
-			var pair:StrategyStylePair = new StrategyStylePair();
-			pair.strategy = strategy;
+			var pair:StateStylePair = new StateStylePair();
+			pair.state = state;
 			pair.style = style;
 			pStateDic[type] = pair;
 		}
 		
 		public function changeState(type:String):void
 		{
-			var strategy:IStrategy = getStrategy(type);
-			pStrategyMachine.setStrategy(strategy);
+			pCurrentStateType = type;
+			var state:IState = getState(type);
+			pStateMachine.setState(state);
 			
-			draw();
+			//draw();
 		}
 		
-		public function getStrategy(type:String):IStrategy
+		public function getState(type:String):IState
 		{
 			if(pStateDic[type])
 			{
-				return pStateDic[type].strategy;
+				return pStateDic[type].state;
 			}
 			return null;
 		}
@@ -57,10 +61,11 @@ package ui.base
 			}
 			return null;
 		}
-		
-		public function draw():void
+
+		public function get currentStateType():String
 		{
-			
+			return pCurrentStateType;
 		}
+
 	}
 }

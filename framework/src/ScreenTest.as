@@ -11,11 +11,11 @@ package
 	[SWF(width="800", height="600", frameRate="60", backgroundColor="0xcccccc")]
 	public class ScreenTest extends Sprite
 	{
-		[Embed(source="assets/images/surge.png")]
+		[Embed(source="assets/images/test/surge.png")]
 		private var RedRabbit:Class;
 		private var redRabbitData:BitmapData = (new RedRabbit() as Bitmap).bitmapData;
 		
-		[Embed(source="assets/images/timg.png")]
+		[Embed(source="assets/images/test/timg.png")]
 		private var Backgournd:Class;
 		private var backgourndData:BitmapData = (new Backgournd() as Bitmap).bitmapData;
 		

@@ -30,9 +30,9 @@ package common.event
 			EventManager.getInstance().removeEventListener(type, mOwner);
 		}
 		
-		public function dispatchEvent(type:String, event:EventData):void
+		public function dispatchEvent(event:EventData):void
 		{
-			EventManager.getInstance().dispatchEvent(type, event, mOwner);
+			EventManager.getInstance().dispatchEvent(event);
 		}
 	}
 }

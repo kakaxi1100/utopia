@@ -42,11 +42,19 @@ package
 			s2.graphics.drawCircle(0,0,20);
 			s2.graphics.endFill();
 			
-			s.addEventListener(MouseEvent.CLICK, onMouseClick);
-			s1.addEventListener(MouseEvent.CLICK, onMouseClick1);
-			s2.addEventListener(MouseEvent.CLICK, onMouseClick2);
+			s.addEventListener(MouseEvent.MOUSE_DOWN, onMouseClick, false);
+			s.addEventListener(MouseEvent.MOUSE_DOWN, onMouseClickOther, true);
+
+			s.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseClick);
+//			s1.addEventListener(MouseEvent.MOUSE_DOWN, onMouseClick1);
+//			s2.addEventListener(MouseEvent.MOUSE_DOWN, onMouseClick2);
 			
 			var test:TestObject = new TestObject();
+		}
+		
+		protected function onMouseClickOther(event:MouseEvent):void
+		{
+			trace("other");
 		}
 		
 		protected function onMouseClick2(event:MouseEvent):void
@@ -56,7 +64,7 @@ package
 		
 		protected function onMouseClick1(event:MouseEvent):void
 		{
-			trace("s1");			
+			trace("s1");		
 		}
 		
 		protected function onMouseClick(event:MouseEvent):void

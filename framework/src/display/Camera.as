@@ -7,7 +7,7 @@ package display
 	 * @author juli
 	 * 
 	 */	
-	public class Camera implements IMoveable
+	public class Camera
 	{
 		private var mPosX:Number;
 		private var mPosY:Number;

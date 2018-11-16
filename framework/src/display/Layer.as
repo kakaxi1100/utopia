@@ -1,9 +1,10 @@
 package display
 {
-	import flash.display.Scene;
+	import flash.display.BitmapData;
+	import flash.geom.Rectangle;
 	
-	import datastructure.link.sortlink.SortLink;
-	import datastructure.link.sortlink.SortLinkNode;
+	import datastructure.link.sortlink.DoubleSortLink;
+	import datastructure.link.sortlink.DoubleSortLinkNode;
 
 	/**
 	 * layer 只是用来区分这一层有多少个元素需要渲染
@@ -14,7 +15,7 @@ package display
 	 * @author juli
 	 * 
 	 */	
-	public class Layer implements IMoveable, ISortable, IDrawable
+	public class Layer extends DrawBase
 	{
 		//每个层都有自己的相机
 		private var mCamera:Camera;
@@ -25,91 +26,96 @@ package display
 		private var mMaxX:Number;
 		private var mMinY:Number;
 		private var mMaxY:Number;
-		private var mPosX:Number;
-		private var mPosY:Number;
-		private var mDrawList:SortLink;
-		private var mZOrder:int;
-		private var mScreen:Screen;
+		private var mDrawList:DoubleSortLink;
+		//这个是用来判断实际的绘制区域大小的
+		//它只可能比camera小
+		private var mDrawRectangle:Rectangle;
+		
 		public function Layer(fixCamera:Boolean = false)
 		{
 			mFixCamera = fixCamera;
 			mCamera = new Camera();
-			mDrawList = new SortLink();
+			mDrawList = new DoubleSortLink();
+			mDrawRectangle = new Rectangle();
 			mWidth = 0;
 			mHeight = 0;
 			mMinX = 0;
 			mMaxX = 0;
 			mMinY = 0;
 			mMaxY = 0;
-			mPosX = 0;
-			mPosY = 0;
 		}
 		
 		public function setCamera(x:Number, y:Number,w:Number, h:Number):void
 		{
 			if(!mFixCamera) return;
-			mCamera.x = x;
-			mCamera.y = y;
-			mCamera.width = w;
-			mCamera.height = h;
+			mDrawRectangle.x = mCamera.x = x;
+			mDrawRectangle.y = mCamera.y = y;
+			mDrawRectangle.width = mCamera.width = w;
+			mDrawRectangle.height = mCamera.height = h;
 		}
 		
-		public function addChild(drawObj:DrawObject):void
+		public function addChild(drawObj:IDrawable):void
 		{
-			drawObj.layer = this;
+			drawObj.parent = this;
+//			drawObj.canvasData = mCanvasData;
 			mDrawList.insert(drawObj.zOrder, drawObj);
-			caculateSize(drawObj);
+			//caculateSize(drawObj);
 		}
 		
-		public function removeChild(drawObj:DrawObject):void
+		public function removeChild(drawObj:IDrawable):void
 		{
 			mDrawList.removeByObj(drawObj);
 		}
 		
-		public function draw():void
+		override public function draw():void
 		{
 			//要判断是不是在camera内
-			var curt:SortLinkNode = mDrawList.head.next;
+			var curt:DoubleSortLinkNode = mDrawList.head.next;
 			while(curt != null)
 			{
-				var drawObj:DrawObject = curt.data as DrawObject;		
+				var drawObj:IDrawable = curt.data as IDrawable;		
+				drawObj.canvasData = mCanvasData;
 				
 				//假如DrawObj不在Camera内
-				if(drawObj.maxX < mCamera.x || drawObj.maxY < mCamera.y ||
-				   drawObj.x > mCamera.maxX || drawObj.y > mCamera.maxY)
+				if(drawObj.maxX < mDrawRectangle.x || drawObj.maxY < mDrawRectangle.y ||
+				   drawObj.x >= mDrawRectangle.width || drawObj.y >= mDrawRectangle.height)
 				{
 					//那么就不需要画
 				}else
 				{
 					//只有在镜头内的才需要画
-					//并且只话在镜头内的部分
-					drawObj.drawRectangle.x = 0;//x 的开始位置
-					drawObj.drawRectangle.y = 0;//y 的开始位置
-					drawObj.drawRectangle.width = drawObj.width ;//x 的结束位置
-					drawObj.drawRectangle.height = drawObj.height;//y 的结束位置
-					
-					var drawScreenX:Number = drawObj.x;
-					var drawScreenY:Number = drawObj.y;
-					var drawFromX:Number = 0;
-					var drawFromY:Number = 0;
-					var drawWidth:Number = drawObj.width;
-					var drawHeight:Number = drawObj.height;
-					if(drawObj.x < mCamera.x)
+					//并且只画在镜头内的部分
+					if(drawObj.x < mDrawRectangle.x)
 					{
-						drawObj.drawRectangle.x = mCamera.x - drawObj.x;
-					}
-					if(drawObj.maxX > mCamera.maxX)
+						drawObj.drawRectangle.x = mDrawRectangle.x - drawObj.x;
+					}else
 					{
-						drawObj.drawRectangle.width = mCamera.maxX - drawObj.x;
+						drawObj.drawRectangle.x = 0;
 					}
 					
-					if(drawObj.y < mCamera.y)
+					if(drawObj.maxX > mDrawRectangle.width)
 					{
-						drawObj.drawRectangle.y = mCamera.y - drawObj.y;
+						drawObj.drawRectangle.width = drawObj.maxX - mDrawRectangle.width;
+					}else
+					{
+						drawObj.drawRectangle.width = drawObj.width;
 					}
-					if(drawObj.maxY > mCamera.maxY)
+					
+					if(drawObj.y < mDrawRectangle.y)
 					{
-						drawObj.drawRectangle.height = mCamera.maxY - drawObj.y;
+						drawObj.drawRectangle.y = mDrawRectangle.y - drawObj.y;
+					}else
+					{
+						drawObj.drawRectangle.y = 0;
+					}
+					
+					
+					if(drawObj.maxY > mDrawRectangle.height)
+					{
+						drawObj.drawRectangle.height = drawObj.maxY - mDrawRectangle.height;
+					}else
+					{
+						drawObj.drawRectangle.height = drawObj.height;
 					}
 					
 					drawObj.draw();
@@ -119,7 +125,7 @@ package display
 			}
 		}
 		
-		private function caculateSize(drawObj:DrawObject):void
+		private function caculateSize(drawObj:IDrawable):void
 		{
 			if(drawObj.x < mMinX)
 			{
@@ -142,88 +148,90 @@ package display
 			mHeight = mMinY + mMaxY;
 			if(!mFixCamera)
 			{
+				//注意可以是负数
+				mCamera.x = mMinX;
+				mCamera.y = mMinY;
 				mCamera.width = mWidth;
 				mCamera.height = mHeight;
+			}else
+			{
+				if(mDrawRectangle.x < mCamera.x)
+				{
+					mDrawRectangle.x = mCamera.x;
+				}
+				if(mDrawRectangle.y < mCamera.y)
+				{
+					mDrawRectangle.y = mCamera.y;
+				}
+				if(mDrawRectangle.width > mCamera.width)
+				{
+					mDrawRectangle.width = mCamera.width;
+				}
+				if(mDrawRectangle.height > mCamera.height)
+				{
+					mDrawRectangle.height = mCamera.height;
+				}
 			}
 		}
 		
-		public function hitTestPoint(xfromstage:Number, yfromstage:Number, shapeFlag:Boolean = true):Boolean
+		private function reCaculateSize():void
 		{
-			var curt:SortLinkNode = mDrawList.head.next;
+			var curt:DoubleSortLinkNode = mDrawList.head.next;
 			while(curt != null)
 			{
-				var drawObj:DrawObject = curt.data as DrawObject;
+				var drawObj:IDrawable = curt.data as IDrawable;	
+				caculateSize(drawObj);
+				curt = curt.next;
+			}
+		}
+		
+		override public function hitTestPoint(xfromstage:Number, yfromstage:Number, shapeFlag:Boolean = true):Boolean
+		{
+			var curt:DoubleSortLinkNode = mDrawList.tail;
+			while(curt != null &&　curt != mDrawList.head)
+			{
+				var drawObj:IDrawable = curt.data as IDrawable;
 				if(drawObj.hitTestPoint(xfromstage, yfromstage, shapeFlag))
 				{
 					return true;
 				}
-				curt = curt.next;
+				curt = curt.prev;
 			}
-			
 			return false;
 		}
 		
-		public function get zOrder():int
+		override public function get maxX():Number
 		{
-			return mZOrder;
+			reCaculateSize();
+			return mMaxX;
 		}
 		
-		public function set zOrder(value:int):void
+		override public function get maxY():Number
 		{
-			mZOrder = value;
+			reCaculateSize();
+			return mMaxY;
 		}
 		
-		public function get x():Number
+		override public function get width():Number
 		{
-			return mPosX;
-		}
-		
-		public function set x(value:Number):void
-		{
-			mPosX = value;
-			if(!mFixCamera)
-			{
-				mCamera.x = mPosX;
-			}
-		}
-		
-		public function get y():Number
-		{
-			return mPosY;
-		}
-		
-		public function set y(value:Number):void
-		{
-			mPosY = value;
-			if(!mFixCamera)
-			{
-				mCamera.y = mPosY;
-			}
-		}
-		
-		public function get width():Number
-		{
+			reCaculateSize();
 			return mWidth;
 		}
 		
-		public function get height():Number
+		override public function get height():Number
 		{
+			reCaculateSize();
 			return mHeight;
 		}
-
-		public function get screen():Screen
+		
+		override public function get drawRectangle():Rectangle
 		{
-			return mScreen;
+			return mDrawRectangle;
 		}
-
-		public function set screen(value:Screen):void
+		
+		override public function set drawRectangle(value:Rectangle):void
 		{
-			mScreen = value;
-		}
-
-		public function get parent():IDrawable
-		{
-			return mScreen;
+			mDrawRectangle = value;
 		}
 	}
 }

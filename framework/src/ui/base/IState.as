@@ -1,6 +1,6 @@
 package ui.base
 {
-	public interface IStrategy
+	public interface IState
 	{
 		function enter(e:Element):void;
 		function exit(e:Element):void;
