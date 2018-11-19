@@ -3,11 +3,15 @@ package common.event.mouse
 	import common.event.EventData;
 	import common.event.EventSubject;
 	
+	import datastructure.link.sortlink.DoubleSortLinkNode;
+	
 	import display.IDrawable;
-
+	import display.ScreenContainer;
+	
 	public class MouseOverEventSubject extends EventSubject
 	{
-		private var capture_bubbleList:Array = [];
+		private var mCaptureList:Array = [];
+		private var mBubbleList:Array = [];
 		public function MouseOverEventSubject()
 		{
 			super();
@@ -17,62 +21,56 @@ package common.event.mouse
 		{
 			var draw:IDrawable;
 			var mouseEvent:MouseEventData = event as MouseEventData;
-			for(var o:Object in mDic)
-			{
-				if(o is IDrawable)//假如它是IDrawable 包括了 Screen, Layer, 和  DrawObject
-				{
-					draw = o as IDrawable;
-					//TODO:捕获的阶段,需要有个Screen管理来, 这样才能实现从上到下运行
-					
-					
-					//冒泡的阶段
-					if(draw.hitTestPoint(mouseEvent.mouseX, mouseEvent.mouseY, mouseEvent.isUserShape))
-					{
-						if(mDic[draw] != null)
-						{
-							draw.isPrevHasMouse = draw.isHasMouse;
-							draw.isHasMouse = true;
-
-							capture_bubbleList.push(draw);
-							var parent:IDrawable = draw.parent;
-							while(parent != null)
-							{
-								if(mDic[parent] != null)
-								{
-									parent.isPrevHasMouse = parent.isHasMouse;
-									parent.isHasMouse = true;
-									capture_bubbleList.push(parent);
-								}
-								parent = parent.parent;
-							}
-						}
-					}
-					//事件是否停止传输(这个暂时还没有遇到这种需求, 以后再实现)
-					
-				}else
-				{
-					mDic[o].call(o, event);
-				}
-			}
+			capture(mouseEvent);
 			
-			if(mouseEvent.isStop)
+			//目标阶段
+			while(mCaptureList.length > 0)
 			{
-				draw = capture_bubbleList.shift();
-				if(draw != null)
+				draw = mCaptureList.pop();
+				if(!draw.isPrevHasMouse && draw.isHasMouse)
 				{
 					mDic[draw].call(draw, event);
 				}
-			}else{
-				//目标阶段
-				while(capture_bubbleList.length > 0)
+			}
+		}
+		
+		//从上往下找
+		private function capture(mouseEvent:MouseEventData):void
+		{
+			var drawNode:DoubleSortLinkNode = ScreenContainer.getInstance().screenList.tail;
+			var draw:IDrawable;
+			
+			while(drawNode != null && drawNode.data != null)
+			{
+//				drawNode = draw.drawList.tail;//从尾部开始
+				draw = drawNode.data as IDrawable;
+				if(draw.hitTestPoint(mouseEvent.mouseX, mouseEvent.mouseY, mouseEvent.isUserShape)) //找到之后继续往下找
 				{
-					draw = capture_bubbleList.shift();
-					if(!draw.isPrevHasMouse && draw.isHasMouse)
+					draw.isPrevHasMouse = draw.isHasMouse;
+					draw.isHasMouse = true;
+					if(mDic[draw] != null)
 					{
-						mDic[draw].call(draw, event);
+						mCaptureList.push(draw);//找到之后看它是否在侦听列表中, 如果在就把它加到捕获列表中
 					}
+					if(draw.drawList != null)//这个draw还是layer就继续往下找
+					{
+						drawNode = draw.drawList.tail;//就在这个layer中找
+					}else//这个draw已经是DrawObject了
+					{
+						drawNode = null;
+					}
+					
+				}else //假如没有找到就找前下一个, 注意是在显示层上从前往后找, 防止遮挡
+				{
+					drawNode = drawNode.prev;
 				}
 			}
+			
+		}
+		
+		private function bubble():void
+		{
+			
 		}
 	}
 }

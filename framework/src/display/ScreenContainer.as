@@ -16,6 +16,7 @@ package display
 		private static var instance:ScreenContainer = null;
 		public function ScreenContainer()
 		{
+			mScreenList = new DoubleSortLink();
 		}
 		public static function getInstance():ScreenContainer
 		{
@@ -31,5 +32,11 @@ package display
 		{
 			mScreenList.removeByObj(screen);
 		}
+
+		public function get screenList():DoubleSortLink
+		{
+			return mScreenList;
+		}
+
 	}
 }

@@ -7,7 +7,7 @@ package datastructure.link.sortlink
 		public function DoubleSortLink()
 		{
 			mHead = new DoubleSortLinkNode();
-			mTail = mHead;
+			mTail = mHead.next;
 		}
 		
 		public function insert(value:int, data:Object = null):void
@@ -80,7 +80,13 @@ package datastructure.link.sortlink
 				curt.prev = prev;
 			}else
 			{
-				mTail = prev;
+				if(prev != mHead)
+				{
+					mTail = prev;
+				}else
+				{
+					mTail = null;
+				}
 			}
 			
 		}
@@ -110,7 +116,13 @@ package datastructure.link.sortlink
 			curt.next.prev = curt.prev;
 			if(curt.prev.next == null)
 			{
-				mTail = curt.prev;
+				if(curt.prev != mHead)
+				{
+					mTail = curt.prev;
+				}else
+				{
+					mTail = null;
+				}
 			}
 			
 			curt.prev = curt.next = null;

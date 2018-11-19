@@ -1,18 +1,18 @@
 package common.event
 {
-	import ecs.EntityManager;
-
+	
 	public class EventHandler
 	{
 		private var mOwner:Object;
 		public function EventHandler(owner:Object = null)
 		{
-			//假如没有owner那么这个事件就是属于全局的
+			//假如没有owner那么owner就属于这个事件本身
 			if(owner == null)
 			{
-				owner = EntityManager.getInstance();
+				owner = this;
+			}else{
+				mOwner = owner;
 			}
-			mOwner = owner;
 		}
 		
 		public function addEventListener(type:String, callback:Function):void

@@ -233,5 +233,10 @@ package display
 		{
 			mDrawRectangle = value;
 		}
+		
+		override public function get drawList():DoubleSortLink
+		{
+			return mDrawList;
+		}
 	}
 }

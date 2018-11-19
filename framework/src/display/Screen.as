@@ -22,9 +22,6 @@ package display
 		private var mBitmap:Bitmap;
 		private var mWidth:Number;
 		private var mHeight:Number;
-		private var mPosX:Number;
-		private var mPosY:Number;
-		private var mZOrder:int;
 		private var mDrawList:DoubleSortLink;
 		private var mParent:IDrawable;
 		public function Screen(w:Number = 800, h:Number = 600, transparent:Boolean = true, color:uint = 0, pixelSnapping = "auto", smoothing = false)
@@ -134,7 +131,7 @@ package display
 			}
 			return false;
 		}
-
+		
 		public function get canvas():Bitmap
 		{
 			return mBitmap;
@@ -189,5 +186,11 @@ package display
 		{
 			return mHeight;
 		}
+
+		override public function get drawList():DoubleSortLink
+		{
+			return mDrawList;
+		}
+
 	}
 }

@@ -3,6 +3,8 @@ package display
 	import flash.display.BitmapData;
 	import flash.geom.Rectangle;
 	
+	import datastructure.link.sortlink.DoubleSortLink;
+	
 	public class DrawBase implements IDrawable
 	{
 		protected var mParent:IDrawable;
@@ -124,6 +126,11 @@ package display
 		public function set isPrevHasMouse(value:Boolean):void
 		{
 			mIsPrevHasMouse = value;
+		}
+		
+		public function get drawList():DoubleSortLink
+		{
+			return null;
 		}
 
 	}

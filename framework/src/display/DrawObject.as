@@ -3,6 +3,8 @@ package display
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	
+	import datastructure.link.sortlink.DoubleSortLink;
 
 	public class DrawObject extends DrawBase
 	{
@@ -76,7 +78,6 @@ package display
 			return false;
 		}
 		
-		
 		public function set data(data:BitmapData):void
 		{
 			mBitmapData = data;
@@ -105,6 +106,11 @@ package display
 		override public function set drawRectangle(value:Rectangle):void
 		{
 			mDrawRectangle = value;
+		}
+		
+		override public function get drawList():DoubleSortLink
+		{
+			return null;
 		}
 	}
 }

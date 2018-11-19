@@ -2,11 +2,14 @@ package display
 {
 	import flash.display.BitmapData;
 	import flash.geom.Rectangle;
+	
+	import datastructure.link.sortlink.DoubleSortLink;
 
 	public interface IDrawable
 	{
 		function draw():void;
 		function hitTestPoint(xfromstage:Number, yfromstage:Number, shapeFlag:Boolean = true):Boolean;
+		function get drawList():DoubleSortLink;
 		
 		function set parent(value:IDrawable):void
 		function get parent():IDrawable;
