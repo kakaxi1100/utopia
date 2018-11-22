@@ -36,7 +36,6 @@ package display
 		
 		function get isHasMouse():Boolean;
 		function set isHasMouse(value:Boolean):void;
-		
 		function get isPrevHasMouse():Boolean;
 		function set isPrevHasMouse(value:Boolean):void;
 	}

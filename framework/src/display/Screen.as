@@ -2,6 +2,7 @@ package display
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.Stage;
 	import flash.geom.Rectangle;
 	
 	import datastructure.link.sortlink.DoubleSortLink;

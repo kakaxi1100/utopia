@@ -11,7 +11,6 @@ package common.event.mouse
 	public class MouseOverEventSubject extends EventSubject
 	{
 		private var mCaptureList:Array = [];
-		private var mBubbleList:Array = [];
 		public function MouseOverEventSubject()
 		{
 			super();
@@ -38,39 +37,43 @@ package common.event.mouse
 		private function capture(mouseEvent:MouseEventData):void
 		{
 			var drawNode:DoubleSortLinkNode = ScreenContainer.getInstance().screenList.tail;
-			var draw:IDrawable;
+			var draw:IDrawable = captureTarget(drawNode, mouseEvent);
 			
-			while(drawNode != null && drawNode.data != null)
+			while(draw != null)
 			{
-//				drawNode = draw.drawList.tail;//从尾部开始
-				draw = drawNode.data as IDrawable;
-				if(draw.hitTestPoint(mouseEvent.mouseX, mouseEvent.mouseY, mouseEvent.isUserShape)) //找到之后继续往下找
+				if(mDic[draw] != null)
 				{
 					draw.isPrevHasMouse = draw.isHasMouse;
 					draw.isHasMouse = true;
-					if(mDic[draw] != null)
-					{
-						mCaptureList.push(draw);//找到之后看它是否在侦听列表中, 如果在就把它加到捕获列表中
-					}
-					if(draw.drawList != null)//这个draw还是layer就继续往下找
-					{
-						drawNode = draw.drawList.tail;//就在这个layer中找
-					}else//这个draw已经是DrawObject了
-					{
-						drawNode = null;
-					}
-					
-				}else //假如没有找到就找前下一个, 注意是在显示层上从前往后找, 防止遮挡
-				{
-					drawNode = drawNode.prev;
+					mCaptureList.push(draw);
 				}
+				draw = draw.parent;
 			}
-			
 		}
 		
-		private function bubble():void
-		{
+		private function captureTarget(node:DoubleSortLinkNode, mouseEvent:MouseEventData):IDrawable
+		{	
+			while(node.data != null)
+			{					
+				var draw:IDrawable = node.data as IDrawable;
+				if(draw.drawList != null)
+				{
+					node = draw.drawList.tail;
+				    var temp:IDrawable = captureTarget(node, mouseEvent);//进入下一层
+					if(temp)
+					{
+						return temp
+					}
+				}else{
+					if(draw.hitTestPoint(mouseEvent.mouseX, mouseEvent.mouseY, mouseEvent.isUserShape))
+					{
+						return draw;//如果找到了就返回找到的找个对象
+					}
+				}
+				node = node.prev;//再本层查找					
+			}
 			
+			return null;
 		}
 	}
 }

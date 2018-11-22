@@ -12,8 +12,8 @@ package display
 		protected var mPosX:Number;
 		protected var mPosY:Number;
 		protected var mCanvasData:BitmapData;
-		protected var mIsHasMouse:Boolean;//当前鼠标是否在容器内
-		protected var mIsPrevHasMouse:Boolean; //在此之前鼠标是否在容器内
+		protected var mIsHasMouse:Boolean;//当前鼠标是否在容器内 
+		protected var mIsPrevHasMouse:Boolean; //在此之前鼠标是否在容器内 
 		public function DrawBase()
 		{
 			mPosX = 0;

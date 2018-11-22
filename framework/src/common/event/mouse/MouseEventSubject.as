@@ -1,8 +1,12 @@
 package common.event.mouse
 {
-	import display.IDrawable;
 	import common.event.EventData;
 	import common.event.EventSubject;
+	
+	import datastructure.link.sortlink.DoubleSortLinkNode;
+	
+	import display.IDrawable;
+	import display.ScreenContainer;
 
 	/**
 	 * 这里涉及到了捕获和冒泡
@@ -39,66 +43,65 @@ package common.event.mouse
 	{
 		//TODO：
 		//这里应该用一个链表替换, 暂时先这么做, 等链表逻辑写好了再替换
-		private var capture_bubbleList:Array = [];
+		private var mCaptureList:Array = [];
 		public function MouseEventSubject()
 		{
 			super();
 			
 		}
 		
-		//这里对  Object 进行区分
-		//如果 Object 不是显示对象那就直接执行代码
-		//如果 Object 是显示对象那根据事件是否冒泡来决定它的父级是否需要执行侦听代码
 		override public function dispatchEvent(event:EventData):void
 		{
+			var draw:IDrawable;
 			var mouseEvent:MouseEventData = event as MouseEventData;
-			for(var o:Object in mDic)
-			{
-				if(o is IDrawable)//假如它是IDrawable 包括了 Screen, Layer, 和  DrawObject
-				{
-					var draw:IDrawable = o as IDrawable;
-					//TODO:捕获的阶段,需要有个Screen管理来, 这样才能实现从上到下运行
-											
-					
-					//冒泡的阶段
-					if(draw.hitTestPoint(mouseEvent.mouseX, mouseEvent.mouseY))
-					{
-						if(mDic[draw] != null)
-						{
-							draw.isPrevHasMouse = draw.isHasMouse;
-							draw.isHasMouse = true;
-							if(draw.isPrevHasMouse == false && draw.isHasMouse == true)
-							{
-								trace(draw.isPrevHasMouse, draw.isHasMouse);
-							}
-							capture_bubbleList.push(draw);
-							var parent:IDrawable = draw.parent;
-							while(parent != null)
-							{
-								if(mDic[parent] != null)
-								{
-									parent.isPrevHasMouse = parent.isHasMouse;
-									parent.isHasMouse = true;
-									capture_bubbleList.push(parent);
-								}
-								parent = parent.parent;
-							}
-						}
-					}
-					//事件是否停止传输(这个暂时还没有遇到这种需求, 以后再实现)
-					
-				}else
-				{
-					mDic[o].call(o, event);
-				}
-			}
+			capture(mouseEvent);
 			
 			//目标阶段
-			while(capture_bubbleList.length > 0)
+			while(mCaptureList.length > 0)
 			{
-				var obj:Object = capture_bubbleList.shift();
-				mDic[obj].call(obj, event);
+				draw = mCaptureList.pop();
+				mDic[draw].call(draw, event);
 			}
+		}
+		//从上往下找
+		private function capture(mouseEvent:MouseEventData):void
+		{
+			var drawNode:DoubleSortLinkNode = ScreenContainer.getInstance().screenList.tail;
+			var draw:IDrawable = captureTarget(drawNode, mouseEvent);
+			
+			while(draw != null)
+			{
+				if(mDic[draw] != null)
+				{
+					mCaptureList.push(draw);
+				}
+				draw = draw.parent;
+			}
+		}
+		
+		private function captureTarget(node:DoubleSortLinkNode, mouseEvent:MouseEventData):IDrawable
+		{	
+			while(node.data != null)
+			{					
+				var draw:IDrawable = node.data as IDrawable;
+				if(draw.drawList != null)
+				{
+					node = draw.drawList.tail;
+					var temp:IDrawable = captureTarget(node, mouseEvent);//进入下一层
+					if(temp)
+					{
+						return temp
+					}
+				}else{
+					if(draw.hitTestPoint(mouseEvent.mouseX, mouseEvent.mouseY, mouseEvent.isUserShape))
+					{
+						return draw;//如果找到了就返回找到的找个对象
+					}
+				}
+				node = node.prev;//再本层查找					
+			}
+			
+			return null;
 		}
 	}
 }

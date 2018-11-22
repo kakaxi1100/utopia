@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties analytics="false" mainApplicationPath="UITest.as" projectUUID="896ccb02-1915-428d-a25f-ce98c5901341" version="11">
+<actionScriptProperties analytics="false" mainApplicationPath="ECSTest.as" projectUUID="896ccb02-1915-428d-a25f-ce98c5901341" version="11">
   <compiler additionalCompilerArguments="-locale en_US" advancedTelemetry="false" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" useFlashSDK="true" verifyDigests="true" warn="true">
     <compilerSourcePath/>
     <libraryPath defaultLinkType="0">
@@ -32,6 +32,8 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
+    <application path="ECSTest.as"/>
+    <application path="MoveTest.as"/>
     <application path="UITest.as"/>
     <application path="ScreenTest.as"/>
     <application path="framework.as"/>
