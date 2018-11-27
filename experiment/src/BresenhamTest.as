@@ -20,7 +20,7 @@ package
 		public function BresenhamTest()
 		{
 			super();
-			
+				
 			addChild(bmp);
 			
 			sp1.graphics.lineStyle(1, 0xff0000);
