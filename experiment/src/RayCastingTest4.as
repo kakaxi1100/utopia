@@ -6,13 +6,16 @@ package
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 	
-	[SWF(width="1000", height="800", frameRate="60", backgroundColor="0")]
+	[SWF(width="1000", height="800", frameRate="24", backgroundColor="0")]
 	public class RayCastingTest4 extends Sprite
 	{
 		private var fovSprite:Sprite = new Sprite();
 		private var ppSprite:Sprite = new Sprite();
 		private var fov:FOV;
 		private var pp:ProjectionPlane;
+		//浮点数运算会出错, 这里要减少精度
+		private var step:Number = Number((Math.PI / (3 * 320)).toFixed(5));
+		private var currentIndex:int = 0;
 		public function RayCastingTest4()
 		{
 			super();
@@ -22,7 +25,7 @@ package
 			addChild(fovSprite);
 			addChild(ppSprite);
 			ppSprite.x = 650;
-			ppSprite.y = 200;
+			ppSprite.y = 100;
 			
 			GridManager.getInstance().init();
 			GridManager.getInstance().draw(fovSprite);
@@ -39,21 +42,19 @@ package
 			ppSprite.addChild(pp);
 			pp.setFOV(fov);
 			
-//			for(var i:Number = 0; i < 1.57 ; i += 0.1)
+//			for(var i:Number = 0; i < 320 ; i += 1)
 //			{
 //				var ray:Ray = new Ray();
-//				ray.dir =  i;
+//				ray.dir =  i*step;
 //				fov.addRay(ray);
 //			}
-//			var ray:Ray = new Ray();
-//			ray.dir = 0.1;
+//			var ray:Ray = new Ray();//240
+//			ray.dir = 240*step;
 //			fov.addRay(ray);
 			
 //			trace(fov.rayList.length);
 			fov.draw(fovSprite);
-			
 			Collision.FOVGridsTest(fov);
-			
 			pp.drawPlane();
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
@@ -92,6 +93,15 @@ package
 				case Keyboard.D:
 				{
 					fov.x += 3;
+					break;
+				}
+				case Keyboard.SPACE:
+				{
+					var ray:Ray = new Ray();
+					ray.dir =  currentIndex*step;
+					fov.rayList[0] = ray;
+					currentIndex++;
+					trace(currentIndex);
 					break;
 				}
 				default:
@@ -164,7 +174,7 @@ class FOV
 	
 	public function caculateRays(width:Number):void
 	{
-		var step:Number = parseFloat((mViewField / width).toPrecision(5)); //每一个ray需要递增多少度
+		var step:Number = parseFloat((mViewField / width).toFixed(5)); //每一个ray需要递增多少度
 		var ray:Ray;
 		for(var i:int = 0; i < width; i += 1)
 		{
@@ -371,7 +381,9 @@ class ProjectionPlane extends Sprite
 	private var mProjectDist:Number;
 	private var mCurrentFOV:FOV;
 	
-	private var debug:BitmapData =new BitmapData(Config.GRID_W, Config.GRID_H, false, 0x00ff00);
+	[Embed(source="assets/wolftextures.png")]
+	private var Wall:Class;
+	private var debug:BitmapData =Bitmap(new Wall()).bitmapData;//new BitmapData(Config.GRID_W, Config.GRID_H, false, 0x00ff00);
 	
 	public function ProjectionPlane(width:Number = 320, height:Number = 200)
 	{
@@ -415,12 +427,20 @@ class ProjectionPlane extends Sprite
 			//计算一个slice的高度 
 			//TODO:: 注意其实应该根据判断碰到边的不同来区分是用 GRID_H 还是 GRID_W 
 			sliceHeight = mProjectDist * Config.GRID_H / ray.collideData.realDist;
-			slicePos = ray.collideData.isHorizonCollide ? Math.abs(ray.collideData.collideX) % Config.GRID_H : Math.abs(ray.collideData.collideY) % Config.GRID_H;
+			if(ray.collideData.isHorizon)
+			{
+				slicePos = Math.abs(ray.collideData.collideX) % Config.GRID_H;
+			}else
+			{
+				slicePos = Math.abs(ray.collideData.collideY) % Config.GRID_H;
+			}
+			trace(sliceHeight);
 			//开始画到平面上
 			slice = mBitmapList[i];
 			slice.bitmapData.copyPixels(debug, new Rectangle(slicePos, 0, 1, Config.GRID_H), new Point());
 			slice.scaleY = sliceHeight / Config.GRID_H;
 			slice.y = (this.height - sliceHeight) * 0.5;
+//			slice.bitmapData.copyPixels(debug, new Rectangle(i % 64, 0, 1, Config.GRID_H), new Point());
 		}
 	}
 }
@@ -432,14 +452,14 @@ class CollisionData
 	public var collideX:Number = -1;
 	public var collideY:Number = -1;
 	public var realDist:Number = -1;//去除鱼眼效果
-	public var isHorizonCollide:Boolean = false;
+	public var isHorizon:Boolean = false;
 	public function reset():void
 	{
 		dist2 = -1;
 		collideX = -1;
 		collideY = -1;
-		isHorizonCollide = false;
 		realDist = -1;
+		isHorizon = false;
 	}
 }
 
@@ -558,7 +578,7 @@ class Collision
 						ray.collideData.dist2 = tempDist2;
 						ray.collideData.collideX = tempX + fov.x;
 						ray.collideData.collideY = tempY + fov.y;
-						ray.collideData.realDist = tempX + fov.x;
+						ray.collideData.realDist = Math.abs(tempY);
 					}
 					break;
 				}
@@ -594,8 +614,8 @@ class Collision
 						ray.collideData.dist2 = tempDist2;
 						ray.collideData.collideX = tempX + fov.x;
 						ray.collideData.collideY = tempY + fov.y;
-						ray.collideData.realDist = tempY + fov.y;
-						ray.collideData.isHorizonCollide = true;
+						ray.collideData.realDist = Math.abs(tempY);
+						ray.collideData.isHorizon = true;
 					}
 					break;
 				}
@@ -664,13 +684,13 @@ class GridManager
 	private var mRawMap:Array = [
 								[1,1,1,1,1,1,1,1,1,1],
 								[1,0,0,0,0,0,0,0,0,1],
-								[1,0,0,1,0,0,0,1,0,1],
-								[1,0,1,0,1,0,0,0,0,1],
-								[1,0,0,1,0,1,0,0,1,1],
-								[1,0,0,0,1,0,0,0,0,1],
-								[1,0,1,0,0,0,0,0,0,1],
-								[1,0,0,0,0,0,1,0,0,1],
-								[1,0,0,0,1,0,0,0,0,1],
+								[1,0,0,0,0,0,0,0,0,1],
+								[1,0,0,0,0,0,0,0,0,1],
+								[1,0,0,0,0,0,0,0,0,1],
+								[1,0,0,0,0,0,0,0,0,1],
+								[1,0,0,0,0,0,0,0,0,1],
+								[1,0,0,0,0,0,0,0,0,1],
+								[1,0,0,0,0,0,0,0,0,1],
 								[1,1,1,1,1,1,1,1,1,1]
 								];
 	private var mMaxRow:int;
