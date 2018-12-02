@@ -176,10 +176,13 @@ class FOV
 	{
 		var step:Number = parseFloat((mViewField / width).toFixed(5)); //每一个ray需要递增多少度
 		var ray:Ray;
+		var halfView:Number = mViewField / 2;
 		for(var i:int = 0; i < width; i += 1)
 		{
 			ray = new Ray();
 			ray.dir = i*step;
+			ray.cosTheta = Math.cos( i*step - halfView);
+//			trace(ray.cosTheta);
 			addRay(ray);
 		}
 	}
@@ -265,6 +268,7 @@ class Ray extends Sprite
 	private var mDir:Number;
 	private var mRotate:Number;
 	private var mRealDir:Number;//等于dir + rotate
+	private var mCosTheta:Number;//去除鱼眼效果
 	public function Ray()
 	{
 		super();
@@ -272,6 +276,16 @@ class Ray extends Sprite
 		mCollideData = new CollisionData();
 	}
 	
+	public function get cosTheta():Number
+	{
+		return mCosTheta;
+	}
+
+	public function set cosTheta(value:Number):void
+	{
+		mCosTheta = value;
+	}
+
 	public function get slop():Number
 	{
 		return mSlop;
@@ -426,20 +440,21 @@ class ProjectionPlane extends Sprite
 			ray = mCurrentFOV.rayList[i];
 			//计算一个slice的高度 
 			//TODO:: 注意其实应该根据判断碰到边的不同来区分是用 GRID_H 还是 GRID_W 
-			sliceHeight = mProjectDist * Config.GRID_H / ray.collideData.realDist;
+//			sliceHeight = mProjectDist * Config.GRID_H / (ray.collideData.realDist*);
+			sliceHeight = mProjectDist * Config.GRID_H / (Math.sqrt(ray.collideData.dist2) * ray.cosTheta);
 			if(ray.collideData.isHorizon)
 			{
-				slicePos = Math.abs(ray.collideData.collideX) % Config.GRID_H;
+				slicePos = Math.floor(Math.abs(ray.collideData.collideX) % Config.GRID_H);
 			}else
 			{
-				slicePos = Math.abs(ray.collideData.collideY) % Config.GRID_H;
+				slicePos = Math.floor((Math.abs(ray.collideData.collideY) % Config.GRID_H));
 			}
-			trace(sliceHeight);
+			trace(slicePos);
 			//开始画到平面上
 			slice = mBitmapList[i];
 			slice.bitmapData.copyPixels(debug, new Rectangle(slicePos, 0, 1, Config.GRID_H), new Point());
 			slice.scaleY = sliceHeight / Config.GRID_H;
-			slice.y = (this.height - sliceHeight) * 0.5;
+			slice.y = (mHeight - sliceHeight) * 0.5;
 //			slice.bitmapData.copyPixels(debug, new Rectangle(i % 64, 0, 1, Config.GRID_H), new Point());
 		}
 	}
@@ -578,7 +593,7 @@ class Collision
 						ray.collideData.dist2 = tempDist2;
 						ray.collideData.collideX = tempX + fov.x;
 						ray.collideData.collideY = tempY + fov.y;
-						ray.collideData.realDist = Math.abs(tempY);
+						ray.collideData.realDist = Math.abs(tempX);
 					}
 					break;
 				}
@@ -685,8 +700,8 @@ class GridManager
 								[1,1,1,1,1,1,1,1,1,1],
 								[1,0,0,0,0,0,0,0,0,1],
 								[1,0,0,0,0,0,0,0,0,1],
-								[1,0,0,0,0,0,0,0,0,1],
-								[1,0,0,0,0,0,0,0,0,1],
+								[1,0,0,0,1,0,0,0,0,1],
+								[1,0,0,1,0,0,0,0,0,1],
 								[1,0,0,0,0,0,0,0,0,1],
 								[1,0,0,0,0,0,0,0,0,1],
 								[1,0,0,0,0,0,0,0,0,1],

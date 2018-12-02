@@ -303,7 +303,7 @@ class Player extends Sprite
 	public var row:int;
 	public var col:int;
 	public var fov:Number = Math.PI / 3;
-	public var dir:Number = 2 * Math.PI / 3;
+	public var dir:Number = 0;//2 * Math.PI / 3;
 	public var projectWidth:Number = 320;
 	public var projectHeight:Number = 200;
 	public var distance:Number = (projectWidth * 0.5) / Math.tan(fov * 0.5);
