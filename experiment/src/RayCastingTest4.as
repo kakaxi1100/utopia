@@ -3,12 +3,22 @@ package
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
+	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 	
 	[SWF(width="1000", height="800", frameRate="24", backgroundColor="0")]
 	public class RayCastingTest4 extends Sprite
 	{
+		private var isUp:Boolean;
+		private var isDown:Boolean;
+		private var isLeft:Boolean;
+		private var isRight:Boolean;
+		private var isLeftRotate:Boolean;
+		private var isRightRotate:Boolean;
+		private var rotateSpeed:Number = 0.01;
+		private var speed:Number = 1;
+		
 		private var fovSprite:Sprite = new Sprite();
 		private var ppSprite:Sprite = new Sprite();
 		private var fov:FOV;
@@ -58,41 +68,131 @@ package
 			pp.drawPlane();
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
-		protected function onKeyDown(event:KeyboardEvent):void
+		protected function onEnterFrame(event:Event):void
 		{
-			var isHit:Boolean = true;
+			var isHit:Boolean = false;
+			if(this.isLeft)
+			{
+				fov.x -= speed;
+				isHit = true;
+			}else if(this.isRight)
+			{
+				fov.x += speed;
+				isHit = true;
+			}
+			
+			if(this.isUp)
+			{
+				fov.y -= speed;
+				isHit = true;
+			}else if(this.isDown)
+			{
+				fov.y += speed;
+				isHit = true;
+			}
+			
+			if(this.isLeftRotate)
+			{
+				fov.rotation -= rotateSpeed;
+				isHit = true;
+			}else if(this.isRightRotate)
+			{
+				fov.rotation += rotateSpeed;
+				isHit = true;
+			}
+			if(isHit)
+			{
+				fov.draw(fovSprite);
+				Collision.FOVGridsTest(fov);
+				pp.drawPlane();
+			}
+		}
+		
+		protected function onKeyUp(event:KeyboardEvent):void
+		{
 			switch(event.keyCode)
 			{
 				case Keyboard.LEFT:
 				{
-					fov.rotation -= 0.1;
+					this.isLeftRotate = false;
 					break;
 				}
 				case Keyboard.RIGHT:
 				{
-					fov.rotation += 0.1;
+					this.isRightRotate = false;
 					break;
 				}
 				case Keyboard.W:
 				{
-					fov.y -= 3;
+					this.isUp = false;
 					break;
 				}
 				case Keyboard.S:
 				{
-					fov.y += 3;
+					this.isDown = false;
 					break;
 				}
 				case Keyboard.A:
 				{
-					fov.x -= 3;
+					this.isLeft = false;
 					break;
 				}
 				case Keyboard.D:
 				{
-					fov.x += 3;
+					this.isRight = false;
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
+			
+		}
+		
+		protected function onKeyDown(event:KeyboardEvent):void
+		{
+//			var isHit:Boolean = true;
+			switch(event.keyCode)
+			{
+				case Keyboard.LEFT:
+				{
+//					fov.rotation -= 0.1;
+					this.isLeftRotate = true;
+					break;
+				}
+				case Keyboard.RIGHT:
+				{
+//					fov.rotation += 0.1;
+					this.isRightRotate = true;
+					break;
+				}
+				case Keyboard.W:
+				{
+//					fov.y -= 3;
+					this.isUp = true;
+					break;
+				}
+				case Keyboard.S:
+				{
+//					fov.y += 3;
+					this.isDown = true;
+					break;
+				}
+				case Keyboard.A:
+				{
+//					fov.x -= 3;
+					this.isLeft = true;
+					break;
+				}
+				case Keyboard.D:
+				{
+//					fov.x += 3;
+					this.isRight = true;
 					break;
 				}
 				case Keyboard.SPACE:
@@ -106,17 +206,17 @@ package
 				}
 				default:
 				{
-					isHit = false;
+//					isHit = false;
 					break;
 				}
 			}
-			
-			if(isHit)
-			{
-				fov.draw(fovSprite);
-				Collision.FOVGridsTest(fov);
-				pp.drawPlane();
-			}
+//			
+//			if(isHit)
+//			{
+//				fov.draw(fovSprite);
+//				Collision.FOVGridsTest(fov);
+//				pp.drawPlane();
+//			}
 		}
 	}
 }
@@ -158,7 +258,9 @@ class Player extends Sprite
 class FOV
 {
 	private var mPosX:Number;
-	public var mPosY:Number;
+	private var mPosY:Number;
+	private var mPosZ:Number;
+	
 	private var mRotation:Number;
 	private var mRayList:Vector.<Ray>;
 	//注意取值范围为[0, 180]
@@ -170,6 +272,7 @@ class FOV
 		mRotation = mPosX = mPosY = 0;	
 		mRayList = new Vector.<Ray>();
 		mViewField = viewField;
+		mPosZ = Config.GRID_H * 0.5;
 	}
 	
 	public function caculateRays(width:Number):void
@@ -233,6 +336,16 @@ class FOV
 	public function set y(value:Number):void
 	{
 		mPosY = value;
+	}
+	
+	public function get z():Number
+	{
+		return mPosZ;
+	}
+	
+	public function set z(value:Number):void
+	{
+		mPosZ = value;
 	}
 
 	public function get rotation():Number
@@ -367,7 +480,7 @@ class Ray extends Sprite
 }
 
 /**
- *	投影面要解决两个问题
+ *	墙面投影面要解决两个问题
  * 	1. 要画的墙面的高度
  *  2. 要画的墙面的位置
  * 
@@ -380,6 +493,9 @@ class Ray extends Sprite
  *  第二个问题:
  * 	这个位置其实是可以随便设置的, 但是初始时一般先设置为 投影面高度的一半, 这样地面和天花板看起来会比较一致
  * 
+ * 	地板投影
+ * 	看笔记吧, 一大推图
+ * 
  *  
  * @author juli
  * 
@@ -391,6 +507,7 @@ class ProjectionPlane extends Sprite
 	//slice以plane的哪个位置为中心进行摆放, 注意这个值影响墙在投影平面上的渲染垂直的位置
 	private var mVerticalCenter:Number;
 	private var mBitmapList:Vector.<Bitmap>;
+	private var mFloor:Bitmap;
 	
 	private var mProjectDist:Number;
 	private var mCurrentFOV:FOV;
@@ -399,6 +516,10 @@ class ProjectionPlane extends Sprite
 	private var Wall:Class;
 	private var debug:BitmapData =Bitmap(new Wall()).bitmapData;//new BitmapData(Config.GRID_W, Config.GRID_H, false, 0x00ff00);
 	
+	[Embed(source="assets/floortile.png")]
+	private var Floor:Class;
+	private var debugFloor:BitmapData =Bitmap(new Floor()).bitmapData;
+	
 	public function ProjectionPlane(width:Number = 320, height:Number = 200)
 	{
 		mWidth = width;
@@ -406,6 +527,8 @@ class ProjectionPlane extends Sprite
 		mVerticalCenter = mHeight * 0.5;
 		mProjectDist = 0;
 		mBitmapList = new Vector.<Bitmap>();
+		mFloor = new Bitmap(new BitmapData(320,200, false, 0));
+		addChild(mFloor);
 	}
 	
 	public function setFOV(fov:FOV):void
@@ -435,27 +558,62 @@ class ProjectionPlane extends Sprite
 		var slice:Bitmap;
 		var sliceHeight:Number;
 		var slicePos:Number;
+		
+		mFloor.bitmapData.fillRect(mFloor.bitmapData.rect, 0);
 		for(var i:int = 0; i < mCurrentFOV.rayList.length; i++)
 		{
 			ray = mCurrentFOV.rayList[i];
 			//计算一个slice的高度 
 			//TODO:: 注意其实应该根据判断碰到边的不同来区分是用 GRID_H 还是 GRID_W 
-//			sliceHeight = mProjectDist * Config.GRID_H / (ray.collideData.realDist*);
-			sliceHeight = mProjectDist * Config.GRID_H / (Math.sqrt(ray.collideData.dist2) * ray.cosTheta);
+			sliceHeight = mProjectDist * Config.GRID_H / (ray.collideData.realDist * ray.cosTheta);
 			if(ray.collideData.isHorizon)
 			{
-				slicePos = Math.floor(Math.abs(ray.collideData.collideX) % Config.GRID_H);
+				slicePos = Math.floor(Math.abs(ray.collideData.collideX) % Config.GRID_H); //collideX 应该提前被roundOff
+//				slicePos =Math.abs(ray.collideData.collideX) % Config.GRID_H;
 			}else
 			{
-				slicePos = Math.floor((Math.abs(ray.collideData.collideY) % Config.GRID_H));
+				slicePos = Math.floor((Math.abs(ray.collideData.collideY) % Config.GRID_H));//collideY 应该提前被roundOff
+//				slicePos =Math.abs(ray.collideData.collideY) % Config.GRID_H;
 			}
-			trace(slicePos);
+//			trace(slicePos);
 			//开始画到平面上
 			slice = mBitmapList[i];
 			slice.bitmapData.copyPixels(debug, new Rectangle(slicePos, 0, 1, Config.GRID_H), new Point());
 			slice.scaleY = sliceHeight / Config.GRID_H;
 			slice.y = (mHeight - sliceHeight) * 0.5;
 //			slice.bitmapData.copyPixels(debug, new Rectangle(i % 64, 0, 1, Config.GRID_H), new Point());
+			
+			
+			//draw floor
+			var floorRow:int = Math.floor(slice.y + slice.height - 1);
+			if(floorRow <= mHeight)
+			{
+				//初始的点和距离都是已知的, 先转换到FOV坐标
+				var firstPointX:Number = ray.collideData.collideX - mCurrentFOV.x;
+				var firstPointY:Number = ray.collideData.collideY - mCurrentFOV.y;
+				//归一化, 知道了这条射线的方向
+				var normalX:Number = firstPointX / ray.collideData.realDist;
+				var normalY:Number = firstPointY / ray.collideData.realDist;
+				
+				//来计算每一行的realDist距离
+				for(var r:int = floorRow; r < mHeight; r++)
+				{
+					//距离的计算公式参考笔记
+					var realDist:Number = (mCurrentFOV.z * mProjectDist / (r - mHeight * 0.5))/ray.cosTheta;
+					//计算出它在tile上的交点
+					var pointX:Number = realDist * normalX ;
+					var pointY:Number = realDist * normalY ;
+					//这里要再转回全局坐标, 因为只有全局坐标的点才是固定不变的
+					var textureX:int = Math.floor(Math.abs(pointX + mCurrentFOV.x) % Config.GRID_W);
+					var textureY:int = Math.floor(Math.abs(pointY + mCurrentFOV.y) % Config.GRID_H);
+					
+//					mFloor.bitmapData.setPixel32(i, r,0xff0000);
+					mFloor.bitmapData.copyPixels(debugFloor, new Rectangle(textureX, textureY, 1, 1), new Point(i, r));
+				}
+			}
+			
+			//draw ceil
+			
 		}
 	}
 }
@@ -591,9 +749,9 @@ class Collision
 					{
 						tempDist2 = tempX * tempX + tempY * tempY;
 						ray.collideData.dist2 = tempDist2;
-						ray.collideData.collideX = tempX + fov.x;
-						ray.collideData.collideY = tempY + fov.y;
-						ray.collideData.realDist = Math.abs(tempX);
+						ray.collideData.collideX = tempX + fov.x; //应该被roundOff
+						ray.collideData.collideY = tempY + fov.y; //应该被roundOff
+						ray.collideData.realDist = Math.sqrt(ray.collideData.dist2);
 					}
 					break;
 				}
@@ -627,9 +785,9 @@ class Collision
 					if(ray.collideData.dist2 < 0 || tempDist2 < ray.collideData.dist2)
 					{
 						ray.collideData.dist2 = tempDist2;
-						ray.collideData.collideX = tempX + fov.x;
-						ray.collideData.collideY = tempY + fov.y;
-						ray.collideData.realDist = Math.abs(tempY);
+						ray.collideData.collideX = tempX + fov.x;//应该被roundOff
+						ray.collideData.collideY = tempY + fov.y;//应该被roundOff
+						ray.collideData.realDist = Math.sqrt(ray.collideData.dist2);
 						ray.collideData.isHorizon = true;
 					}
 					break;
@@ -700,8 +858,8 @@ class GridManager
 								[1,1,1,1,1,1,1,1,1,1],
 								[1,0,0,0,0,0,0,0,0,1],
 								[1,0,0,0,0,0,0,0,0,1],
-								[1,0,0,0,1,0,0,0,0,1],
-								[1,0,0,1,0,0,0,0,0,1],
+								[1,0,0,0,0,0,0,0,0,1],
+								[1,0,0,0,0,0,0,0,0,1],
 								[1,0,0,0,0,0,0,0,0,1],
 								[1,0,0,0,0,0,0,0,0,1],
 								[1,0,0,0,0,0,0,0,0,1],
