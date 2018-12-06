@@ -674,6 +674,29 @@ class ProjectionPlane extends Sprite
 			//开始画到平面上
 			slice = mBitmapList[i];
 			slice.bitmapData.copyPixels(debug, new Rectangle(slicePos, 0, 1, Config.GRID_H), new Point());
+			//shader
+			var brightness:Number = 100/ray.collideData.realDist;
+			for(var j:int = 0; j < slice.bitmapData.height; j++)
+			{
+				var color:uint = slice.bitmapData.getPixel(0, j);
+				var red:uint = ((color & 0xff0000) >> 16) * brightness;
+				var green:uint = ((color & 0xff00) >> 8) * brightness;
+				var blue:uint = ((color & 0xff)) * brightness;
+				if(red > 255)
+				{
+					red = 255;
+				}
+				if(green > 255)
+				{
+					green = 255;
+				}
+				if(blue > 255)
+				{
+					blue = 255;
+				}
+				color = red << 16 | green << 8 | blue;
+				slice.bitmapData.setPixel(0,j, color);
+			}
 			slice.scaleY = sliceHeight / Config.GRID_H;
 			//这个坐标点的计算公式是只要计算出它上半部分的距离就可以了
 			//具体参考笔记
