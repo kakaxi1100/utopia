@@ -7,7 +7,7 @@ package
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 	
-	[SWF(width="1000", height="800", frameRate="24", backgroundColor="0")]
+	[SWF(width="1000", height="800", frameRate="60", backgroundColor="0")]
 	public class RayCastingTest4 extends Sprite
 	{
 		private var isUp:Boolean;
@@ -16,8 +16,13 @@ package
 		private var isRight:Boolean;
 		private var isLeftRotate:Boolean;
 		private var isRightRotate:Boolean;
-		private var rotateSpeed:Number = 0.01;
-		private var speed:Number = 1;
+		private var isLookUp:Boolean;
+		private var isLookDown:Boolean;
+		private var isFly:Boolean;
+		private var isCrouch:Boolean;
+		
+		private var rotateSpeed:Number = 0.05;
+		private var speed:Number = 4;
 		
 		private var fovSprite:Sprite = new Sprite();
 		private var ppSprite:Sprite = new Sprite();
@@ -51,6 +56,7 @@ package
 			pp = new ProjectionPlane();
 			ppSprite.addChild(pp);
 			pp.setFOV(fov);
+			fov.rotation = -Math.PI / 2;
 			
 //			for(var i:Number = 0; i < 320 ; i += 1)
 //			{
@@ -79,7 +85,8 @@ package
 			{
 				fov.x -= speed;
 				isHit = true;
-			}else if(this.isRight)
+			}
+			if(this.isRight)
 			{
 				fov.x += speed;
 				isHit = true;
@@ -89,7 +96,8 @@ package
 			{
 				fov.y -= speed;
 				isHit = true;
-			}else if(this.isDown)
+			}
+			if(this.isDown)
 			{
 				fov.y += speed;
 				isHit = true;
@@ -99,11 +107,36 @@ package
 			{
 				fov.rotation -= rotateSpeed;
 				isHit = true;
-			}else if(this.isRightRotate)
+			}
+			if(this.isRightRotate)
 			{
 				fov.rotation += rotateSpeed;
 				isHit = true;
 			}
+			
+			if(this.isLookUp)
+			{
+				pp.verticalCenter += 10;
+				isHit = true;
+			}
+			if(this.isLookDown)
+			{
+				pp.verticalCenter -= 10;
+				isHit = true;
+			}
+			
+			if(this.isFly)
+			{
+				fov.z += 1;
+				isHit = true;
+			}
+			if(this.isCrouch)
+			{
+				fov.z -= 1;
+				isHit = true;
+			}
+			
+			
 			if(isHit)
 			{
 				fov.draw(fovSprite);
@@ -144,6 +177,26 @@ package
 				case Keyboard.D:
 				{
 					this.isRight = false;
+					break;
+				}
+				case Keyboard.Q:
+				{
+					isLookUp = false;
+					break;
+				}
+				case Keyboard.E:
+				{
+					isLookDown = false;
+					break;
+				}
+				case Keyboard.Z:
+				{
+					isFly = false;
+					break;
+				}
+				case Keyboard.C:
+				{
+					isCrouch = false;
 					break;
 				}
 				default:
@@ -193,6 +246,28 @@ package
 				{
 //					fov.x += 3;
 					this.isRight = true;
+					break;
+				}
+				case Keyboard.Q:
+				{
+					isLookUp = true;
+//					pp.verticalCenter += 10;
+					break;
+				}
+				case Keyboard.E:
+				{
+					isLookDown = true;
+//					pp.verticalCenter -= 10;
+					break;
+				}
+				case Keyboard.Z:
+				{
+					isFly = true;
+					break;
+				}
+				case Keyboard.C:
+				{
+					isCrouch = true;
 					break;
 				}
 				case Keyboard.SPACE:
@@ -263,6 +338,7 @@ class FOV
 	
 	private var mRotation:Number;
 	private var mRayList:Vector.<Ray>;
+	//TODO::超过90°会出问题,要查看一下是什么原因, 180°的时候完全显示不了了
 	//注意取值范围为[0, 180]
 	private var mViewField:Number;
 	
@@ -276,7 +352,7 @@ class FOV
 	}
 	
 	public function caculateRays(width:Number):void
-	{
+	{		
 		var step:Number = parseFloat((mViewField / width).toFixed(5)); //每一个ray需要递增多少度
 		var ray:Ray;
 		var halfView:Number = mViewField / 2;
@@ -346,6 +422,13 @@ class FOV
 	public function set z(value:Number):void
 	{
 		mPosZ = value;
+		if(mPosZ < 1)
+		{
+			mPosZ = 1;
+		}else if(mPosZ > Config.GRID_H - 1)
+		{
+			mPosZ = Config.GRID_H - 1;
+		}
 	}
 
 	public function get rotation():Number
@@ -512,13 +595,17 @@ class ProjectionPlane extends Sprite
 	private var mProjectDist:Number;
 	private var mCurrentFOV:FOV;
 	
-	[Embed(source="assets/wolftextures.png")]
+	[Embed(source="assets/tile2.png")]
 	private var Wall:Class;
 	private var debug:BitmapData =Bitmap(new Wall()).bitmapData;//new BitmapData(Config.GRID_W, Config.GRID_H, false, 0x00ff00);
 	
 	[Embed(source="assets/floortile.png")]
 	private var Floor:Class;
 	private var debugFloor:BitmapData =Bitmap(new Floor()).bitmapData;
+	
+	[Embed(source="assets/wall01.jpg")]
+	private var Ceil:Class;
+	private var debugCeil:BitmapData =Bitmap(new Ceil()).bitmapData;
 	
 	public function ProjectionPlane(width:Number = 320, height:Number = 200)
 	{
@@ -529,6 +616,14 @@ class ProjectionPlane extends Sprite
 		mBitmapList = new Vector.<Bitmap>();
 		mFloor = new Bitmap(new BitmapData(320,200, false, 0));
 		addChild(mFloor);
+		
+		var maskMap:Sprite = new Sprite();
+		maskMap.graphics.beginFill(0, 0.5);
+		maskMap.graphics.drawRect(0,0,320,200);
+		maskMap.graphics.endFill();
+		this.addChild(maskMap);
+		
+		this.mask = maskMap;
 	}
 	
 	public function setFOV(fov:FOV):void
@@ -580,42 +675,88 @@ class ProjectionPlane extends Sprite
 			slice = mBitmapList[i];
 			slice.bitmapData.copyPixels(debug, new Rectangle(slicePos, 0, 1, Config.GRID_H), new Point());
 			slice.scaleY = sliceHeight / Config.GRID_H;
-			slice.y = (mHeight - sliceHeight) * 0.5;
+			//这个坐标点的计算公式是只要计算出它上半部分的距离就可以了
+			//具体参考笔记
+			slice.y =  mVerticalCenter - sliceHeight * (1 - mCurrentFOV.z/Config.GRID_H); //mVerticalCenter - sliceHeight * 0.5;//这里还和player的height有关系
 //			slice.bitmapData.copyPixels(debug, new Rectangle(i % 64, 0, 1, Config.GRID_H), new Point());
 			
 			
+			//初始的点和距离都是已知的, 先转换到FOV坐标
+			var r:int;
+			var firstPointX:Number = ray.collideData.collideX - mCurrentFOV.x;
+			var firstPointY:Number = ray.collideData.collideY - mCurrentFOV.y;
+			//归一化, 知道了这条射线的方向
+			var normalX:Number = firstPointX / ray.collideData.realDist;
+			var normalY:Number = firstPointY / ray.collideData.realDist;
+			var realDist:Number;
+			var pointX:Number;
+			var pointY:Number;
+			var textureX:int;
+			var textureY:int;
+			var offsetX:int;//加个偏移值, 这样可以取得从的不同位置开始的纹理像素点
+			var offsetY:int;
 			//draw floor
 			var floorRow:int = Math.floor(slice.y + slice.height - 1);
 			if(floorRow <= mHeight)
 			{
-				//初始的点和距离都是已知的, 先转换到FOV坐标
-				var firstPointX:Number = ray.collideData.collideX - mCurrentFOV.x;
-				var firstPointY:Number = ray.collideData.collideY - mCurrentFOV.y;
-				//归一化, 知道了这条射线的方向
-				var normalX:Number = firstPointX / ray.collideData.realDist;
-				var normalY:Number = firstPointY / ray.collideData.realDist;
 				
 				//来计算每一行的realDist距离
-				for(var r:int = floorRow; r < mHeight; r++)
+				for(r = floorRow; r < mHeight; r++)
 				{
 					//距离的计算公式参考笔记
-					var realDist:Number = (mCurrentFOV.z * mProjectDist / (r - mHeight * 0.5))/ray.cosTheta;
+					realDist = (mCurrentFOV.z * mProjectDist / (r - mVerticalCenter))/ray.cosTheta;
 					//计算出它在tile上的交点
-					var pointX:Number = realDist * normalX ;
-					var pointY:Number = realDist * normalY ;
+					pointX = realDist * normalX ;
+					pointY = realDist * normalY ;
 					//这里要再转回全局坐标, 因为只有全局坐标的点才是固定不变的
-					var textureX:int = Math.floor(Math.abs(pointX + mCurrentFOV.x) % Config.GRID_W);
-					var textureY:int = Math.floor(Math.abs(pointY + mCurrentFOV.y) % Config.GRID_H);
+					//TODO::检查这里的逻辑
+					textureX = Math.floor(Math.abs(pointX + mCurrentFOV.x + offsetX) % Config.GRID_W);//这里是不是用floor 打个？号
+					textureY = Math.floor(Math.abs(pointY + mCurrentFOV.y + offsetY) % Config.GRID_H);
 					
 //					mFloor.bitmapData.setPixel32(i, r,0xff0000);
 					mFloor.bitmapData.copyPixels(debugFloor, new Rectangle(textureX, textureY, 1, 1), new Point(i, r));
 				}
 			}
-			
 			//draw ceil
-			
+			var ceilRow:int = Math.floor(slice.y);
+			if(ceilRow >= 0)
+			{	
+				//来计算每一行的realDist距离
+				for(r = ceilRow; r >= 0; r--)
+				{
+					//距离的计算公式参考笔记
+					realDist = ((Config.GRID_H - mCurrentFOV.z) * mProjectDist / (mVerticalCenter - r))/ray.cosTheta;
+					//计算出它在tile上的交点
+					pointX = realDist * normalX ;
+					pointY = realDist * normalY ;
+					//这里要再转回全局坐标, 因为只有全局坐标的点才是固定不变的
+					textureX = Math.floor(Math.abs(pointX + mCurrentFOV.x + offsetX) % Config.GRID_W);
+					textureY = Math.floor(Math.abs(pointY + mCurrentFOV.y + offsetY) % Config.GRID_H);
+					
+					//					mFloor.bitmapData.setPixel32(i, r,0xff0000);
+					mFloor.bitmapData.copyPixels(debugCeil, new Rectangle(textureX, textureY, 1, 1), new Point(i, r));
+				}
+			}
 		}
 	}
+
+	public function get verticalCenter():Number
+	{
+		return mVerticalCenter;
+	}
+
+	public function set verticalCenter(value:Number):void
+	{
+		mVerticalCenter = value;
+		if(mVerticalCenter < 0)
+		{
+			mVerticalCenter = 0;
+		}else if(mVerticalCenter > mHeight)
+		{
+			mVerticalCenter = mHeight;
+		}
+	}
+
 }
 
 class CollisionData
@@ -856,14 +997,14 @@ class GridManager
 {
 	private var mRawMap:Array = [
 								[1,1,1,1,1,1,1,1,1,1],
+								[1,0,0,0,0,0,0,0,1,1],
+								[1,0,1,0,0,0,0,1,0,1],
+								[1,0,0,1,0,0,0,0,0,1],
+								[1,0,0,0,0,1,0,0,0,1],
+								[1,0,0,0,0,0,0,1,0,1],
 								[1,0,0,0,0,0,0,0,0,1],
-								[1,0,0,0,0,0,0,0,0,1],
-								[1,0,0,0,0,0,0,0,0,1],
-								[1,0,0,0,0,0,0,0,0,1],
-								[1,0,0,0,0,0,0,0,0,1],
-								[1,0,0,0,0,0,0,0,0,1],
-								[1,0,0,0,0,0,0,0,0,1],
-								[1,0,0,0,0,0,0,0,0,1],
+								[1,0,1,0,0,0,1,0,0,1],
+								[1,0,0,0,0,0,0,1,0,1],
 								[1,1,1,1,1,1,1,1,1,1]
 								];
 	private var mMaxRow:int;
