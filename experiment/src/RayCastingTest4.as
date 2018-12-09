@@ -653,7 +653,7 @@ class ProjectionPlane extends Sprite
 		var slice:Bitmap;
 		var sliceHeight:Number;
 		var slicePos:Number;
-		
+		var brightness:Number;
 		mFloor.bitmapData.fillRect(mFloor.bitmapData.rect, 0);
 		for(var i:int = 0; i < mCurrentFOV.rayList.length; i++)
 		{
@@ -665,17 +665,18 @@ class ProjectionPlane extends Sprite
 			{
 				slicePos = Math.floor(Math.abs(ray.collideData.collideX) % Config.GRID_H); //collideX 应该提前被roundOff
 //				slicePos =Math.abs(ray.collideData.collideX) % Config.GRID_H;
+				brightness = 180/(ray.collideData.realDist * ray.cosTheta);
 			}else
 			{
 				slicePos = Math.floor((Math.abs(ray.collideData.collideY) % Config.GRID_H));//collideY 应该提前被roundOff
 //				slicePos =Math.abs(ray.collideData.collideY) % Config.GRID_H;
+				 brightness = 180/(ray.collideData.realDist * ray.cosTheta);
 			}
 //			trace(slicePos);
 			//开始画到平面上
 			slice = mBitmapList[i];
 			slice.bitmapData.copyPixels(debug, new Rectangle(slicePos, 0, 1, Config.GRID_H), new Point());
 			//shader
-			var brightness:Number = 100/ray.collideData.realDist;
 			for(var j:int = 0; j < slice.bitmapData.height; j++)
 			{
 				var color:uint = slice.bitmapData.getPixel(0, j);
