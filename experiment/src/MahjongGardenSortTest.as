@@ -28,3 +28,10 @@ class GridManager
 		return instance ||= new GridManager();
 	}
 }
+
+class Config
+{
+	public static const ROWS:int = 34;
+	public static const COLS:int = 20;
+	public static const MAX_LAYER:int = 5;
+}
