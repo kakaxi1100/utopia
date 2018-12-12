@@ -16,15 +16,18 @@ package
 		private var raceMap:Bitmap = new Map();
 		
 		private var fov:Number = Math.PI / 2;
-		private var far:Number = 100;
+		private var dist:Number = 50;
+		private var far:Number = 500;//注意这个far是斜边,并不是垂直与far平面的那条线(因为斜边比较好算)
 		private var cX:Number = 300;
 		private var cY:Number = 300;
+		private var cZ:Number = 50;
 		private var cA:Number = 0;
 		
 		private var farX1:Number = 0;
 		private var farY1:Number = 0;
 		private var farX2:Number = 0;
 		private var farY2:Number = 0;
+		private var farHeight:Number = 0;
 		
 		private var screenWidth:Number = 320;
 		private var screenHeight:Number = 240;
@@ -38,7 +41,6 @@ package
 			addChild(floor);
 			
 			caculatePoint();
-			draw();
 			sampling();
 			
 //			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
@@ -55,35 +57,21 @@ package
 		
 		private function sampling():void
 		{
-			var sampleY:Number;
-			var sampleX:Number;
-			var startY:Number;
-			var startX:Number;
-			var endY:Number;
-			var endX:Number;
-			
-			floor.bitmapData.fillRect(floor.bitmapData.rect, 0);
-			for(var y:int = 0; y < screenHeight; y++)
+			var startX:Number = 0;
+			var startY:Number = 0;
+			var endX:Number = 0;
+			var endY:Number = 0;
+			var startRow:int = dist / farHeight * cZ + 120;
+			for(var y:int = startRow; y < screenHeight; y++)
 			{
-				var stepY:Number =  y / screenHeight;
-				startY = stepY * (farY1 - cY) + cY;
-				endY = stepY * (farY2 - cY) + cY;
-				
-				startX = stepY * (farX1 - cX) + cX;
-				endX = stepY * (farX2 - cX) + cX;
-				
-				this.graphics.lineStyle(2, 0xffff00);
-				this.graphics.moveTo(startX, startY);
-				this.graphics.lineTo(endX, endY);
 				
 				for(var x:int = 0; x < screenWidth; x++)
 				{
 					var stepX:Number = x / screenWidth;
-					sampleX = stepX * (endX - startX) + startX;
-					sampleY = stepX * (endY - startY) + startY;
-					floor.bitmapData.lock();
+					var sampleY:Number = stepX * (endY - startY) + startY;
+					var sampleX:Number = stepX * (endX - startX) + startX;
+					
 					floor.bitmapData.copyPixels(raceMap.bitmapData, new Rectangle(sampleX,sampleY,1,1), new Point(x, y));
-					floor.bitmapData.unlock();
 				}
 			}
 		}
@@ -95,6 +83,8 @@ package
 			farY1 = cY + Math.sin(angle + cA) * far;
 			farX2 = cX + Math.cos(-angle + cA) * far;
 			farY2 = cY + Math.sin(-angle + cA) * far;
+			dist = Math.cos(angle) * screenWidth * 0.5;
+			farHeight = Math.cos(angle) * far;
 		}
 		
 		private function draw():void
