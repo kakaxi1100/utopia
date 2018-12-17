@@ -8,7 +8,12 @@ package
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	[SWF(width="800", height="600", frameRate="30", backgroundColor="0")]
+	/**
+	 *并未完成！！ 
+	 * @author juli
+	 * 
+	 */	
+	[SWF(width="800", height="600", frameRate="30", backgroundColor="0")]	
 	public class Mode7Test extends Sprite
 	{
 		[Embed(source="assets/C1W.png")]

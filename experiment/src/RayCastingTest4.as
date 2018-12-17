@@ -603,7 +603,7 @@ class ProjectionPlane extends Sprite
 	private var Floor:Class;
 	private var debugFloor:BitmapData =Bitmap(new Floor()).bitmapData;
 	
-	[Embed(source="assets/wall01.jpg")]
+	[Embed(source="assets/floortile.png")]
 	private var Ceil:Class;
 	private var debugCeil:BitmapData =Bitmap(new Ceil()).bitmapData;
 	
@@ -665,12 +665,12 @@ class ProjectionPlane extends Sprite
 			{
 				slicePos = Math.floor(Math.abs(ray.collideData.collideX) % Config.GRID_H); //collideX 应该提前被roundOff
 //				slicePos =Math.abs(ray.collideData.collideX) % Config.GRID_H;
-				brightness = 180/(ray.collideData.realDist * ray.cosTheta);
+				brightness = 100/(ray.collideData.realDist * ray.cosTheta);
 			}else
 			{
 				slicePos = Math.floor((Math.abs(ray.collideData.collideY) % Config.GRID_H));//collideY 应该提前被roundOff
 //				slicePos =Math.abs(ray.collideData.collideY) % Config.GRID_H;
-				 brightness = 180/(ray.collideData.realDist * ray.cosTheta);
+				 brightness = 100/(ray.collideData.realDist * ray.cosTheta);
 			}
 //			trace(slicePos);
 			//开始画到平面上
@@ -723,7 +723,6 @@ class ProjectionPlane extends Sprite
 			var floorRow:int = Math.floor(slice.y + slice.height - 1);
 			if(floorRow <= mHeight)
 			{
-				
 				//来计算每一行的realDist距离
 				for(r = floorRow; r < mHeight; r++)
 				{
@@ -739,6 +738,24 @@ class ProjectionPlane extends Sprite
 					
 //					mFloor.bitmapData.setPixel32(i, r,0xff0000);
 					mFloor.bitmapData.copyPixels(debugFloor, new Rectangle(textureX, textureY, 1, 1), new Point(i, r));
+					var color:uint = mFloor.bitmapData.getPixel(i, r);
+					var red:uint = ((color & 0xff0000) >> 16) * 100 / realDist;
+					var green:uint = ((color & 0xff00) >> 8) * 100 / realDist;
+					var blue:uint = ((color & 0xff)) * 100 / realDist;
+					if(red > 255)
+					{
+						red = 255;
+					}
+					if(green > 255)
+					{
+						green = 255;
+					}
+					if(blue > 255)
+					{
+						blue = 255;
+					}
+					color = red << 16 | green << 8 | blue;
+					mFloor.bitmapData.setPixel(i,r, color);
 				}
 			}
 			//draw ceil
@@ -759,6 +776,24 @@ class ProjectionPlane extends Sprite
 					
 					//					mFloor.bitmapData.setPixel32(i, r,0xff0000);
 					mFloor.bitmapData.copyPixels(debugCeil, new Rectangle(textureX, textureY, 1, 1), new Point(i, r));
+					var color:uint = mFloor.bitmapData.getPixel(i, r);
+					var red:uint = ((color & 0xff0000) >> 16) * 100 / realDist;
+					var green:uint = ((color & 0xff00) >> 8) * 100 / realDist;
+					var blue:uint = ((color & 0xff)) * 100 / realDist;
+					if(red > 255)
+					{
+						red = 255;
+					}
+					if(green > 255)
+					{
+						green = 255;
+					}
+					if(blue > 255)
+					{
+						blue = 255;
+					}
+					color = red << 16 | green << 8 | blue;
+					mFloor.bitmapData.setPixel(i,r, color);
 				}
 			}
 		}
