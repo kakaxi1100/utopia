@@ -683,6 +683,7 @@ class ProjectionPlane extends Sprite
 				var red:uint = ((color & 0xff0000) >> 16) * brightness;
 				var green:uint = ((color & 0xff00) >> 8) * brightness;
 				var blue:uint = ((color & 0xff)) * brightness;
+				
 				if(red > 255)
 				{
 					red = 255;
