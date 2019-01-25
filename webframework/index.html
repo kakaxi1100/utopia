@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Example 2.3: The Draw One Square Project</title>
+        <link rel ="icon" type ="image/x-icon" href="./favicon.png">
+    </head>
+    <body onload="new MyGame('GLCanvas')">
+
+        <script type="text/javascript" src="src/lib/gl-matrix.js"></script>
+
+        <script type="text/javascript" src="src/Engine/Transform.js"></script>
+        <script type="text/javascript" src="src/Engine/Core/Core.js"></script>
+        <script type="text/javascript" src="src/Engine/Core/VertexBuffer.js"></script>
+        <script type="text/javascript" src="src/Engine/SimpleShader.js"></script>
+        <script type="text/javascript" src="src/Engine/Renderable.js"></script>
+        
+
+        <!-- Client game code -->
+        <script type="text/javascript" src="src/MyGame/MyGame.js"></script>
+
+        <canvas id="GLCanvas" width="640" height="480">
+            Your browser does not support the HTML5 canvas.
+        </canvas>
+    </body>
+</html>
