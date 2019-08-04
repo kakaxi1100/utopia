@@ -20,6 +20,10 @@ package
 		private var speed:Number = 0.3;
 		private var spread:Number = 10;
 		private var furthest:Number = 100;
+		//视距 他是和视域相关的, 因为视频面我们固定到  -1 ~ 1  那么  tan(θ) = 1 / d 其中分子1 就是视频面的半宽 => d = tan(θ)
+		//视距越近 观察范围越大  但是观察物越集中
+		//视距越远 观察范围越小  但是观察物越分散
+		private var d:Number = 2; 
 		public function Test1StarField()
 		{
 			super();
@@ -38,7 +42,7 @@ package
 		}
 		
 		//假如视平面是归一化的, 既  -1 < x/z < 1 and -1 < y/z < 1
-		//一下的随机要保证在这个范围之内
+		//一下的随机要保证在这个范围之内  tan45 = 1 所以角度小于 45度
 		private function initStar(i:int):void
 		{
 			mPositionX[i] = (Math.random()-0.5)* 2 * spread;
@@ -56,8 +60,8 @@ package
 				}
 				
 				//透视坐标之后 将归一化的视平面 转换到屏幕坐标 以宽度为例   视平面(-1) = 0,  视平面(1) = 屏幕宽度  
-				mScreenX[i] = (mPositionX[i] / mPositionZ[i]) * centerX + centerX;
-				mScreenY[i] = (mPositionY[i] / mPositionZ[i]) * centerY + centerY;
+				mScreenX[i] = (mPositionX[i] * d / mPositionZ[i]) * centerX + centerX;
+				mScreenY[i] = (mPositionY[i] * d / mPositionZ[i]) * centerY + centerY;
 				
 				if(mScreenX[i] < 0 || mScreenX[i] > stage.stageWidth || 
 					mScreenY[i] < 0 || mScreenY[i] > stage.stageHeight)
