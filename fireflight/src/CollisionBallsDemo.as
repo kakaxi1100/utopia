@@ -70,7 +70,7 @@ package
 			FFLinkManager.getInstance().updateLink(dt);
 			FFForceManager.getIntsance().updateForce(dt);
 			
-			for(var m:int = 0; m < 50; m++){
+			for(var m:int = 0; m < 1; m++){
 				for(var k:int = 0; k < cs.length; k++){
 					for(var j:int = k; j < cs.length; j++){
 						FFCollisionDetector.contactCircleCircle(cs[k], cs[j], dt);

@@ -83,6 +83,7 @@ package org.ares.fireflight
 		 * 	
 		 *
 		 * 刚体速度解决方案
+		 * https://www.myphysicslab.com/engine2D/collision-en.html
 		 * 
 		 * ma, mb = A,B的质量
 		 * Rap, Rbp = A,B中心点到碰撞点P的距离,这是一个矢量
@@ -115,15 +116,22 @@ package org.ares.fireflight
 		 * 8. Vab2 = Va2 + Wa2 x Rap - Vb2 - Wb2 x Rbp
 		 * 
 		 * 然后根据碰撞后的速度等于碰撞后的速度乘以恢复系数(在碰撞法线上!)可得:
-		 * 9. Vab2·N = -eVab1·N  (0<=e<=1)
+		 * (**这里是错误的, 不是只是在碰撞法线上 ,而是在整个系统中动量都守恒, 在碰撞法线上守恒是因为在不是法线的方向上速度没有变化,公式中相抵消了**)  
+		 * 9. Vab2·N = -eVab1·N  (0<=e<=1) (这里有个问题是否 角速度产生的线速度 可以和 物体平动的速度分开计算)
 		 * 
-		 * (注意一下等式的成立都是建立在法线方向上的!)
+		 * (注意一下等式的成立都是建立在法线方向上的!) (**在整个系统中成立, 理由同上**)
 		 * 
 		 * 10. ma*va1 + mb*vb1 = ma*va2 + mb*vb2 
-		 * 11. j = ma*Va2 - maVa1 = -(mb*Vb2 - mb*Vb1)    
+		 * 11. j = ma*Va2 - maVa1 = -(mb*Vb2 - mb*Vb1)    (不用这么想)
+		 * 
+		 * (其实可以这么想)
+		 * 动量是速度改变的原因, J =mΔV ∴ V2 = V1 + J/m 角速度同理
+		 * 
 		 * 12. Va2 = Va1 + j/ma
 		 * 13. Vb2 = Vb1 - j/mb
 		 * 
+		 * 
+		 * 角速度的求解关键在下面, 角速度所产生的线速度的动量也守恒, 那么就可以用求粒子的那套来做了
 		 * 同理可以推导出 Wa2和Wb2
 		 * Ia = ma*Rap²
 		 * Ib = mb*Rbp²
@@ -136,7 +144,7 @@ package org.ares.fireflight
 		 * Vbp1单独 = Wb1 x Rbp Vbp2单独 = Wb2 x Rbp
 		 * 根据动量守恒 同 12,13可得
 		 * Vap1单独 = Vap2单独 + j/ma
-		 * 14. Wa2 x Rap = Wa1 x Rap + j * Rap²/Ia  =>  Wa2 = Wa1 + (Rap * j)/Ia
+		 * 14. Wa2 x Rap = Wa1 x Rap + j * Rap²/Ia  =>  Wa2 = Wa1 + (Rap * j)/Ia (叉乘就是乘以了个sinθ而已, 所以可以两边相除)
 		 * 15. Wb2 x Rbp = Wb1 x Rbp + j * Rbp²/Ib  =>  Wb2 = Wb1 + (Rbp * j)/Ib
 		 * 
 		 * 将7,8,12,13,14,15,代入9可得:

@@ -28,7 +28,7 @@ package
 			super();
 			
 			s1.setXY(100,100);
-//			s1.p.velocity.setTo(50, 0);
+			s1.p.velocity.setTo(50, 0);
 			s1.p.mass = Number.MAX_VALUE;
 			addChild(s1);
 			

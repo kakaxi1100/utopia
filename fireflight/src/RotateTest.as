@@ -26,9 +26,10 @@ package
 			objs[0].mass = 10;
 //			objs[0].velocity.setTo(0, 10);
 //			objs[0].angularVelocity = 6;
-			objs[0].position.setTo(380, 110);
+//			objs[0].position.setTo(350, 210);
+			objs[0].position.setTo(320, 0);
 			objs[1].name = "circle green";
-			objs[1].mass = 10;
+			objs[1].mass = Number.MAX_VALUE;
 //			objs[1].angularVelocity = 1;
 			objs[1].position.setTo(350, 250);
 			
