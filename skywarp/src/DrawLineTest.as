@@ -14,6 +14,7 @@ package
 		private var p1:Point = new Point();
 		private var p2:Point = new Point();
 		private var mathod:int = 1;
+		private var needClear:Boolean = false;
 		public function DrawLineTest()
 		{
 			super();
@@ -22,11 +23,11 @@ package
 			
 			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
 			
-//			p1.x = 400;
-//			p1.y = 300;
-//			p2.x = 500;
-//			p2.y = 500;
-//			this.bresenham(p1, p2);
+			p1.x = 400;
+			p1.y = 200;
+			p2.x = 400;
+			p2.y = 300;
+			this.bresenham(p1, p2);
 			this.randomLine(500);
 		}
 		
@@ -44,16 +45,27 @@ package
 		
 		protected function onMouseClick(event:MouseEvent):void
 		{
-			bmd.fillRect(bmd.rect, 0xffffffff);
+			if(needClear)
+			{
+				bmd.fillRect(bmd.rect, 0xffffffff);
+			}
 //			p2.x = Math.random() * 400 + 50;
 //			p2.y = Math.random() * 300 + 50;
 //			p1.x = Math.random() * 350 + 450;
 //			p1.y = Math.random() * 300 + 50;
 			
+//			p2.x = Math.random() * 800;
+//			p2.y = Math.random() * 600;
+//			p1.x = Math.random() * 800;
+//			p1.y = Math.random() * 600;
+			
+			
 			p2.x = Math.random() * 800;
 			p2.y = Math.random() * 600;
 			p1.x = Math.random() * 800;
 			p1.y = Math.random() * 600;
+			
+			
 			if(mathod == 0){
 				this.drawLine1(p1, p2);
 			}else if(mathod == 1){
@@ -126,7 +138,7 @@ package
 		//　　　}
 		private function bresenham(p1:Point, p2:Point):void
 		{
-			
+			// d0 没有计算
 			var sx:int = p1.x >> 0;
 			var sy:int = p1.y >> 0;
 			var ex:int = p2.x >> 0;
@@ -137,7 +149,6 @@ package
 			var yInc:int = ey > sy ? 1 : -1;
 			
 			var x:int = sx, y:int = sy;
-			var d:int = 0;
 			
 			//判断是近X轴还是近Y轴, 如果是近Y轴 那么 公式中需要调换 dx和dy
 			var isCloseX:Boolean = dx > dy ? true : false;
@@ -147,10 +158,13 @@ package
 				dx=dy;
 				dy=temp;
 			}
+			
+			var d:int = 2 * dy - dx;//d1 计算 x1 时候的d值
+			
 			while(true)
 			{
 				bmd.setPixel(x, y, 0);
-				if(x == ex || y == ey) break;
+				if(x == ex && y == ey) break;
 				//x每步进一次, y取什么?
 				if(isCloseX)
 				{
@@ -160,7 +174,7 @@ package
 				}
 				// 通过 误差 E 的符号来判断 应该取哪个值 E < 0 y or E > 0 y+1
 				// E0 = -0.5 起始点总是取靠近下面的点
-				// E1 = (y0 + m) - y0r - 0.5
+				// E1 = m - 0.5 => (y0 + m) - y0r - 0.5
 				// E2 = (y1 + m) - y1r - 0.5
 				//   ....
 				// Ei+1 = (yi + m) - yir - 0.5
@@ -168,7 +182,7 @@ package
 				// 求En的通用公式
 				// Ei+1 = yi+1 - yir - 0.5;
 				// if(Ei+1 > 0) 
-				//		y(i+1)r = yir + 1
+				//		y(i+1)r = yir + 1 (为什么? 因为如果> 0.5那么下一个y一定上去了) 解释: 两个紧邻正方形组成的矩形, 那么它们的对角线经过共用边的中点即0.5 
 				// else 
 				//		y(i+1)r = yir
 				//
@@ -179,6 +193,7 @@ package
 				// En = En-1 + m - 1, En-1 >= 0 and En = En-1 + m, En-1 < 0
 				// m = Δy/Δx 为了消除 0.5 和 Δx 我们乘以 2*Δx 因为不等式两边同乘一个正数, 符号性质不变
 				// D0 = -2*Δx or = 0
+				// D1 = 2*Δx * (m - 0.5) = 2 * Δy - Δx 
 				// ....
 				// Di+1 = 2 * Δx * [(yi + m) - yir - 0.5] = 2 * Δx *(yi+1 - yir - 0.5)  
 				// Di+2 = 2 * Δx * [(yi+1 + m) - y(i+1)r - 0.5]
