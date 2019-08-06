@@ -3,25 +3,26 @@ package
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
 	[SWF(width="800", height="600", frameRate="60", backgroundColor="0")]
-	public class DrawLineTest extends Sprite
+	public class Test2DrawLine extends Sprite
 	{
 		private var bmd:BitmapData = new BitmapData(800, 600);
 		private var bmp:Bitmap = new Bitmap(bmd);
 		private var p1:Point = new Point();
 		private var p2:Point = new Point();
 		private var mathod:int = 1;
-		private var needClear:Boolean = false;
-		public function DrawLineTest()
+		public function Test2DrawLine()
 		{
 			super();
 			
 			this.addChild(bmp);
 			
 			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			
 			p1.x = 400;
 			p1.y = 200;
@@ -31,29 +32,14 @@ package
 			this.randomLine(500);
 		}
 		
-		private function randomLine(num:int):void
+		protected function onKeyDown(event:KeyboardEvent):void
 		{
-			for(var i:int = 0; i < num; i++)
-			{
-				p2.x = Math.random() * 800;
-				p2.y = Math.random() * 600;
-				p1.x = Math.random() * 800;
-				p1.y = Math.random() * 600;
-				this.bresenham(p1, p2);
-			}
-		}
-		
-		protected function onMouseClick(event:MouseEvent):void
-		{
-			if(needClear)
-			{
-				bmd.fillRect(bmd.rect, 0xffffffff);
-			}
+			
 //			p2.x = Math.random() * 400 + 50;
 //			p2.y = Math.random() * 300 + 50;
 //			p1.x = Math.random() * 350 + 450;
 //			p1.y = Math.random() * 300 + 50;
-			
+
 //			p2.x = Math.random() * 800;
 //			p2.y = Math.random() * 600;
 //			p1.x = Math.random() * 800;
@@ -72,6 +58,25 @@ package
 				this.bresenham(p1, p2);
 			}
 			trace(p1, p2);
+		}
+		
+		private function randomLine(num:int):void
+		{
+			for(var i:int = 0; i < num; i++)
+			{
+				p2.x = Math.random() * 800;
+				p2.y = Math.random() * 600;
+				p1.x = Math.random() * 800;
+				p1.y = Math.random() * 600;
+				this.bresenham(p1, p2);
+			}
+		}
+		
+		protected function onMouseClick(event:MouseEvent):void
+		{
+			
+			bmd.fillRect(bmd.rect, 0xffffffff);
+
 		}
 		
 		//Bresenham 画线的两种方法: 判别式法和误差法

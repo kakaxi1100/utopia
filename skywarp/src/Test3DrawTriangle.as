@@ -9,5 +9,10 @@ package
 		{
 			super();
 		}
+		
+		private function drawTriangle():void
+		{
+			
+		}
 	}
 }
