@@ -20,18 +20,34 @@ package skywarp.version2
 			return this.mX * v.mX + this.mY * v.mY + this.mZ * v.mZ;
 		}
 		
-		public function cross(v:SWPoint3D):SWPoint3D
+		//用左手还是右手判断取决于你用什么坐标系
+		//原则是 i，j，k满足以下特点：
+		//i=jxk；j=kxi；k=ixj；
+		//kxj=–i；ixk=–j；jxi=–k；
+		//ixi=jxj=kxk=0；（0是指0向量）
+		public function cross(v:SWPoint3D, result:SWPoint3D = null):SWPoint3D
 		{
+			if(!result)
+			{
+				result = new SWPoint3D();
+			}
+			
 			var cx:Number = this.mY * v.mZ - this.mZ * v.mY;
 			var cy:Number = this.mZ * v.mX - this.mX * v.mZ;
 			var cz:Number = this.mX * v.mY - this.mY * v.mX;
 			
-			return new SWPoint3D(cx, cy, cz);
+			result.setTo(cx, cy, cz)
+			return result;
 		}
 		
-		public function minusNew(v:SWPoint3D):SWPoint3D
+		public function minus(v:SWPoint3D, result:SWPoint3D = null):SWPoint3D
 		{
-			return new SWPoint3D(this.mX - v.mX, this.mY - v.mY, this.mZ - v.mZ);
+			if(!result)
+			{
+				result = new SWPoint3D();
+			}
+			result.setTo(this.mX - v.mX, this.mY - v.mY, this.mZ - v.mZ);
+			return result;
 		}	
 		
 		public function rotateXYZ(a:Number, b:Number, c:Number):void
@@ -90,6 +106,13 @@ package skywarp.version2
 			
 			mX = rx;
 			mY = ry;
+		}
+		
+		public function setTo(x:Number, y:Number, z:Number):void
+		{
+			this.mX = x;
+			this.mY = y;
+			this.mZ = z;
 		}
 		
 		public function clone():SWPoint3D

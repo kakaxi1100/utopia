@@ -89,16 +89,22 @@ package skywarp.version2
 			var ex:int = interpolate(pc.x, pd.x, gradient2) >> 0;
 			
 			//计算z的插值
-			var sz:Number = interpolate(pa.z, pb.z, gradient1) >> 0;
-			var ez:Number = interpolate(pc.z, pd.z, gradient2) >> 0;
-			
+			if(mIsZBuffer)
+			{
+				var sz:Number = interpolate(pa.z, pb.z, gradient1) >> 0;
+				var ez:Number = interpolate(pc.z, pd.z, gradient2) >> 0;
+			}
 			// drawing a line from left (sx) to right (ex) 
 			for(var x:int = sx; x < ex; x++) {
-//				bmd.setPixel32(x, y, color);
-				//对每个点计算z值
-				var gradient:Number = (x - sx)/(ex - sx);
-				var z:Number = interpolate(sz, ez, gradient);
-				putPixel(x, y, z, bmd, color);
+				if(!mIsZBuffer)
+				{
+					bmd.setPixel32(x, y, color);
+				}else{
+					//对每个点计算z值
+					var gradient:Number = (x - sx)/(ex - sx);
+					var z:Number = interpolate(sz, ez, gradient);
+					putPixel(x, y, z, bmd, color);
+				}
 			}
 		}
 		
@@ -116,22 +122,25 @@ package skywarp.version2
 		}
 		
 		
-		private static var depthBuffer:Array;
+		private static var mDepthBuffer:Array;
+		private static var mIsZBuffer:Boolean = false;
 		public static function setZBuffer(bmd:BitmapData):void
 		{
 			var size:uint = bmd.width * bmd.height;
-			depthBuffer = new Array(size);
+			mDepthBuffer = new Array(size);
 			for(var i:uint = 0; i < size; i++)
 			{
-				depthBuffer[i] = 99999999;//将其设置到最远处
+				mDepthBuffer[i] = 99999999;//将其设置到最远处
 			}
+			mIsZBuffer = true;
 		}
 		
 		public static function clearZBuffer():void
 		{
-			for(var i:uint = 0; i < depthBuffer.length; i++)
+			if(!mIsZBuffer) return;
+			for(var i:uint = 0; i < mDepthBuffer.length; i++)
 			{
-				depthBuffer[i] = 99999999;
+				mDepthBuffer[i] = 99999999;
 			}
 		}
 		
@@ -140,19 +149,19 @@ package skywarp.version2
 			//当前处理的那个pixel
 			var index:uint = ((x>>0) + (y>>0) * bmd.width);
 			
-			if(depthBuffer[index] < z)
+			if(mDepthBuffer[index] < z)
 			{
 				//假如这个点在depth的后面, 就不用画了
 			}else
 			{
-				depthBuffer[index] = z;
+				mDepthBuffer[index] = z;
 				bmd.setPixel32(x, y, color);
 			}
 		}
 
 //-----------------------------------------------------------------------------------------
 		//Bresenham
-		public static function DrawLine(bmd:BitmapData, p1:Point, p2:Point, color:uint = 0):void
+		public static function DrawLine(bmd:BitmapData, p1:SWPoint3D, p2:SWPoint3D, color:uint = 0):void
 		{
 			// d0 没有计算
 			var sx:int = p1.x >> 0;

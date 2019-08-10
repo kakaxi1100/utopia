@@ -8,7 +8,7 @@ package
 	import skywarp.version2.SWPoint3D;
 	import skywarp.version2.SWUtils;
 	
-	[SWF(width="100", height="100", frameRate="30", backgroundColor="0xcccccc")]
+	[SWF(width="800", height="600", frameRate="60", backgroundColor="0xcccccc")]
 	public class Test4ZBuffer extends Sprite
 	{
 		private var bmd:BitmapData = new BitmapData(800, 600);
@@ -23,7 +23,7 @@ package
 			super();
 			stage.addChild(bmp);
 			var p:SWPoint3D;
-			SWUtils.setZBuffer(bmd);
+//			SWUtils.setZBuffer(bmd);
 //------------------cube-----------------------------			
 			p = new SWPoint3D(50, 50, 50);
 			vertexList.push(p);

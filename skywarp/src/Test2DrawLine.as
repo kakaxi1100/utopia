@@ -24,12 +24,17 @@ package
 			stage.addEventListener(MouseEvent.CLICK, onMouseClick);
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			
+//			p1.x = 400;
+//			p1.y = 200;
+//			p2.x = 400;
+//			p2.y = 300;
+			
 			p1.x = 400;
-			p1.y = 200;
-			p2.x = 400;
+			p1.y = 300;
+			p2.x = 100;
 			p2.y = 300;
 			this.bresenham(p1, p2);
-			this.randomLine(500);
+//			this.randomLine(500);
 		}
 		
 		protected function onKeyDown(event:KeyboardEvent):void
