@@ -9,7 +9,12 @@ package
 	import skywarp.version2.SWUtils;
 	
 	[SWF(width="800", height="600", frameRate="60", backgroundColor="0xcccccc")]
-	public class Test5BackFaceCulling extends Sprite
+	/**
+	 * 固定着色
+	 * 固定着色不考虑任何光照效果, 只是用某种颜色填充多边形
+	 *  
+	 */	
+	public class Test6ConstantShading extends Sprite
 	{
 		private var bmd:BitmapData = new BitmapData(800, 600);
 		private var bmp:Bitmap = new Bitmap(bmd);
@@ -20,9 +25,10 @@ package
 		private var vertexTranList:Array = [];
 		private var polygonList:Array = [];
 		private var polygonState:Array = [];
-		public function Test5BackFaceCulling()
+		public function Test6ConstantShading()
 		{
-			super();stage.addChild(bmp);
+			super();
+			stage.addChild(bmp);
 			var p:SWPoint3D;
 //			SWUtils.setZBuffer(bmd);
 //------------------cube-----------------------------			
@@ -132,24 +138,24 @@ package
 //			vertexList.push(p);
 //			
 //			polygonList.push(2, 9, 1, 
-//							 2, 1, 5,
-//							 1, 0, 4,
-//							 1, 4, 5,
-//							 0, 8, 3,
-//							 0, 3, 4,
-//							 2, 3, 8,
-//							 2, 8, 9,
-//							 6, 7, 9,
-//							 6, 9, 8,
-//							 0, 1, 7,
-//							 0, 7, 6,
-//							 0, 6, 8,
-//							 1, 9, 7,
-//							 10, 11, 12,
-//							 10, 12, 13,
-//							 14, 15, 16,
-//							 14, 16, 17,
-//							 20, 19, 18);
+//				2, 1, 5,
+//				1, 0, 4,
+//				1, 4, 5,
+//				0, 8, 3,
+//				0, 3, 4,
+//				2, 3, 8,
+//				2, 8, 9,
+//				6, 7, 9,
+//				6, 9, 8,
+//				0, 1, 7,
+//				0, 7, 6,
+//				0, 6, 8,
+//				1, 9, 7,
+//				10, 11, 12,
+//				10, 12, 13,
+//				14, 15, 16,
+//				14, 16, 17,
+//				20, 19, 18);
 //-------------------------------------------------------	
 			for(var i:int = 0; i < polygonList.length / 3; i++)
 			{
@@ -169,7 +175,7 @@ package
 			{
 				var p3D:SWPoint3D = this.vertexList[i];
 				p3D.rotateY(1);
-//				p3D.rotateX(1);
+				p3D.rotateX(1);
 //				p3D.rotateZ(1);
 			}
 			this.hidingSide();
@@ -179,7 +185,7 @@ package
 		
 		private function drawWrieframe():void
 		{
-			bmd.fillRect(bmd.rect, 0xffffffff);
+			bmd.fillRect(bmd.rect, 0xff000000);
 			SWUtils.clearZBuffer();
 			for(var i:int = 0; i < this.polygonList.length - 2; i+=3)
 			{
@@ -191,13 +197,13 @@ package
 				var p2:SWPoint3D = this.convertToScreen(this.vertexList[this.polygonList[i + 1]]);
 				var p3:SWPoint3D = this.convertToScreen(this.vertexList[this.polygonList[i + 2]]);
 				
-//				SWUtils.DrawLinePro(bmd, p1, p2, 0xffff0000);
-//				SWUtils.DrawLinePro(bmd, p2, p3, 0xffff0000);
-//				SWUtils.DrawLinePro(bmd, p3, p1, 0xffff0000);
+				var color:Number = 0.25 + ((i % this.polygonList.length) / this.polygonList.length) * 0.75;
+				var colorU:uint = (color * 255) >> 0;
+				var colorHex:uint = 0xff << 24 | colorU << 16 | colorU << 8 | colorU;
 				
-				SWUtils.DrawLine(bmd, p1, p2, 0xffff0000);
-				SWUtils.DrawLine(bmd, p2, p3, 0xffff0000);
-				SWUtils.DrawLine(bmd, p3, p1, 0xffff0000);
+				SWUtils.DrawLine(bmd, p1, p2, colorHex);
+				SWUtils.DrawLine(bmd, p2, p3, colorHex);
+				SWUtils.DrawLine(bmd, p3, p1, colorHex);
 			}
 		}
 		
@@ -213,14 +219,11 @@ package
 				var p1:SWPoint3D = this.convertToScreen(this.vertexList[this.polygonList[i]]);
 				var p2:SWPoint3D = this.convertToScreen(this.vertexList[this.polygonList[i + 1]]);
 				var p3:SWPoint3D = this.convertToScreen(this.vertexList[this.polygonList[i + 2]]);
-				SWUtils.drawTriangle(p1, p2, p3, bmd, Math.random() * 0x00ffffff);
+				var color:Number = 0.25 + ((i % this.polygonList.length) / this.polygonList.length) * 0.75;
+				var colorU:uint = (color * 255) >> 0;
+				var colorHex:uint = 0xff << 24 | colorU << 16 | colorU << 8 | colorU;
 				
-//				var color = 0.25 + ((indexFaces % cMesh.Faces.length) / cMesh.Faces.length) * 0.75;
-//				if( i % 2 == 0){
-//					SWUtils.drawTriangle(p1, p2, p3, bmd, 0x7700ff00);
-//				}else{
-//					SWUtils.drawTriangle(p1, p2, p3, bmd, 0x77ffff00);
-//				}
+				SWUtils.drawTriangle(p1, p2, p3, bmd, colorHex);
 			}
 		}
 		
@@ -246,13 +249,13 @@ package
 				//计算平面的法向没必要归一化, 因为只算方向, 注意顶点旋转顺序采用右手法则
 				p2World.minus(p1World, tempP1);
 				p3World.minus(p1World, tempP2);
-//				trace(tempP1, tempP2);
+				//				trace(tempP1, tempP2);
 				var n:SWPoint3D = tempP2.cross(tempP1, tempP2);
 				//求视点相对于p1的位置
 				var view:SWPoint3D = camera.minus(p1World, tempP1);
 				//求点积
 				var dot:Number = n.dot(view);
-//				trace(n, view, dot);
+				//				trace(n, view, dot);
 				if( dot <= 0)
 				{
 					polygonState[i/3 >>0] = 0;
@@ -273,5 +276,3 @@ package
 		}
 	}
 }
-
-

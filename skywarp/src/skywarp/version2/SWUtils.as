@@ -160,6 +160,42 @@ package skywarp.version2
 		}
 
 //-----------------------------------------------------------------------------------------
+		//递归画线法
+		private static function DrawLineMid(bmd:BitmapData, p1:Point, p2:Point):void
+		{
+			var dist:Number = Point.distance(p1, p2);
+			if(dist < 2){
+				return;
+			}
+			
+			var midPoint:Point = Point.interpolate(p1,p2,0.5);
+			bmd.setPixel(midPoint.x, midPoint.y, 0);
+			
+			DrawLineMid(bmd, p1, midPoint);
+			DrawLineMid(bmd, midPoint, p2);
+		}
+		
+		//Bresenham
+		public static function DrawLinePro(bmd:BitmapData, p1:SWPoint3D, p2:SWPoint3D, color:uint = 0):void
+		{
+			var x0:int = p1.x >> 0;
+			var y0:int = p1.y >> 0;
+			var x1:int = p2.x >> 0;
+			var y1:int = p2.y >> 0;
+			var dx:Number = Math.abs(x1 - x0);
+			var dy:Number = Math.abs(y1 - y0);
+			var sx:int = (x0 < x1) ? 1 : -1;
+			var sy:int = (y0 < y1) ? 1 : -1;
+			var err:Number = dx - dy;
+			while(true) {
+				bmd.setPixel32(x0, y0, color)
+				if((x0 == x1) && (y0 == y1)) break;
+				var e2:Number = 2 * err;
+				if(e2 > -dy) { err -= dy; x0 += sx; }
+				if(e2 < dx) { err += dx; y0 += sy; }
+			}
+		}
+		
 		//Bresenham
 		public static function DrawLine(bmd:BitmapData, p1:SWPoint3D, p2:SWPoint3D, color:uint = 0):void
 		{

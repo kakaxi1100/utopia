@@ -23,7 +23,7 @@ package
 			super();
 			stage.addChild(bmp);
 			var p:SWPoint3D;
-//			SWUtils.setZBuffer(bmd);
+			SWUtils.setZBuffer(bmd);
 //------------------cube-----------------------------			
 			p = new SWPoint3D(50, 50, 50);
 			vertexList.push(p);

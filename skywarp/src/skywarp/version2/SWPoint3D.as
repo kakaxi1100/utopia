@@ -50,6 +50,17 @@ package skywarp.version2
 			return result;
 		}	
 		
+		public function mult(number:Number, out:SWPoint3D = null):SWPoint3D 
+		{
+			if(out == null){
+				out = new SWPoint3D(this.x * number, this.y * number, this.z * number);
+			}else{
+				out.setTo(this.x * number, this.y * number, this.z * number);
+			}
+			
+			return out;
+		}
+		
 		public function rotateXYZ(a:Number, b:Number, c:Number):void
 		{
 			var cosa:Number = Math.cos(a * Radian);
@@ -113,6 +124,10 @@ package skywarp.version2
 			this.mX = x;
 			this.mY = y;
 			this.mZ = z;
+		}
+		
+		public function magnitude():Number {
+			return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
 		}
 		
 		public function clone():SWPoint3D
