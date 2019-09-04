@@ -45,9 +45,13 @@ package
 		{
 			back.bitmapData.fillRect(back.bitmapData.rect, 0);
 			
-			p1.setTo(Math.random()*640 - 320, Math.random()*480 - 240);
-			p2.setTo(Math.random()*640 - 320, Math.random()*480 - 240);
-			p3.setTo(Math.random()*640 - 320, Math.random()*480 - 240);
+			p1.setTo(400, 100);
+			p2.setTo(400, 300);
+			p3.setTo(300, 300);
+			
+//			p1.setTo(Math.random()*640 - 320, Math.random()*480 - 240);
+//			p2.setTo(Math.random()*640 - 320, Math.random()*480 - 240);
+//			p3.setTo(Math.random()*640 - 320, Math.random()*480 - 240);
 			
 			Base.drawTriangle(p1.x + Base.worldCenterX, p1.y + Base.worldCenterY, 
 							  p2.x + Base.worldCenterX, p2.y + Base.worldCenterY, 

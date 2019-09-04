@@ -108,7 +108,7 @@ package
 		private function rotationSelf(o:CObjective):void
 		{
 			rotateMt.setToZero();
-			var mt:CMatrix = CUtils.buildRotationMatrix(a,a,a, rotateMt);
+			var mt:CMatrix = CUtils.buildRotationMatrix(0,a,0, rotateMt);
 			for(var i:int = 0; i < o.vlist.length; i++)
 			{
 				mt.multipPoint4D(o.vlist[i]);
@@ -286,7 +286,7 @@ package
 				
 				var p:CPolygon = o.plist[i];
 				
-				//环境光
+//				环境光
 				r += light.colorAmbient.red / 255 * p.colorBase.red;
 				g += light.colorAmbient.green / 255 * p.colorBase.green;
 				b += light.colorAmbient.blue / 255 * p.colorBase.blue;
@@ -298,13 +298,13 @@ package
 				//暂时值计算散射项
 //				trace("vert: ", p.vert);
 //				trace("dp: ", dp);
-				if(dp > 0)
-				{
-					var theta:Number = dp / (n.length());
-					r += light1.colorDiffuse.red / 255 * p.colorBase.red * theta;
-					g += light1.colorDiffuse.green / 255 * p.colorBase.green * theta;
-					b += light1.colorDiffuse.blue / 255 * p.colorBase.blue * theta;
-				}
+//				if(dp > 0)
+//				{
+//					var theta:Number = dp / (n.length());
+//					r += light1.colorDiffuse.red / 255 * p.colorBase.red * theta;
+//					g += light1.colorDiffuse.green / 255 * p.colorBase.green * theta;
+//					b += light1.colorDiffuse.blue / 255 * p.colorBase.blue * theta;
+//				}
 				
 				//点光源
 				var n:CPoint4D = p.normal();
@@ -330,46 +330,6 @@ package
 //				trace("(r: ", r, "g: ", g, "b: ",b,")");
 				p.colorBlend.setByRGB(r,g,b);
 			}
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		}	
 	}
 }

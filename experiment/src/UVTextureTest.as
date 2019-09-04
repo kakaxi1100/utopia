@@ -13,9 +13,9 @@ package
 		private var wall:Bitmap = new Wall();
 		private var bmp:Bitmap = new Bitmap(new BitmapData(800, 600, false, 0));
 		
-		private var p1:Object = {"x":400, "y":100, "u":32, "v":63};
-		private var p2:Object = {"x":50, "y":500, "u":32, "v":28};
-		private var p3:Object = {"x":750, "y":500, "u":50, "v":47};
+		private var p1:Object = {"x":400, "y":100, "u":0, "v":0};
+		private var p2:Object = {"x":350, "y":200, "u":0, "v":63};
+		private var p3:Object = {"x":450, "y":200, "u":63, "v":63};
 		
 		public function UVTextureTest()
 		{
