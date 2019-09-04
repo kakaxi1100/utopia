@@ -122,6 +122,9 @@ package skywarp.version2
 		}
 		
 		
+		//要用1/z来存,具体原因看第11章
+		//主要是因为Y的插值是根据屏幕坐标来的, 而Z的插值是根据空间坐标来的
+		//而空间坐标转换到屏幕坐标是 除以了一个 Z的
 		private static var mDepthBuffer:Array;
 		private static var mIsZBuffer:Boolean = false;
 		public static function setZBuffer(bmd:BitmapData):void

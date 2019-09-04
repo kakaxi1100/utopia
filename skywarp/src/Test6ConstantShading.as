@@ -246,7 +246,7 @@ package
 				p1World.setTo(p1.x + centerX, p1.y + centerY, p1.z + centerZ);
 				p2World.setTo(p2.x + centerX, p2.y + centerY, p2.z + centerZ);
 				p3World.setTo(p3.x + centerX, p3.y + centerY, p3.z + centerZ);
-				//计算平面的法向没必要归一化, 因为只算方向, 注意顶点旋转顺序采用右手法则
+				//计算平面的法向没必要归一化
 				p2World.minus(p1World, tempP1);
 				p3World.minus(p1World, tempP2);
 				//				trace(tempP1, tempP2);

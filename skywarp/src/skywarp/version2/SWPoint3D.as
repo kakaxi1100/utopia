@@ -40,6 +40,16 @@ package skywarp.version2
 			return result;
 		}
 		
+		public function plus(v:SWPoint3D, out:SWPoint3D = null):SWPoint3D
+		{
+			if(out == null){
+				out = new SWPoint3D(this.x + v.x, this.y + v.y, this.z + v.z);
+			}else{
+				out.setTo(this.x + v.x, this.y + v.y, this.z + v.z);
+			}
+			return out;
+		}
+		
 		public function minus(v:SWPoint3D, result:SWPoint3D = null):SWPoint3D
 		{
 			if(!result)
@@ -128,6 +138,19 @@ package skywarp.version2
 		
 		public function magnitude():Number {
 			return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+		}
+		
+		public function normalize(out:SWPoint3D = null):SWPoint3D {
+			var m:Number = this.magnitude();
+			if(out == null){
+				out = new SWPoint3D();
+			}
+			
+			if (m == 0) {
+				out.setTo(0, 0, 0);
+				return out;
+			}
+			return this.mult(1 / m, out);
 		}
 		
 		public function clone():SWPoint3D
