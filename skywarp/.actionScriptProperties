@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties analytics="false" mainApplicationPath="Test13AlphaBlending.as" projectUUID="964b49c2-f5ec-4bb9-9b8c-a29f36ad3e72" version="11">
+<actionScriptProperties analytics="false" mainApplicationPath="Test14SimpleShadow.as" projectUUID="964b49c2-f5ec-4bb9-9b8c-a29f36ad3e72" version="11">
   <compiler additionalCompilerArguments="-locale en_US" advancedTelemetry="false" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" useFlashSDK="true" verifyDigests="true" warn="true">
     <compilerSourcePath/>
     <libraryPath defaultLinkType="0">
@@ -32,6 +32,7 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
+    <application path="Test14SimpleShadow.as"/>
     <application path="Test13AlphaBlending.as"/>
     <application path="Test9TextureMapping.as"/>
     <application path="Test12BlilinearTextureMapping.as"/>

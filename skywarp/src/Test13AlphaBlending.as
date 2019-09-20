@@ -12,7 +12,13 @@ package
 	import skywarp.version2.SWPoint3D;
 
 	/**
-	 *Alpha 混合 
+	 * Alpha 混合 
+	 * 
+	 * alpha 混合包含两个方面, Zsort 和  Z 缓存
+	 * 这并不是一个完美的解决方案,但是相对游戏来说是可以接受的
+	 * 
+	 * 完美的解决方案需要大量的运算
+	 * 
 	 * @author juli
 	 * 
 	 */
@@ -50,8 +56,9 @@ package
 			
 			bmd.copyPixels(back.bitmapData, back.bitmapData.rect, new Point());
 			stage.addChild(bmp);
-			var p:SWPoint3D;
+			Utils.setZBuffer(bmd);
 			
+			var p:SWPoint3D;
 			p = new SWPoint3D(50, 50, -50);
 			vertexList.push(p);
 			p = new SWPoint3D(-50, 50, -50);
@@ -71,17 +78,17 @@ package
 			
 			polygonList.push(
 				2, 1, 0,
-//				3, 2, 0,
-//				4, 7, 0,
-//				7, 3, 0,
-//				6, 7, 4,
-//				5, 6, 4,
-				2, 6, 1
-//				6, 5, 1
-//				7, 6, 3,
-//				6, 2, 3,
-//				5, 4, 0,
-//				1, 5, 0
+				3, 2, 0,
+				4, 7, 0,
+				7, 3, 0,
+				6, 7, 4,
+				5, 6, 4,
+				2, 6, 1,
+				6, 5, 1,
+				7, 6, 3,
+				6, 2, 3,
+				5, 4, 0,
+				1, 5, 0
 			);
 			
 			for(var i:int = 0; i < polygonList.length / 3; i++)
@@ -168,6 +175,7 @@ package
 				}
 			}
 			
+			Utils.clearZBuffer();
 			this.zSort();
 			this.fillTriangle();
 		}
@@ -184,6 +192,7 @@ package
 //				p3D.rotateZ(rotaZ);
 			}
 			
+			Utils.clearZBuffer();
 			this.zSort();
 			this.fillTriangle();
 		}
@@ -222,7 +231,7 @@ package
 				}
 			}
 			
-			trace(zSortList, polygonZAverage);
+//			trace(zSortList, polygonZAverage);
 		}
 		
 		private function fillTriangle():void
@@ -351,28 +360,28 @@ class Utils
 		var dest:uint;
 		// drawing a line from left (sx) to right (ex) 
 		for(var x:int = sx; x < ex; x++) {
+			dest = bmd.getPixel32(x, y);
+			var redDest:uint = dest >> 16 & 0xFF;
+			var greenDest:uint = dest >> 8 & 0xFF;
+			var blueDest:uint = dest & 0xFF;
+			
+			var red:Number = (alpha * redSource + (1 - alpha) * redDest);
+			var green:Number = (alpha * greenSource + (1 - alpha) * greenDest);
+			var blue:Number = (alpha * blueSource + (1 - alpha) * blueDest);
+			
+			if(red > 255) red = 255;
+			if(green > 255) green = 255;
+			if(blue > 255) blue = 255;
+			
+			var c:uint = red << 16 | green << 8 | blue;
 			if(!mIsZBuffer)
 			{
-				dest = bmd.getPixel32(x, y);
-				var redDest:uint = dest >> 16 & 0xFF;
-				var greenDest:uint = dest >> 8 & 0xFF;
-				var blueDest:uint = dest & 0xFF;
-				
-				var red:Number = (alpha * redSource + (1 - alpha) * redDest);
-				var green:Number = (alpha * greenSource + (1 - alpha) * greenDest);
-				var blue:Number = (alpha * blueSource + (1 - alpha) * blueDest);
-				
-				if(red > 255) red = 255;
-				if(green > 255) green = 255;
-				if(blue > 255) blue = 255;
-				
-				var c:uint = red << 16 | green << 8 | blue;
 				bmd.setPixel(x, y, c);
 			}else{
 				//对每个点计算z值
 				var gradient:Number = (x - sx)/(ex - sx);
 				var z:Number = interpolate(sz, ez, gradient);
-				putPixel(x, y, z, bmd, color);
+				putPixel(x, y, z, bmd, c);
 			}
 		}
 	}
@@ -427,7 +436,7 @@ class Utils
 		}else
 		{
 			mDepthBuffer[index] = z;
-			bmd.setPixel32(x, y, color);
+			bmd.setPixel(x, y, color);
 		}
 	}
 	

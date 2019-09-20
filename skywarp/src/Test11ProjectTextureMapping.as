@@ -30,7 +30,6 @@ package
 		private var centerZ:int = 200;
 		private var vertexList:Array = [];
 		private var uvList:Array = [];
-		private var vertexTranList:Array = [];
 		private var polygonList:Array = [];
 		private var vertexNormalList:Array = [];
 		private var vertexColorList:Array = [];
