@@ -7,108 +7,52 @@ package walle
 		
 		public function FFVector(px:Number = 0, py:Number = 0)
 		{
-			x = px;
-			y = py;
+			this.x = px;
+			this.y = py;
 		}
 		
-		/**
-		 *矢量相加
-		 * 不改变原始值，产生一个新值 
-		 * @param v
-		 * @return 
-		 * 
-		 */		
-		public function plus(v:FFVector, t:FFVector = null):FFVector 
+		//如果需要改变的是原值, 只需要将out设置为自己本身就可以了
+		//var a = new FFVector();
+		//a.plus(new FFVector(1,5), a);
+		//a: FFVector {x: 1, y: 5}
+		public function plus(v:FFVector, out:FFVector = null):FFVector 
 		{
-			if(t == null){
-				t = new FFVector(x + v.x, y + v.y);
-			}else{
-				t.setTo(x + v.x, y + v.y);
+			if(out == null){
+				out = new FFVector();
 			}
 			
-			return t;  
+			out.setTo(this.x + v.x, this.y + v.y);
+			
+			return out;
 		}
-		/**
-		 * 矢量相加
-		 * 改变原始值
-		 * @param v
-		 * @return 
-		 * 
-		 */		
-		public function plusEquals(v:FFVector):FFVector 
+		
+		public function minus(v:FFVector, out:FFVector = null):FFVector 
 		{
-			x += v.x;
-			y += v.y;
-			return this;
-		}
-		/**
-		 *矢量相减 
-		 * 不改变原始值，产生一个新值 
-		 * @param v
-		 * @return 
-		 * 
-		 */		
-		public function minus(v:FFVector, t:FFVector = null):FFVector 
-		{
-			if(t == null){
-				t = new FFVector(x - v.x, y - v.y);
-			}else{
-				t.setTo(x - v.x, y - v.y);
+			if(out == null){
+				out = new FFVector();
 			}
 			
-			return t;    
-		}
-		/**
-		 *矢量相减 
-		 * 改变原始值
-		 * @param v
-		 * @return 
-		 * 
-		 */	
-		public function minusEquals(v:FFVector):FFVector 
-		{
-			x -= v.x;
-			y -= v.y;
-			return this;
+			out.setTo(this.x - v.x, this.y - v.y);
+			
+			return out;
 		}
 		
-		/**
-		 *数乘 
-		 * 不改变原始值，产生一个新值 
-		 * @param s
-		 * @return 
-		 * 
-		 */		
-		public function mult(s:Number, t:FFVector = null):FFVector 
+		public function mult(number:Number, out:FFVector = null):FFVector 
 		{
-			if(t == null){
-				t = new FFVector(x * s, y * s)
-			}else{
-				t.setTo(x * s, y * s);
+			if(out == null){
+				out = new FFVector();
 			}
-			return t;
-		}
-		/**
-		 *数乘 
-		 * 改变原始值
-		 * @param s
-		 * @return 
-		 * 
-		 */
-		public function multEquals(s:Number):FFVector {
-			x *= s;
-			y *= s;
-			return this;
+			
+			out.setTo(this.x * number, this.y * number);
+			
+			return out;
 		}
 		
-		/**
-		 *加上一个被缩放过的矢量 
-		 * 
-		 */		
+			
 		public function plusScaledVector(v:FFVector, scale:Number):void
 		{
-			x += v.x * scale;
-			y += v.y * scale;
+			this.x += v.x * scale;
+			this.y += v.y * scale;
 		}
 		
 		/**
@@ -122,7 +66,7 @@ package walle
 		 */		
 		public function scalarMult(v:FFVector):Number 
 		{
-			return x * v.x + y * v.y;
+			return this.x * v.x + this.y * v.y;
 		}
 		/**
 		 *叉积（矢积、外积） 
@@ -137,100 +81,75 @@ package walle
 		 */		
 		public function vectorMult(v:FFVector):Number 
 		{
-			return x * v.y - y * v.x;
+			return this.x * v.y - this.y * v.x;
 		}
-		
-		/**
-		 *将矢量进行旋转 
-		 * @param theta
-		 * @param v
-		 * @return 
-		 * 
-		 */		
+			
 		public function rotate(theta:Number):void
 		{
-			var tempX:Number = this.x*Math.cos(theta) - this.y*Math.sin(theta);
-			var tempY:Number = this.x*Math.sin(theta) + this.y*Math.cos(theta);
+			var tempX:Number = this.x * Math.cos(theta) - this.y * Math.sin(theta);
+			var tempY:Number = this.x * Math.sin(theta) + this.y * Math.cos(theta);
 			
 			this.setTo(tempX, tempY);
 		}
 		
-		/**
-		 *大小 
-		 * @return 
-		 * 
-		 */		
 		public function magnitude():Number 
 		{
-			return Math.sqrt(x * x + y * y);
+			return Math.sqrt(this.x * this.x + this.y * this.y);
 		}
-		
-		/**
-		 *大小的平方
-		 * @return 
-		 * 
-		 */		
+			
 		public function magnitudeSquare():Number 
 		{
-			return x * x + y * y;
+			return this.x * this.x + this.y * this.y;
 		}
 		
-		/**
-		 *计算两点之间的距离 
-		 * @param v
-		 * @return 
-		 * 
-		 */		
-		public function distance(v:FFVector, t:FFVector = null):Number
+			
+		public function distance(v:FFVector, out:FFVector = null):Number
 		{
-			return this.minus(v, t).magnitude();
+			return this.minus(v, out).magnitude();
 		}
 		
-		/**
-		 *计算两点之间的距离平方
-		 * @param v
-		 * @return 
-		 * 
-		 */		
-		public function distanceSquare(v:FFVector, t:FFVector = null):Number
+			
+		public function distanceSquare(v:FFVector, out:FFVector = null):Number
 		{
-			return this.minus(v, t).magnitudeSquare();
+			return this.minus(v, out).magnitudeSquare();
 		}
 		
-		/**
-		 *标准化矢量 
-		 * 不改变原始值，产生一个新值 
-		 * @return 
-		 * 
-		 */		
-		public function normalize():FFVector 
-		{
-			var m:Number = magnitude();
-			if (m == 0) return null;
-			return mult(1 / m);
-		}
-		
-		/**
-		 *标准化矢量 
-		 * 改变原始值
-		 * @return 
-		 * 
-		 */		
-		public function normalizeEquals():FFVector 
-		{
-			var m:Number = magnitude();
-			if (m != 0){
-				multEquals(1 / m);
+		public function normalize(out:FFVector = null):FFVector {
+			var m:Number = this.magnitude();
+			if(out == null){
+				out = new FFVector();
 			}
+			
+			if (m == 0) {
+				out.setTo(0, 0);
+				return out;
+			}
+			return this.mult(1 / m, out);
+		}
+			
+		public function truncate(num:Number):FFVector
+		{
+			if(this.magnitudeSquare() > num * num)
+			{
+				//如果大了就截断
+				var vNormal:FFVector = this.normalize(this);
+				vNormal.mult(num, this);
+			}
+			
 			return this;
 		}
 		
-		/**
-		 *判断两个向量是否相等 
-		 * @param v
-		 * @return 
-		 * 
-		 */		
+		//正交基的另一个轴 perpendicular 垂直的意思
+		public function perp(out:FFVector = null):FFVector
+		{
+			if(out == null){
+				out = new FFVector();
+			}
+			
+			out.setTo(-this.y, this.x);
+			return out;
+		}
+		
 		public function equal(v:FFVector):Boolean
 		{
 			return (this.x == v.x && this.y == v.y);
@@ -238,31 +157,37 @@ package walle
 		
 		public function setTo(px:Number, py:Number):FFVector
 		{
-			x = px;
-			y = py;
+			this.x = px;
+			this.y = py;
 			
 			return this;
 		}
 		
-		public function clear():void
+		public function isZero():Boolean
 		{
-			x = y = 0;
+			return this.x == 0 && this.y == 0;
 		}
 		
-		public function clone(t:FFVector = null):FFVector
+		public function clear():void
 		{
-			if(t == null){
-				t = new FFVector(this.x, this.y);
-			}else{
-				t.setTo(this.x, this.y);
+			this.x = this.y = 0;
+		}
+		
+		public function clone(out:FFVector = null):FFVector
+		{
+			if(out == null)
+			{
+				out = new FFVector();
 			}
 			
-			return t
+			out.setTo(this.x, this.y);
+			
+			return out
 		}
 		
 		public function toString():String 
 		{
-			return "( "+ x + " , " + y +" )";
+			return "( "+ this.x + " , " + this.y +" )";
 		}
 	}
 }

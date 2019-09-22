@@ -2,26 +2,150 @@ package walle
 {
 	public class Intelligent
 	{
-		//速度
 		private var mVelocity:FFVector;
-		//位置
 		private var mPosition:FFVector;
-		//加速度
 		private var mAcceleration:FFVector;
-		//所受的力
 		private var mForceAccum:FFVector;
-		//朝向
-		private var mHeadDirction:FFVector;
-		//侧向
-		private var mSideDiretion:FFVector;
+		private var mHead:FFVector;
+		private var mSide:FFVector;
+		
+		private var mMass:Number;
+		private var mInverseMass:Number;
+		private var mMaxSpeed:Number;
+		private var mMaxForce:Number;
+		private var mMaxTurnRate:Number;
+		
+		private var mPanicDisSq:Number;
+		private var mWanderTarget:FFVector;
+		private var mWanderRadius:Number;
+		private var mWanderJitter:Number;
+		private var mWanderDist:Number;
+		
 		public function Intelligent()
 		{
+			this.init();	
+		}
+		
+		private function init():void
+		{
+			mVelocity = new FFVector();
+			mPosition = new FFVector();
+			mAcceleration = new FFVector();
+			mForceAccum = new FFVector();
+			mHead = new FFVector(1, 0);
+			mSide = new FFVector(0, 1);
+			
+			mMass = 1
+			mInverseMass = 1
+			mMaxSpeed = 20;
+			mMaxForce = 5;
+			mMaxTurnRate = 10;
+			mPanicDisSq = 100 * 100;
+			
+			mWanderRadius = 20;
+			mWanderJitter = 4;
+			mWanderDist = 30;
+			mWanderTarget = new FFVector();
 		}
 		
 		//时间差
 		public function update(dt:Number):void
 		{
+			this.mAcceleration.setTo(this.mForceAccum.x * this.mInverseMass, this.mForceAccum.y * this.mInverseMass);
+			this.mVelocity.plusScaledVector(this.mAcceleration, dt);
+			//截断不能超过最大速度
+			this.mVelocity.truncate(this.mMaxSpeed);
+			this.mPosition.plusScaledVector(this.mVelocity, dt);
+			//更新朝向
+			if(this.mVelocity.magnitudeSquare() > 0.1){
+				this.mVelocity.normalize(this.mHead);
+				this.mHead.perp(this.mSide);
+			}
 			
+			mForceAccum.clear();
+		}
+		
+		public function addForce(f:FFVector):void
+		{
+			this.mForceAccum.plus(f, this.mForceAccum);
+			this.mForceAccum.truncate(this.mMaxForce);
+		}
+ 
+		public function get panicDisSq():Number
+		{
+			return this.mPanicDisSq;
+		}
+		
+		public function get wanderDist():Number
+		{
+			return this.mWanderDist;
+		}
+		
+		public function get wanderJitter():Number
+		{
+			return this.mWanderJitter;
+		}
+		
+		public function get wanderRadius():Number
+		{
+			return this.mWanderRadius;
+		}
+		
+		public function set maxForce(value:Number):void
+		{
+			this.mMaxForce = value;
+		}
+		public function get maxForce():Number
+		{
+			return this.mMaxForce;
+		}
+		
+		public function set maxSpeed(value:Number):void
+		{
+			this.mMaxSpeed = value;
+		}
+		public function get maxSpeed():Number
+		{
+			return this.mMaxSpeed;
+		}
+		
+		public function get wanderTarget():FFVector
+		{
+			return this.mWanderTarget;
+		}
+		
+		public function get velocity():FFVector
+		{
+			return this.mVelocity;
+		}
+		
+		public function get position():FFVector
+		{
+			return this.mPosition;
+		}
+		
+		public function get head():FFVector
+		{
+			return this.mHead;
+		}
+		
+		public function get side():FFVector
+		{
+			return this.mSide;
+		}
+		
+		public function set mass(value):void
+		{
+			if (value == 0) {
+				this.mInverseMass = 0;
+			} else {
+				this.mInverseMass = 1 / value;
+			}
+			this.mMass = value;
+		}
+		public function get mass():Number
+		{
+			return this.mMass;
 		}
 	}
 }

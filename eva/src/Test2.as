@@ -7,6 +7,7 @@ package
 	import voforai.SteeringBehaviors;
 	import voforai.Vehicle;
 	
+	[SWF(frameRate="60", backgroundColor="#FFFFFF",width="800",height="600")]
 	public class Test2 extends Sprite
 	{
 		private var sp:Sprite = new Sprite();

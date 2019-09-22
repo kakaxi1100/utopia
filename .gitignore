@@ -24,6 +24,10 @@ experiment/bin/
 experiment/bin-debug/
 experiment/bin-release/
 
+Walle/bin/
+Walle/bin-debug/
+Walle/bin-release/
+
 # Other files and folders
 vernalbreeze/.settings/
 vernalbreeze.~ml
