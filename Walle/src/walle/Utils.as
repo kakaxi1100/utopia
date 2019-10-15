@@ -7,5 +7,10 @@ package walle
 		{
 			return Math.random() - Math.random();
 		}
+		
+		public static function randomRange(start:Number, end:Number):Number
+		{
+			return Math.random() * (end - start) + start;
+		}
 	}
 }

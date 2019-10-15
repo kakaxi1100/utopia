@@ -20,6 +20,10 @@ package walle
 		private var mWanderRadius:Number;
 		private var mWanderJitter:Number;
 		private var mWanderDist:Number;
+		//全速前进时检测盒的长度
+		private var mMinDetetionBoxLength:Number;
+		private var mDetetionBoxLength:Number;
+		private var mDetetionBoxHalfHeight:Number;
 		
 		public function Intelligent()
 		{
@@ -38,7 +42,7 @@ package walle
 			mMass = 1
 			mInverseMass = 1
 			mMaxSpeed = 20;
-			mMaxForce = 5;
+			mMaxForce = 8;
 			mMaxTurnRate = 10;
 			mPanicDisSq = 100 * 100;
 			
@@ -46,6 +50,9 @@ package walle
 			mWanderJitter = 4;
 			mWanderDist = 30;
 			mWanderTarget = new FFVector();
+			mMinDetetionBoxLength = 50;
+			mDetetionBoxHalfHeight = 5;
+			mDetetionBoxLength = 0;
 		}
 		
 		//时间差
@@ -107,6 +114,25 @@ package walle
 		public function get maxSpeed():Number
 		{
 			return this.mMaxSpeed;
+		}
+		
+		public function get minDetetionBoxLength():Number
+		{
+			return this.mMinDetetionBoxLength;
+		}
+		
+		public function set detetionBoxLength(value:Number):void
+		{
+			this.mDetetionBoxLength = value;
+		}
+		public function get detetionBoxLength():Number
+		{
+			return this.mDetetionBoxLength;
+		}
+		
+		public function get detetionBoxHalfHeight():Number
+		{
+			return this.mDetetionBoxHalfHeight;
 		}
 		
 		public function get wanderTarget():FFVector

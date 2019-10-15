@@ -8,9 +8,12 @@ package walle
 		public var intelligent:Intelligent = new Intelligent();
 		public var warp:FFVector = new FFVector(800, 600);
 		
+		private var detection:Sprite = new Sprite();
 		public function Car(color:uint = 0)
 		{
 			super();
+			
+			addChild(detection);
 			
 			this.graphics.lineStyle(1,0xFF0000);
 			this.graphics.drawCircle(0,0,1);
@@ -49,6 +52,11 @@ package walle
 			this.y = this.intelligent.position.y;
 			
 			this.rotation = Math.atan2(this.intelligent.head.y, this.intelligent.head.x) * RToD;
+			
+			//draw detection
+			this.detection.graphics.clear();
+			this.detection.graphics.lineStyle(1, 0x00FF00);
+			this.detection.graphics.lineTo(this.intelligent.detetionBoxLength, 0);
 		}
 		
 		

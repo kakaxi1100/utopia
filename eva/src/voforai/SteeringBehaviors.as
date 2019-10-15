@@ -96,8 +96,9 @@ package voforai
 			//---为了方便控制力
 			//---将这部分移动到了caculate里面去计算
 			//---这里仅仅是返回cohesion所受的力
-			//v.addForce(direct.minusEquals(v.velocity));
-			return direct.minusEquals(v.velocity);
+			var force:EVector = direct.minusEquals(v.velocity);
+			v.addForce(force);
+			return force;
 		}
 		/**
 		 *p 追 e 
