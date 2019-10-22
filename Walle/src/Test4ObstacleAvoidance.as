@@ -2,6 +2,7 @@ package
 {
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	
 	import walle.Car;
@@ -42,6 +43,17 @@ package
 			
 			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+		}
+		
+		protected function onKeyUp(event:KeyboardEvent):void
+		{
+			for(var i:int = 0; i < clist.length; i++)
+			{
+				var c:Circle = clist[i];
+				c.x = Utils.randomRange(c.radius, stage.stageWidth - c.radius);
+				c.y = Utils.randomRange(c.radius, stage.stageHeight - c.radius);
+			}
 		}
 		
 		protected function onMouseDown(event:MouseEvent):void

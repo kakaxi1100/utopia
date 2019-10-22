@@ -25,6 +25,10 @@ package walle
 		private var mDetetionBoxLength:Number;
 		private var mDetetionBoxHalfHeight:Number;
 		
+		//是否被其它小车标记
+		private var mTag:Boolean;
+		//所受到的力的标志
+		private var flag:int;
 		public function Intelligent()
 		{
 			this.init();	
@@ -53,6 +57,8 @@ package walle
 			mMinDetetionBoxLength = 50;
 			mDetetionBoxHalfHeight = 5;
 			mDetetionBoxLength = 0;
+			
+			mTag = false;
 		}
 		
 		//时间差
@@ -76,6 +82,35 @@ package walle
 		{
 			this.mForceAccum.plus(f, this.mForceAccum);
 			this.mForceAccum.truncate(this.mMaxForce);
+		}
+		
+		public function on(types:int):void
+		{
+			flag |= types;
+		}
+		public function off(types:int):void
+		{
+			flag &= ~types;
+		}
+		
+		public function isOn(types:int):Boolean
+		{
+			return flag & types;
+		}
+		
+		public function isTagged():Boolean
+		{
+			return this.mTag;
+		}
+		
+		public function tag():void
+		{
+			this.mTag = true;
+		}
+		
+		public function untag():void
+		{
+			this.mTag = false;
 		}
  
 		public function get panicDisSq():Number

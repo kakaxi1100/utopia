@@ -13,7 +13,7 @@ package
 	{
 		private var car1:Car = new Car();
 		private var car2:Car = new Car();
-		private var car3:Car = new Car();
+		private var car3:Car = new Car(0XFF00FF);
 		private var car4:Car = new Car();
 		private var car5:Car = new Car();
 		private var car6:Car = new Car();
@@ -31,25 +31,31 @@ package
 			
 			this.addChild(car1);
 			car1.intelligent.position.setTo(100, 100);
+			car1.intelligent.maxForce = 10;
 			offset1.setTo(-50, -50);
 			
 			this.addChild(car2);
 			car2.intelligent.position.setTo(700, 500);
+			car2.intelligent.maxForce = 10;
 			offset2.setTo(-50, 50);
 			
 			this.addChild(car3);
+			car3.intelligent.maxSpeed = 12;
 			car3.intelligent.position.setTo(400, 300);
 			
 			this.addChild(car4);
 			car4.intelligent.position.setTo(200, 200);
+			car4.intelligent.maxForce = 10;
 			offset4.setTo(-100, -100);
 			
 			this.addChild(car5);
 			car5.intelligent.position.setTo(300, 300);
+			car5.intelligent.maxForce = 10;
 			offset5.setTo(-100, 0);
 			
 			this.addChild(car6);
 			car6.intelligent.position.setTo(400, 400);
+			car6.intelligent.maxForce = 10;
 			offset6.setTo(-100, 100);
 			
 			
@@ -74,8 +80,8 @@ package
 			SteeringBehaviors.offsetPursuit(car3.intelligent, car5.intelligent, offset5);
 			SteeringBehaviors.offsetPursuit(car3.intelligent, car6.intelligent, offset6);
 			
-			SteeringBehaviors.arrive(car3.intelligent, target);
-//			SteeringBehaviors.wander(car3.intelligent);
+//			SteeringBehaviors.arrive(car3.intelligent, target);
+			SteeringBehaviors.wander(car3.intelligent);
 			
 			car1.udpate(0.0166 * 10);
 			car2.udpate(0.0166 * 10);
