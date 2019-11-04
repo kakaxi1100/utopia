@@ -15,7 +15,17 @@ package walle
 		public static var TYPE_COHESION:int = 1 << 1;
 		public static var TYPE_ALIGNMENT:int = 1 << 2;
 		
-		private static var flag:int = 0;
+		public static var separationWeight:Number = 0.3;
+		public static var alignmentWeight:Number = 1;
+		public static var cohesionWeight:Number = 0.3;
+		public static var wanderWeight:Number = 1;
+		
+		public static var enforceOn:Boolean = false;
+		
+		private static var separeteDist:int = 25;
+		private static var alignmentDist:int = 50;
+		private static var cohesionDist:int = 50 * 2;
+		private static var enforceDist:int = 20;//最好比separeteDist小, 因为如果大的话, 那么可能很多小车都无法产生 separate的力
 		
 		public function SteeringBehaviors()
 		{
@@ -28,6 +38,17 @@ package walle
 			
 			var force:FFVector = desiredVelocity.minus(source.velocity, tempV1);
 			source.addForce(force);
+		}
+		
+		public static function seek_force(source:Intelligent, target:FFVector):FFVector
+		{
+			var desiredVelocity:FFVector = target.minus(source.position, tempV1);
+			desiredVelocity.normalize(tempV1);
+			desiredVelocity.mult(source.maxSpeed, tempV1);
+			
+			var force:FFVector = desiredVelocity.minus(source.velocity, tempV1);
+			force.truncate(source.maxForce);
+			return force;
 		}
 		
 		public static function flee(source:Intelligent, target:FFVector):void
@@ -60,6 +81,18 @@ package walle
 			source.addForce(force);
 		}
 		
+		public static function arrive_force(source:Intelligent, target:FFVector):FFVector
+		{
+			var dir:FFVector = target.minus(source.position, tempV1);
+			var dist:Number = dir.magnitude();
+			var desiredVelocity:FFVector;
+			desiredVelocity = dir.normalize(dir).mult(source.maxSpeed * dist/cohesionDist, dir);
+			
+			var force:FFVector = desiredVelocity.minus(source.velocity, tempV2);
+			force.truncate(source.maxForce);
+			return force;
+		}
+		
 		public static function wander(source:Intelligent):void
 		{
 			//计算圆心的世界坐标
@@ -74,6 +107,22 @@ package walle
 			targetPos.mult(source.wanderRadius, targetPos);
 			targetPos.plus(center, targetPos);
 			source.addForce(targetPos);
+		}
+		
+		public static function wanderOn(source:Intelligent):FFVector
+		{
+			//计算圆心的世界坐标
+			var center:FFVector = source.head.mult(source.wanderDist, tempV1);
+			//计算抖动偏移量
+			var offset:FFVector = tempV2.setTo(Utils.randomBinomial() * source.wanderJitter, Utils.randomBinomial() * source.wanderJitter);
+			//将之前的点加上偏移量,得到偏移的点
+			var targetPos:FFVector = source.wanderTarget.plus(offset, source.wanderTarget);
+			//将偏移的点投影到圆上
+			targetPos.minus(center, targetPos);
+			targetPos.normalize(targetPos);
+			targetPos.mult(source.wanderRadius, targetPos);
+			targetPos.plus(center, targetPos);
+			return targetPos;
 		}
 		
 		public static function pursuit(source:Intelligent, dest:Intelligent):void
@@ -326,7 +375,7 @@ package walle
 			//先算出两个智能体的中间位置
 			var midPoint:FFVector = dest1.position.plus(dest2.position, tempV1).mult(0.5, tempV1);
 			//然后计算当前source到达这个点所需要得最少的时间，即拥有最大速度
-			var timeToReachMidPoint:Number = source.position.distance(midPoint, tempV2)/source.maxSpeed;
+			var timeToReachMidPoint:Number = source.position.distance(midPoint)/source.maxSpeed;
 			//用这个时间来预测 dest1和dest2 将要到达得位置
 			//先计算出速度于这个时间乘积然后再加上现有的位置
 			//分成两步些主要是为了节省变量
@@ -345,7 +394,7 @@ package walle
 		
 		public static function followPath(source:Intelligent, path:Path):void
 		{
-			var dist:Number = source.position.distanceSquare(path.curtPoint, tempV1);
+			var dist:Number = source.position.distanceSquare(path.curtPoint);
 			//表示到达了
 			if(dist <= path.curtDist * path.curtDist)
 			{
@@ -376,7 +425,7 @@ package walle
 			var futurePostion:FFVector = offsetWorld.plus(leader.velocity.mult(lookAheadTime, tempV2), tempV3);
 			arrive(follow, futurePostion);
 		}
-//--------------------------------------组行为----------------------------------------------------------------------
+//--------------------------------------组行为---第一种方式-------------------------------------------------------------------
 		//标记所有再半径范围内的小车
 		public static function tagNeighbors(source:Intelligent, radius:Number, list:Array):void
 		{
@@ -391,7 +440,7 @@ package walle
 				//先将当前的tag取消
 				curt.untag();
 				//计算到当前p的距离
-				var distSq:Number = curt.position.distanceSquare(source.position, tempV1);
+				var distSq:Number = curt.position.distanceSquare(source.position);
 				//看这个距离是否在范围之内
 				if(distSq < radius * radius)
 				{
@@ -416,7 +465,13 @@ package walle
 					var dist:Number = toAgent.magnitude();
 					var len:Number = (dist == 0) ? source.maxForce : (1/dist > source.maxForce) ? source.maxForce : 1/dist;//如果位置重合就让它产生最大的力
 					//逃离的大小应该跟距离成反比
-					toAgent.normalize(tempV1).mult(len, tempV1);
+					if(dist == 0)
+					{
+						toAgent = curt.head.clone(tempV1);
+					}else
+					{
+						toAgent.normalize(tempV1).mult(len, tempV1);
+					}
 					force.plus(toAgent, force);
 				}
 			}
@@ -472,24 +527,316 @@ package walle
 
 				//seek
 				var dir:FFVector = centerOfMass.minus(source.position, tempV1);
+				dir.normalize(tempV1);
 				var desiredVelocity:FFVector = dir.mult(source.maxSpeed, tempV1);
 				
-				force = desiredVelocity.minus(source.velocity, tempV1);
+				force = desiredVelocity.minus(source.velocity, tempV5);
 			}
 			
 			return force;
 		}
-		
+	
 		public static function calculate(list:Array):void
 		{
-			var force:FFVector = tempV1.setTo(0, 0);
+			var force:FFVector = tempV2.setTo(0, 0);
 			for(var i:int = 0; i < list.length; i++)
 			{
 				var source:Intelligent = list[i];
 				
 				tagNeighbors(source, 100, list);
-				force = cohesion(source, list);
+				var tempForce:FFVector = cohesion(source, list);
+				tempForce.mult(cohesionWeight, tempForce);
+				force.plus(tempForce, tempV2);
+				tempForce = alignment(source, list);
+				tempForce.mult(alignmentWeight, tempForce);
+				force.plus(tempForce, tempV2);
+				tempForce = separation(source, list);
+				tempForce.mult(separationWeight, tempForce);
+				force.plus(tempForce, tempV2);
 				source.addForce(force);
+			}
+		}
+		
+		public static function calculate_truncate(list:Array):void
+		{
+			var force:FFVector = tempV2.setTo(0, 0);
+			var curForce:FFVector = tempV3.setTo(0, 0);
+			var tempForce:FFVector;
+			for(var i:int = 0; i < list.length; i++)
+			{
+				var source:Intelligent = list[i];
+				tagNeighbors(source, 100, list);
+				curForce.setTo(0, 0);
+				
+//				tempForce = cohesion(source, list);
+//				tempForce.mult(cohesionWeight, tempForce);
+//				force.plus(tempForce, tempV2);
+//				if(!accumulateForce(source, force, curForce))
+//				{
+//					continue;
+//				}else
+//				{
+//					source.addForce(curForce);					
+//				}
+				
+				
+				tempForce = alignment(source, list);
+				tempForce.mult(alignmentWeight, tempForce);
+				force.plus(tempForce, tempV2);
+				if(!accumulateForce(source, force, curForce))
+				{
+					continue;
+				}else
+				{
+					source.addForce(curForce);					
+				}
+				
+//				tempForce = separation(source, list);
+//				tempForce.mult(separationWeight, tempForce);
+//				force.plus(tempForce, tempV2);
+//				if(!accumulateForce(source, force, curForce))
+//				{
+//					continue;
+//				}else
+//				{					
+//					source.addForce(curForce);
+//				}
+				
+//				tempForce = wanderOn(source);
+//				tempForce.mult(wanderWeight, tempForce);
+//				force.plus(tempForce, tempV2);
+//				if(!accumulateForce(source, force, curForce))
+//				{
+//					continue;
+//				}else
+//				{					
+//					source.addForce(curForce);
+//				}
+			}
+		}
+		
+		private static function accumulateForce(source:Intelligent, f:FFVector, r:FFVector):Boolean
+		{
+			//当前所使用的总力
+			var curForce:Number = r.magnitude();
+			//最大力与总力之差，计算剩下还能加多少力上去
+			var remainForce:Number = source.maxForce - curForce;
+			//假如没有剩余可加的力,则返回false,不在计算剩余的转向行为
+			if(remainForce <= 0) return false;
+			//计算我们所要加的力的大小
+			var forceToAdd:Number = f.magnitude();
+			//假如将要加上的力比剩余可加的力还小,那么全部加上去就可以了
+			if(forceToAdd < remainForce){
+				r.plus(f, r);
+			}else{//假如要加的力比剩余力还大, 那么直接加上剩余的力就可以了
+				//剩余力为所要加的力的方向和剩余力的大小
+				var remain:FFVector = f.normalize(f).mult(remainForce, f);
+				r.plus(remain, r);
+			}
+			
+			return true;
+		}
+		
+//-------------------------------第二种方式----------------------------------------------------------		
+		public static function separation_force(source:Intelligent, list:Array):FFVector
+		{
+			var curt:Intelligent;
+			var toAgent:FFVector;
+			var dist:Number;
+			var count:int;
+			var force:FFVector = tempV6.setTo(0, 0);
+			for(var i:int = 0; i < list.length; i++)
+			{
+				curt = list[i];
+//				if(curt == source) continue;
+				toAgent = source.position.minus(curt.position, tempV1);//方向是 p指向它，也就是逃离的方向
+				dist = toAgent.magnitude();
+				if(dist > 0 && dist < separeteDist)
+				{
+					toAgent.normalize(tempV1);
+					toAgent.div(dist, tempV1);
+					force.plus(toAgent, tempV6);
+					count++;
+				}
+			}
+			
+			if(count > 0)
+			{
+				force.div(count, tempV6);
+			}
+			
+			if(force.magnitude() > 0)
+			{
+				force.normalize(tempV6);
+				force.mult(source.maxSpeed, tempV6);
+				force.minus(source.velocity, tempV6);
+				force.truncate(source.maxForce);
+			}
+			
+			return force;
+		}
+		
+		
+		public static function alignment_force(source:Intelligent, list:Array):FFVector
+		{
+			var averageHeading:FFVector = tempV6.setTo(0, 0);
+			var force:FFVector = tempV5.setTo(0, 0);
+			var toAgent:FFVector;
+			var dist:Number;
+			var curt:Intelligent;
+			var count:int;
+			for (var i:int = 0; i < list.length; i++) 
+			{
+				curt = list[i];
+//				if(curt == source) continue;
+				toAgent = source.position.minus(curt.position, tempV1);//方向是 p指向它，也就是逃离的方向
+				dist = toAgent.magnitude();
+				if(dist > 0 && dist < alignmentDist)
+				{
+					averageHeading.plus(curt.head, tempV6);//计算朝向的总和
+					count++;
+				}
+			}
+			//求平均值
+			if(count > 0){
+				averageHeading.div(count, tempV6);
+				averageHeading.normalize(tempV6);
+				averageHeading.mult(source.maxSpeed, tempV6);
+				//然后计算转向力
+				force = averageHeading.minus(source.velocity, tempV5);
+				force.truncate(source.maxForce);
+			}
+			
+			return force;
+		}
+		
+		public static function cohesion_force(source:Intelligent, list:Array):FFVector
+		{
+			var centerOfMass:FFVector = tempV6.setTo(0, 0);
+			var force:FFVector = tempV5.setTo(0, 0);
+			var dist:Number;
+			var curt:Intelligent;
+			var count:int;
+			var toAgent:FFVector;
+			for (var i:int = 0; i < list.length; i++) 
+			{
+				curt = list[i];
+//				if(curt == source) continue;
+				toAgent = source.position.minus(curt.position, tempV1);//方向是 p指向它，也就是逃离的方向
+				dist = toAgent.magnitude();
+				if(dist > 0 && dist < cohesionDist)
+				{
+					centerOfMass.plus(curt.position, tempV6);
+					count++;
+				}
+			}
+			//求平均值
+			if(count > 0){
+				//找到中心点
+				centerOfMass.div(count, tempV6);
+				force = arrive_force(source, centerOfMass);
+			}
+			
+			return force;
+		}
+		
+		//加权截断总和
+		public static function flock(list:Array):void
+		{
+			for(var i:int = 0; i < list.length; i++)
+			{
+				var source:Intelligent = list[i];
+				
+				var sep:FFVector = separation_force(source, list);
+				sep.mult(separationWeight, sep);
+				source.addForce(sep);
+				
+				var ali:FFVector = alignment_force(source, list);
+				ali.mult(alignmentWeight, ali);
+				source.addForce(ali);
+				
+				var coh:FFVector = cohesion_force(source, list);
+				coh.mult(cohesionWeight, coh);
+				source.addForce(coh);
+				
+				if(enforceOn)
+				{
+					enforceNonPenetration(source, list);
+				}
+			}
+		}
+		
+		//加权截断累计
+		public static function flock_truncate(list:Array):void
+		{
+			var force:FFVector = tempV2.setTo(0, 0);
+			var curForce:FFVector = tempV3.setTo(0, 0);
+			var tempForce:FFVector;
+			for(var i:int = 0; i < list.length; i++)
+			{
+				var source:Intelligent = list[i];
+				curForce.setTo(0, 0);
+				
+				tempForce = separation_force(source, list);
+				tempForce.mult(separationWeight, tempForce);
+				force.plus(tempForce, tempV2);
+				if(!accumulateForce(source, force, curForce))
+				{
+					continue;
+				}else
+				{
+					source.addForce(curForce);					
+				}
+				
+				
+				tempForce = alignment_force(source, list);
+				tempForce.mult(alignmentWeight, tempForce);
+				force.plus(tempForce, tempV2);
+				if(!accumulateForce(source, force, curForce))
+				{
+					continue;
+				}else
+				{
+					source.addForce(curForce);					
+				}
+				
+				tempForce = cohesion_force(source, list);
+				tempForce.mult(cohesionWeight, tempForce);
+				force.plus(tempForce, tempV2);
+				if(!accumulateForce(source, force, curForce))
+				{
+					continue;
+				}else
+				{					
+					source.addForce(curForce);
+				}
+				
+				if(enforceOn)
+				{
+					enforceNonPenetration(source, list);
+				}
+			}
+		}
+		
+		//确保无重叠
+		public static function enforceNonPenetration(source:Intelligent, list:Array):void
+		{
+			var curt:Intelligent;
+			var toAgent:FFVector;
+			for(var i:int = 0; i < list.length; i++)
+			{
+				curt = list[i];
+				if(source == curt) continue;
+				toAgent = source.position.minus(curt.position, tempV4);
+				var dist:Number = toAgent.magnitude();
+				if(dist < enforceDist)
+				{
+					//那么它们两个应该分离, 可以按照自己的策略分离, 现在先按照一人移动一半来算
+					toAgent.normalize(tempV4);
+					toAgent.mult(dist * 0.5);
+					source.position.plus(toAgent, source.position);
+					curt.position.minus(toAgent, curt.position);
+				}
 			}
 		}
 		

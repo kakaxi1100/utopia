@@ -28,7 +28,10 @@ package walle
 		//是否被其它小车标记
 		private var mTag:Boolean;
 		//所受到的力的标志
-		private var flag:int;
+		private var mFlag:int;
+		
+		//cell相关
+		private var mCellIndex:int; 
 		public function Intelligent()
 		{
 			this.init();	
@@ -86,16 +89,16 @@ package walle
 		
 		public function on(types:int):void
 		{
-			flag |= types;
+			mFlag |= types;
 		}
 		public function off(types:int):void
 		{
-			flag &= ~types;
+			mFlag &= ~types;
 		}
 		
 		public function isOn(types:int):Boolean
 		{
-			return flag & types;
+			return mFlag & types;
 		}
 		
 		public function isTagged():Boolean
@@ -113,6 +116,15 @@ package walle
 			this.mTag = false;
 		}
  
+		public function set cellIndex(value:int):void
+		{
+			mCellIndex = value;
+		}
+		public function get cellIndex():int
+		{
+			return mCellIndex;
+		}
+		
 		public function get panicDisSq():Number
 		{
 			return this.mPanicDisSq;

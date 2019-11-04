@@ -5,6 +5,8 @@ package walle
 		public var x:Number;
 		public var y:Number;
 		
+		private static var mTempV1:FFVector = new FFVector();
+		
 		public function FFVector(px:Number = 0, py:Number = 0)
 		{
 			this.x = px;
@@ -44,6 +46,18 @@ package walle
 			}
 			
 			out.setTo(this.x * number, this.y * number);
+			
+			return out;
+		}
+		
+		public function div(number:Number, out:FFVector = null):FFVector 
+		{
+			if(out == null){
+				out = new FFVector();
+			}
+			
+			
+			out.setTo(this.x / number, this.y / number);
 			
 			return out;
 		}
@@ -103,15 +117,15 @@ package walle
 		}
 		
 			
-		public function distance(v:FFVector, out:FFVector = null):Number
+		public function distance(v:FFVector):Number
 		{
-			return this.minus(v, out).magnitude();
+			return this.minus(v, mTempV1).magnitude();
 		}
 		
 			
-		public function distanceSquare(v:FFVector, out:FFVector = null):Number
+		public function distanceSquare(v:FFVector):Number
 		{
-			return this.minus(v, out).magnitudeSquare();
+			return this.minus(v, mTempV1).magnitudeSquare();
 		}
 		
 		public function normalize(out:FFVector = null):FFVector {

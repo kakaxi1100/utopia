@@ -10,14 +10,14 @@ package
 	import walle.SteeringBehaviors;
 	
 	[SWF(frameRate="60", backgroundColor="#CCCCCC",width="800",height="600")]
-	public class Test8Flock extends Sprite
+	public class Test9GridFlock extends Sprite
 	{
 		private var target:FFVector = new FFVector();
 		private var wanderContainer:Sprite = new Sprite();
 		
 		private var list:Array = [];
 		private var listI:Array = [];
-		public function Test8Flock()
+		public function Test9GridFlock()
 		{
 			super();
 			
@@ -35,9 +35,9 @@ package
 				{
 					car = new Car();
 				}
-//				car.intelligent.position.setTo(Math.random() * 800, Math.random() * 600);
+				//				car.intelligent.position.setTo(Math.random() * 800, Math.random() * 600);
 				car.intelligent.position.setTo(400 + i * 5, 300 + i * 5);
-//				car.intelligent.position.setTo(400, 300);
+				//				car.intelligent.position.setTo(400, 300);
 				list.push(car);
 				listI.push(car.intelligent);
 				addChild(car);

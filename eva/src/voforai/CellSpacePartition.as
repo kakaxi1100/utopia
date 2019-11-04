@@ -81,7 +81,7 @@ package voforai
 				col = mCols - 1;
 			}
 			
-			var index:int = row*mCols + col;//计算出在cell的index
+			var index:int = row * mCols + col;//计算出在cell的index
 			
 			return index;//那个cell
 		}
@@ -101,7 +101,7 @@ package voforai
 		 */		
 		public function updateEntity(v:Vehicle):void
 		{
-			var newIndex:int = postionToIndex(v.position);//计算小车得新位置
+			var newIndex:int = postionToIndex(v.position);//计算小车的新位置
 			if(newIndex == v.cellIndex) return;//假如是在同一个cell, 就直接返回
 			
 			//假如不是同一个cell, 就先从当前cell中删除掉
