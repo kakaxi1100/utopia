@@ -357,7 +357,6 @@ package walle
 				source.head.mult(force.x, tempV3);
 				source.side.mult(force.y, tempV4);
 				var worldForce:FFVector = tempV3.plus(tempV4, tempV5);
-				
 				source.addForce(worldForce);
 			}
 		}
@@ -837,6 +836,130 @@ package walle
 					source.position.plus(toAgent, source.position);
 					curt.position.minus(toAgent, curt.position);
 				}
+			}
+		}
+//-------------------------------第三种方式----------------------------------------------------------	
+		public static function separation_grid(source:Intelligent, list:Array):FFVector
+		{
+			var curt:Intelligent;
+			var toAgent:FFVector;
+			var dist:Number;
+			var count:int;
+			var force:FFVector = tempV6.setTo(0, 0);
+			for(var i:int = 0; i < list.length; i++)
+			{
+				curt = list[i];
+				//				if(curt == source) continue;
+				toAgent = source.position.minus(curt.position, tempV1);//方向是 p指向它，也就是逃离的方向
+				dist = toAgent.magnitude();
+				if(dist > 0 && dist < separeteDist)
+				{
+					toAgent.normalize(tempV1);
+					toAgent.div(dist, tempV1);
+					force.plus(toAgent, tempV6);
+					count++;
+				}
+			}
+			
+			if(count > 0)
+			{
+				force.div(count, tempV6);
+			}
+			
+			if(force.magnitude() > 0)
+			{
+				force.normalize(tempV6);
+				force.mult(source.maxSpeed, tempV6);
+				force.minus(source.velocity, tempV6);
+				force.truncate(source.maxForce);
+			}
+			
+			return force;
+		}
+		
+		
+		public static function alignment_grid(source:Intelligent, list:Array):FFVector
+		{
+			var averageHeading:FFVector = tempV6.setTo(0, 0);
+			var force:FFVector = tempV5.setTo(0, 0);
+			var toAgent:FFVector;
+			var dist:Number;
+			var curt:Intelligent;
+			var count:int;
+			for (var i:int = 0; i < list.length; i++) 
+			{
+				curt = list[i];
+				//				if(curt == source) continue;
+				toAgent = source.position.minus(curt.position, tempV1);//方向是 p指向它，也就是逃离的方向
+				dist = toAgent.magnitude();
+				if(dist > 0 && dist < alignmentDist)
+				{
+					averageHeading.plus(curt.head, tempV6);//计算朝向的总和
+					count++;
+				}
+			}
+			//求平均值
+			if(count > 0){
+				averageHeading.div(count, tempV6);
+				averageHeading.normalize(tempV6);
+				averageHeading.mult(source.maxSpeed, tempV6);
+				//然后计算转向力
+				force = averageHeading.minus(source.velocity, tempV5);
+				force.truncate(source.maxForce);
+			}
+			
+			return force;
+		}
+		
+		public static function cohesion_grid(source:Intelligent, list:Array):FFVector
+		{
+			var centerOfMass:FFVector = tempV6.setTo(0, 0);
+			var force:FFVector = tempV5.setTo(0, 0);
+			var dist:Number;
+			var curt:Intelligent;
+			var count:int;
+			var toAgent:FFVector;
+			for (var i:int = 0; i < list.length; i++) 
+			{
+				curt = list[i];
+				//				if(curt == source) continue;
+				toAgent = source.position.minus(curt.position, tempV1);//方向是 p指向它，也就是逃离的方向
+				dist = toAgent.magnitude();
+				if(dist > 0 && dist < cohesionDist)
+				{
+					centerOfMass.plus(curt.position, tempV6);
+					count++;
+				}
+			}
+			//求平均值
+			if(count > 0){
+				//找到中心点
+				centerOfMass.div(count, tempV6);
+				force = arrive_force(source, centerOfMass);
+			}
+			
+			return force;
+		}
+		
+		public static function flock_grid(list:Array):void
+		{
+			CellSpacePartition.getInstance().update(list);
+			for(var i:int = 0; i < list.length; i++)
+			{
+				var source:Intelligent = list[i];
+				var newList:Array = CellSpacePartition.getInstance().calculateNeighbors(source.position, 100);
+				
+				var sep:FFVector = separation_force(source, newList);
+				sep.mult(separationWeight, sep);
+				source.addForce(sep);
+				
+				var ali:FFVector = alignment_force(source, newList);
+				ali.mult(alignmentWeight, ali);
+				source.addForce(ali);
+				
+				var coh:FFVector = cohesion_force(source, newList);
+				coh.mult(cohesionWeight, coh);
+				source.addForce(coh);
 			}
 		}
 		

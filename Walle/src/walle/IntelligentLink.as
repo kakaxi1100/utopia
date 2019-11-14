@@ -4,6 +4,7 @@ package walle
 	{
 		private var mHead:IntelligentNode;
 		private var mCur:IntelligentNode;
+		private var mIndex:IntelligentNode;
 		private var mLength:int;
 		
 		public function IntelligentLink()
@@ -24,9 +25,29 @@ package walle
 			++mLength;
 		}
 		
+		public function begin():IntelligentNode
+		{
+			mIndex = mHead;
+			return mIndex;
+		}
+		
+		public function next():IntelligentNode
+		{
+			var next:IntelligentNode = null;
+			
+			if(mIndex)
+			{
+				next = mIndex = mIndex.next;
+			}
+			
+			return next;
+		}
+		
 		public function clear():void
 		{
 			mHead.next = null;
+			mIndex = null;
+			mCur = null;
 			mLength = 0;
 		}
 		

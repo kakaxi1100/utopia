@@ -1,11 +1,15 @@
 package
 {
+	import com.sociodox.theminer.TheMiner;
+	
 	import flash.display.Sprite;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.text.TextField;
 	
 	import walle.Car;
+	import walle.CellSpacePartition;
 	import walle.FFVector;
 	import walle.SteeringBehaviors;
 	
@@ -17,11 +21,20 @@ package
 		
 		private var list:Array = [];
 		private var listI:Array = [];
+		
+		private var text:TextField = new TextField();
 		public function Test9GridFlock()
 		{
 			super();
 			
+			addChild(new TheMiner());
+						
+			addChild(text);
+			text.text = "1";
+			text.y = 100;
+			
 			stage.scaleMode = StageScaleMode.NO_SCALE;
+			CellSpacePartition.getInstance().init(stage.stageWidth, stage.stageHeight, 10, 10);
 			
 			
 			for(var i:int = 0; i < 1; i++)
@@ -30,7 +43,7 @@ package
 				if(i == 0)
 				{
 					car = new Car(0xFFFFFF);
-					car.intelligent.velocity.setTo(100, 0);
+//					car.intelligent.velocity.setTo(100, 0);
 				}else
 				{
 					car = new Car();
@@ -56,16 +69,19 @@ package
 			
 			var car:Car = new Car();
 			addChild(car);
-			car.intelligent.position.setTo(event.stageX, event.stageY);
+			car.intelligent.position.setTo(event.stageX + Math.random() * 10, event.stageY + Math.random() * 10);
 			list.push(car);
 			listI.push(car.intelligent);
+			
+			text.text = list.length.toString();
 		}
 		
 		protected function onEnterFrame(event:Event):void
 		{
 //			SteeringBehaviors.arrive(list[0].intelligent, target);
 //			SteeringBehaviors.calculate_truncate(listI);
-			SteeringBehaviors.flock(listI);
+//			SteeringBehaviors.flock(listI);
+			SteeringBehaviors.flock_grid(listI);
 //			SteeringBehaviors.flock_truncate(listI);
 			update(0.0166 * 10);
 		}
@@ -78,6 +94,14 @@ package
 				var car:Car = list[i];
 				car.udpate(dt);
 			}
+			
+			this.render();
+		}
+		
+		private function render():void
+		{
+			this.graphics.clear();
+			CellSpacePartition.getInstance().renderCells(this.graphics);
 		}
 	}
 }

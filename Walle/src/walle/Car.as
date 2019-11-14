@@ -9,6 +9,8 @@ package walle
 		public var warp:FFVector = new FFVector(800, 600);
 		
 		private var detection:Sprite = new Sprite();
+		
+		private var mIsStop:Boolean = false;
 		public function Car(color:uint = 0)
 		{
 			super();
@@ -32,8 +34,19 @@ package walle
 			this.graphics.lineTo(this.intelligent.side.x * 30, this.intelligent.side.y * 30);
 		}
 		
+		public function stop():void
+		{
+			mIsStop = true;
+		}
+		
+		public function start():void
+		{
+			mIsStop = false;
+		}
+		
 		public function udpate(dt:Number):void
 		{
+			if(mIsStop) return;
 			this.intelligent.update(dt);
 			if(this.intelligent.position.x > warp.x){
 				this.intelligent.position.x = 0;				
