@@ -8,11 +8,11 @@ package walle
 		{
 		}
 		
-		public function set weigth(value:int):void
+		public function set weight(value:int):void
 		{
 			mWeight = value;	
 		}
-		public function get weigth():int
+		public function get weight():int
 		{
 			return mWeight;	
 		}

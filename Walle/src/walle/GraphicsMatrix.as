@@ -17,6 +17,25 @@ package walle
 		public function GraphicsMatrix()
 		{
 			vlist = [];
+			eMatrix = [];
+		}
+		
+		//深度优先遍历
+		public function depthFirstSearch():void
+		{
+			
+		}
+		
+		//广度优先遍历
+		public function breadthFirstSearch():void
+		{
+			
+		}
+		
+		public function setEdgeWeight(i:int, j:int, weight:int):void
+		{
+			eMatrix[i][j].weight = weight;
+			eMatrix[j][i].weight = weight;
 		}
 		
 		public function extend(node:GraphicsNode):void
@@ -24,9 +43,43 @@ package walle
 			vlist.push(node);
 			var index:int = eMatrix.length;
 			eMatrix[index] = [];
-			for(var i:int = 0; i <= index; i++)
+			for(var i:int = 0; i < eMatrix.length; i++)
 			{
-				eMatrix[index][i] = new GraphicsEdge();
+				eMatrix[i][index] = new GraphicsEdge();
+			}
+			
+			for(var j:int = 0; j <= index; j++)
+			{
+				eMatrix[index][j] = new GraphicsEdge();
+			}
+		}
+		
+		public function remove(node:GraphicsNode):void
+		{
+			var index:int = -1;
+			for(var i:int = 0; i < vlist.length; i++)
+			{
+				if(node == vlist[i])
+				{
+					vlist.splice(i, 1);
+					index = i;
+					//这里删除列
+//					for(var j:int = 0; j < eMatrix[i].length; j++)
+//					{
+//						eMatrix[i].splice(j--, 1);
+//					}
+					eMatrix.splice(i, 1);
+					break;
+				}
+			}
+			
+			if(index >= 0)
+			{
+				//这里删除行里面对应的点
+				for(i = 0; i < eMatrix.length; i++)
+				{
+					eMatrix[i].splice(index, 1);
+				}
 			}
 		}
 	}

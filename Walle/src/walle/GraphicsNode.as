@@ -8,6 +8,7 @@ package walle
 	 */	
 	public class GraphicsNode
 	{
+		public var data:int = 0;
 		public function GraphicsNode()
 		{
 		}
