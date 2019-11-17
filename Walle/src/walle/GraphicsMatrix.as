@@ -21,14 +21,66 @@ package walle
 		}
 		
 		//深度优先遍历
-		public function depthFirstSearch():void
+		public function depthFirstSearch(firstNode:GraphicsNode = null):void	
 		{
-			
+			if(!firstNode)
+			{
+				firstNode = this.vlist[0];
+			}
+			this.dfs(firstNode);
+		}
+		//这个和树的的层次遍历一样,用队列就可以解决这个问题了, 只是多了一个检查列表, 图的所有遍历都需要有检查列表
+		private function dfs(firstNode:GraphicsNode):void
+		{	
+			var checked:Array = [];
+			var queue:Array = [];
+			queue.push(firstNode);
+			while(queue.length > 0)
+			{
+				var node:GraphicsNode = queue.shift();
+				trace(node);
+				checked.push(node);
+				//遍历node
+				//1. 得到node的在vlist中的index
+				var index:int = getNodeIndex(node);
+				if(index >= 0)
+				{
+					for(var i:int = 0; i < this.eMatrix[index].length; i++)
+					{
+						if(this.eMatrix[index][i].weight > 0)//表示与另一个点有链接
+						{
+							var temp:GraphicsNode = this.vlist[i];
+							if(checked.indexOf(temp) == -1 && queue.indexOf(temp) == -1)//这个点还没被检查过,并且也不在检查队列中
+							{
+								queue.push(temp);
+							}
+						}
+					}
+				}
+			}
 		}
 		
 		//广度优先遍历
 		public function breadthFirstSearch():void
 		{
+			
+		}
+		//深度搜索其实和广度搜索差不多, 只不过他需要一个parent列表可以用来回溯
+		private function bfs(firstNode:GraphicsNode):void
+		{
+			//已检查列表
+			var checked:Array = [];
+			//待访问列表
+			var visit:Array = [];
+			visit.push(firstNode);
+			while(visit.length > 0)
+			{
+				//1. 找最深
+				var node:GraphicsNode = visit[visit.length - 1];
+				var index:int = getNodeIndex(node);
+				//如果权重一样, 那么就找第一个点
+				
+			}
 			
 		}
 		
@@ -81,6 +133,19 @@ package walle
 					eMatrix[i].splice(index, 1);
 				}
 			}
+		}
+		
+		public function getNodeIndex(node:GraphicsNode):int
+		{
+			for(var i:int = 0; i < this.vlist.length; i++)
+			{
+				if(node == this.vlist[i])
+				{
+					return i;
+				}
+			}
+			
+			return -1;
 		}
 	}
 }

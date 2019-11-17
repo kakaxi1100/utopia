@@ -12,5 +12,10 @@ package walle
 		public function GraphicsNode()
 		{
 		}
+		
+		public function toString():String
+		{
+			return "" + data;
+		}
 	}
 }
