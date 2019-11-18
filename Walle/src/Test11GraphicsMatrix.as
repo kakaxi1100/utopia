@@ -35,13 +35,16 @@ package
 			gm.setEdgeWeight(4, 5, 1);
 			gm.setEdgeWeight(5, 6, 1);
 //---------------------------------------------------------------			
-//			gm.depthFirstSearch(gm.vlist[0]);
+//			gm.breadthFirstSearch(gm.vlist[0]);
 //---------------------------------------------------------------			
 			//这里注意删掉2节点之后出现了两个图, 算法需要加以改进
 //			gm.remove(gm.vlist[2]);
-//			gm.depthFirstSearch(gm.vlist[1]);
+//			gm.breadthFirstSearch(gm.vlist[1]);
 //---------------------------------------------------------------
-			
+//			gm.depthFirstSearch();
+//---------------------------------------------------------------
+			gm.remove(gm.vlist[1]);
+			gm.depthFirstSearch();
 			
 		}
 	}

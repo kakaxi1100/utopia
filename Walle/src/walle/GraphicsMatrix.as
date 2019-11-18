@@ -21,16 +21,16 @@ package walle
 		}
 		
 		//深度优先遍历
-		public function depthFirstSearch(firstNode:GraphicsNode = null):void	
+		public function breadthFirstSearch(firstNode:GraphicsNode = null):void	
 		{
 			if(!firstNode)
 			{
 				firstNode = this.vlist[0];
 			}
-			this.dfs(firstNode);
+			this.bfs(firstNode);
 		}
 		//这个和树的的层次遍历一样,用队列就可以解决这个问题了, 只是多了一个检查列表, 图的所有遍历都需要有检查列表
-		private function dfs(firstNode:GraphicsNode):void
+		private function bfs(firstNode:GraphicsNode):void
 		{	
 			var checked:Array = [];
 			var queue:Array = [];
@@ -61,12 +61,16 @@ package walle
 		}
 		
 		//广度优先遍历
-		public function breadthFirstSearch():void
+		public function depthFirstSearch(firstNode:GraphicsNode = null):void
 		{
-			
+			if(!firstNode)
+			{
+				firstNode = this.vlist[0];
+			}
+			this.dfs(firstNode);
 		}
 		//深度搜索其实和广度搜索差不多, 只不过他需要一个parent列表可以用来回溯
-		private function bfs(firstNode:GraphicsNode):void
+		private function dfs(firstNode:GraphicsNode):void
 		{
 			//已检查列表
 			var checked:Array = [];
@@ -78,10 +82,28 @@ package walle
 				//1. 找最深
 				var node:GraphicsNode = visit[visit.length - 1];
 				var index:int = getNodeIndex(node);
-				//如果权重一样, 那么就找第一个点
 				
+				//如果权重一样, 那么就找第一个点
+				for(var i:int = 0; i < this.eMatrix[index].length; i++)
+				{
+					var temp:GraphicsNode = this.vlist[i];
+					if(this.eMatrix[index][i].weight > 0)//表示与另一个点有链接
+					{
+						if(checked.indexOf(temp) == -1 && visit.indexOf(temp) == -1)//这个点还没被检查过,并且也不在检查队列中
+						{
+							visit.push(temp);
+							//找到了最邻近点后就要开始找下一个点
+							index = i;
+							i = 0;
+						}
+					}
+				}
+				
+				//找到了最后一点, 开始访问
+				var crt:GraphicsNode = visit.pop();
+				trace(crt);
+				checked.push(crt);
 			}
-			
 		}
 		
 		public function setEdgeWeight(i:int, j:int, weight:int):void
