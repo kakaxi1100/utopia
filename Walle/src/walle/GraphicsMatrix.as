@@ -106,6 +106,69 @@ package walle
 			}
 		}
 		
+		//Dijkstra
+		//最短路径算法：迪杰斯特拉
+		//思想是: 
+		//有两个列表, 一个是已检查列表, 一个是待检查列表
+		//每次都在待查列表中选取权值最小的节点到已检查列表, 然后根据新添加进来的点, 跟新待查列表中的权值
+		//
+		//例子：求 ①到②的最短路径
+		//①----3------②
+		// \         /
+		//  \1     1/
+		//	 \     /
+		//	  \   /
+		//     \ /
+		//      ③
+		//
+		// step1:checked[①(0)], left[②(3), ③(1)]
+		// step2:checked[①(0), ③(1)], left[②(1)]
+		// step2:checked[①(0), ③(1), ②(1)], left[]
+		//∴ ①到②的最短路径是  ①->③->② 当然如果你需要完整路径, 还要有一个 parent列表, 每当②的值发生变化时, 就将当前节点添加到其中
+		public function dijkstra(firstNode:GraphicsNode):void
+		{
+			//1. 初始化列表
+			var temp:Object = {"node":firstNode, "dist":0};
+			var checked:Array = [];
+			var left:Array = [temp];
+			var index:int = getNodeIndex(temp.node);
+			//最小值为第一个点
+			var miniIndex:int = 0;
+			var miniValue:uint = 0;
+			var crtIndex:uint = index;
+			for(var i:int = 0; i < this.eMatrix[index].length; i++)
+			{
+				if(i == index) continue;
+				var weight:int = this.eMatrix[index][i].weight;
+				temp = {"node":this.vlist[i]};
+				if( weight == 0)
+				{
+					temp["dist"] = -1;
+				}else{
+					if(weight <= miniValue)
+					{
+						miniValue = weight;
+						miniIndex = left.length - 1;
+						crtIndex = i;
+					}
+				}
+				left.push(temp);
+			}
+			
+			//2. 循环计算最短路径
+			while(left.length > 0)
+			{
+				//把最短的点放到已检查列表中
+				var shortest:Object = left.splice(miniIndex, 1);
+				checked.push(shortest);
+				//更新left列表
+				for(i = 0; i < this.eMatrix[crtIndex].length; i++)
+				{
+					
+				}
+			}
+		}
+		
 		public function setEdgeWeight(i:int, j:int, weight:int):void
 		{
 			eMatrix[i][j].weight = weight;
