@@ -108,7 +108,8 @@ package walle
 		
 		//Dijkstra
 		//最短路径算法：迪杰斯特拉
-		//思想是: 
+		//思想是: 把所有能走的路都算一遍, 取其中最短的路径
+		//实现方式:
 		//有两个列表, 一个是已检查列表, 一个是待检查列表
 		//每次都在待查列表中选取权值最小的节点到已检查列表, 然后根据新添加进来的点, 跟新待查列表中的权值
 		//
@@ -125,30 +126,34 @@ package walle
 		// step2:checked[①(0), ③(1)], left[②(1)]
 		// step2:checked[①(0), ③(1), ②(1)], left[]
 		//∴ ①到②的最短路径是  ①->③->② 当然如果你需要完整路径, 还要有一个 parent列表, 每当②的值发生变化时, 就将当前节点添加到其中
-		public function dijkstra(firstNode:GraphicsNode):void
+		public function dijkstra(start:int, end:int):void
 		{
 			//1. 初始化列表
-			var temp:Object = {"node":firstNode, "dist":0};
-			var checked:Array = [];
-			var left:Array = [temp];
-			var index:int = getNodeIndex(temp.node);
+			var parentlist:Array = [];
+			var temp:Object = {"index":start, "dist":0};
+			var checked:Array = [temp];
+			var left:Array = [];
+			var index:int = start;
 			//最小值为第一个点
 			var miniIndex:int = 0;
-			var miniValue:uint = 0;
+			var miniValue:uint = 99999;
 			var crtIndex:uint = index;
+			var loopIndex:uint = 0;
 			for(var i:int = 0; i < this.eMatrix[index].length; i++)
 			{
 				if(i == index) continue;
 				var weight:int = this.eMatrix[index][i].weight;
-				temp = {"node":this.vlist[i]};
+				temp = {"index": i};
 				if( weight == 0)
 				{
-					temp["dist"] = -1;
+					trace("test");
+					temp["dist"] = 99999999;
 				}else{
+					temp["dist"] = weight;
 					if(weight <= miniValue)
 					{
 						miniValue = weight;
-						miniIndex = left.length - 1;
+						miniIndex = left.length;
 						crtIndex = i;
 					}
 				}
@@ -159,14 +164,86 @@ package walle
 			while(left.length > 0)
 			{
 				//把最短的点放到已检查列表中
-				var shortest:Object = left.splice(miniIndex, 1);
+				var shortest:Object = left.splice(miniIndex, 1)[0];
 				checked.push(shortest);
-				//更新left列表
-				for(i = 0; i < this.eMatrix[crtIndex].length; i++)
+				
+				miniIndex = 0;
+				miniValue = 99999;
+				//更新left列表 , crtIndex 是当前的
+				for(i = 0; i < left.length; i++)
 				{
-					
+					 temp = left[i];
+					 var crtWeight:int = this.eMatrix[crtIndex][temp.index].weight;
+					 if(crtWeight + shortest.dist < temp.dist)
+					 {
+						 temp.dist = crtWeight + shortest.dist;
+						 //假如有一个点使得end更新了,那么这个点就是这个的parent之一
+						 if(temp.index == end)
+						 {
+							 parentlist.push(crtIndex);
+						 }
+					 }
+					 
+					 if(temp.dist <= miniValue)
+					 { 
+						 miniValue = temp.dist;
+						 miniIndex = i;
+						 loopIndex = temp.index;
+					 }
+				}
+				crtIndex = loopIndex;
+			}
+			
+			var s:String = "" + start + "->";
+			for(i = 0; i < parentlist.length; i++)
+			{
+				s += parentlist[i] + "->";
+			}
+			s += end;
+			trace(s);
+		}
+		
+		public function floyd(start:int, end:int):void
+		{
+			var dist:Array = [];
+			var path:Array = [];
+			//先初始化整个路径, 就是当 
+			for(var i:int = 0; i < this.eMatrix.length; i++)
+			{
+				dist[i] = [];
+				path[i] = [];
+				for(var j:int = 0; j < this.eMatrix[i].length; j++)
+				{
+					var value:int = this.eMatrix[i][j].weight;
+					dist[i][j] = value;
+					path[i][j] = j;//因为path[0][3] = 3 代表 0-3只经过3点 3是顶点的索引
 				}
 			}
+			
+			
+			for(var k:int = 0; k < dist.length; k++){
+				for(i = 0; i < dist.length; i++)
+				{
+					for(j = 0; j < dist.length; j++)
+					{
+						if(dist[i][j] > (dist[i][k] + dist[k][j]))
+						{
+							dist[i][j] = dist[i][k] + dist[k][j];
+							path[i][j] = path[i][k];
+						}
+					}
+				}
+			}
+			
+			k = path[start][end];
+			var s:String = "" + start + "->";
+			while(k != end)
+			{
+				s += k + "->";
+				k = path[k][end];
+			}
+			s += end;
+			trace(s);
 		}
 		
 		public function setEdgeWeight(i:int, j:int, weight:int):void

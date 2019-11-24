@@ -2,7 +2,7 @@ package walle
 {
 	public class GraphicsEdge
 	{
-		private var mWeight:int;
+		private var mWeight:int = 999999999;
 		
 		public function GraphicsEdge()
 		{

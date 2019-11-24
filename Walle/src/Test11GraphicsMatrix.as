@@ -25,15 +25,15 @@ package
 			
 			gm.setEdgeWeight(0, 1, 1);
 			gm.setEdgeWeight(0, 2, 1);
-			gm.setEdgeWeight(0, 3, 1);
+			gm.setEdgeWeight(0, 3, 3);
 			gm.setEdgeWeight(1, 2, 1);
-			gm.setEdgeWeight(1, 3, 1);			
+			gm.setEdgeWeight(1, 3, 2);			
 			gm.setEdgeWeight(2, 3, 1);
-			gm.setEdgeWeight(2, 4, 1);
+			gm.setEdgeWeight(2, 4, 3);
 			gm.setEdgeWeight(2, 5, 1);
-			gm.setEdgeWeight(2, 6, 1);
+			gm.setEdgeWeight(2, 6, 2);
 			gm.setEdgeWeight(4, 5, 1);
-			gm.setEdgeWeight(5, 6, 1);
+			gm.setEdgeWeight(5, 6, 4);
 //---------------------------------------------------------------			
 //			gm.breadthFirstSearch(gm.vlist[0]);
 //---------------------------------------------------------------			
@@ -43,8 +43,12 @@ package
 //---------------------------------------------------------------
 //			gm.depthFirstSearch();
 //---------------------------------------------------------------
-			gm.remove(gm.vlist[1]);
-			gm.depthFirstSearch();
+//			gm.remove(gm.vlist[1]);
+//			gm.depthFirstSearch();
+//---------------------------------------------------------------
+			gm.dijkstra(0, 4);
+//---------------------------------------------------------------
+			gm.floyd(0, 4);
 			
 		}
 	}
