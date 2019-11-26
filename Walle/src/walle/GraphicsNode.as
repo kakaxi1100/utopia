@@ -9,13 +9,16 @@ package walle
 	public class GraphicsNode
 	{
 		public var data:int = 0;
+		public var indegree:int = 0;
+		public var outdegree:int = 0;
+		
 		public function GraphicsNode()
 		{
 		}
 		
 		public function toString():String
 		{
-			return "" + data;
+			return "( " + data + ", " + indegree + ", " + outdegree + " )";
 		}
 	}
 }

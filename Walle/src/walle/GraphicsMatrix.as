@@ -14,6 +14,9 @@ package walle
 		public var vlist:Array;
 		//边列表
 		public var eMatrix:Array;
+		
+		//是否有向图
+		public var isDirected:Boolean = false;
 		public function GraphicsMatrix()
 		{
 			vlist = [];
@@ -246,10 +249,42 @@ package walle
 			trace(s);
 		}
 		
+		//拓扑排序 必须是有向无环图
+		//https://www.cnblogs.com/bigsai/p/11489260.html
+		//非常简单, 就是把图按照依赖的先后顺序变成一个线性序列
+		//思路:
+		//每次找到入度为 0 的点, 然后取出这个点到线性序列中, 在删除这个点连接的边, 直到取出最后一个点为止
+		//如果过程中找不到入度为 0 的点, 那说明有环, 那么无解
+		public function topsort():void
+		{
+			//先初始化, 找到每个点的入度, 收录入度为0的点
+			var nlist:Array = [];
+			for(var i:int = 0; i < this.vlist.length; i++)
+			{
+				for(var j:int = 0; j < this.eMatrix[i].length; j++)
+				{
+					if(this.eMatrix[i][j].weight > 0 && this.eMatrix[i][j].weight != 999999999){
+						//计算每个点入度
+						if(nlist[j] == null)
+						{
+							nlist[j] = 0;
+						}
+						nlist[j]++;
+					}
+				}
+			}
+			
+			trace(nlist);	
+		}
+		
 		public function setEdgeWeight(i:int, j:int, weight:int):void
 		{
 			eMatrix[i][j].weight = weight;
-			eMatrix[j][i].weight = weight;
+			//假如是有向的就只设置一个边
+			if(!isDirected)
+			{
+				eMatrix[j][i].weight = weight;
+			}
 		}
 		
 		public function extend(node:GraphicsNode):void
