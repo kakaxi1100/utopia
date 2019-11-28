@@ -255,26 +255,66 @@ package walle
 		//思路:
 		//每次找到入度为 0 的点, 然后取出这个点到线性序列中, 在删除这个点连接的边, 直到取出最后一个点为止
 		//如果过程中找不到入度为 0 的点, 那说明有环, 那么无解
+		//这个写的太丑陋了！！！！！
 		public function topsort():void
 		{
-			//先初始化, 找到每个点的入度, 收录入度为0的点
+			//1.先初始化, 找到每个点的入度, 收录入度为0的点
 			var nlist:Array = [];
 			for(var i:int = 0; i < this.vlist.length; i++)
+			{
+				nlist[i] = 0;		
+			}
+			
+			for(i = 0; i < this.vlist.length; i++)
 			{
 				for(var j:int = 0; j < this.eMatrix[i].length; j++)
 				{
 					if(this.eMatrix[i][j].weight > 0 && this.eMatrix[i][j].weight != 999999999){
 						//计算每个点入度
-						if(nlist[j] == null)
-						{
-							nlist[j] = 0;
-						}
 						nlist[j]++;
 					}
 				}
 			}
+			trace("n", nlist);
+			//2.找到为0的点, 随机选一个作为开头
+			var sortList:Array = [];
+			var isEnd:Boolean = true;
+			do{
+				isEnd = true;
+				for(i = 0; i < nlist.length; i++)
+				{
+					if(nlist[i] == 0){
+						sortList.push(i);
+						nlist[i] = -1;
+						for(j = 0; j < this.eMatrix[i].length; j++)
+						{
+							if(this.eMatrix[i][j].weight > 0 && this.eMatrix[i][j].weight != 999999999){
+								nlist[j]--;
+							}
+						}
+						isEnd = false;
+						break;
+					}
+				}
+				trace("n", nlist);
+			}while(!isEnd);
+			trace("s", sortList);
+		}
+		
+		//关键路径 AOE网 
+		//https://www.bilibili.com/video/av17396966/ 清华大学出版社, 数据结构 C++版
+		//关键路径不只一条,重要的是找到关键活动, 即不按期完成就会影响整个工程完成的活动
+		//关键活动有关的量:
+		// ① 事件最早发生的时间 (顶点) ve
+		// ② 事件最晚发生的时间 (顶点) vl
+		// ③ 活动最早开始的时间  (边)  ee
+		// ④ 活动最晚开始的时间  (边)  el
+		// 假如活动最晚开始时间和最早开始时间相等, 说明这个活动不能有任何推迟, 那么这个活动就是一个关键活动
+		// 我们可以从 ①② 得到 ③④
+		// 最终我们比较 ③ee和④el中相等的活动, 就是关键活动
+		public function keyroad():void
+		{
 			
-			trace(nlist);	
 		}
 		
 		public function setEdgeWeight(i:int, j:int, weight:int):void
