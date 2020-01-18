@@ -6,7 +6,7 @@ package
 	import flash.ui.Keyboard;
 	
 	[SWF(frameRate="60", backgroundColor="#CCCCCC",width="1000",height="800")]
-	public class Test16ForwardKinematics extends Sprite
+	public class Test17InverseKinematics extends Sprite
 	{
 		private var s1:Segment = new Segment(100, 50);
 		private var s2:Segment = new Segment(100, 40);
@@ -16,33 +16,16 @@ package
 		
 		private var delta:Number = 0;
 		private var cycle:Number = 0;
-		public function Test16ForwardKinematics()
+		public function Test17InverseKinematics()
 		{
 			super();
 			
-			s1.x = 200;
-			s1.y = 400;
-			
-			s2.x = s1.getPin().x;
-			s2.y = s1.getPin().y;
-//			s2.rotation = 90;
-			
-			s3.x = s2.getPin().x;
-			s3.y = s2.getPin().y;
-			
-			s4.x = s3.getPin().x;
-			s4.y = s3.getPin().y;
-			
-			s5.x = s4.getPin().x;
-			s5.y = s4.getPin().y;
 			
 			addChild(s1);
 			addChild(s2);
 			addChild(s3);
 			addChild(s4);
 			addChild(s5);
-			
-			this.moving();
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
@@ -97,31 +80,29 @@ package
 		
 		public function onEnterFrame(e:Event):void
 		{
-			cycle += 0.05;
-			delta = Math.sin(cycle) * 30;
-			this.moving();
+			drag(s1, mouseX, mouseY);
+			drag(s2, s1.x, s1.y);
+//			drag(s3, s2.x, s2.y);
+//			drag(s4, s3.x, s3.y);
+//			drag(s5, s4.x, s4.y);
 		}
 		
-		public function moving():void
+		public function drag(s:Segment, xPos:Number, yPos:Number):void
 		{
-			s1.rotation = delta;
+			//伸展
+			var dx:Number = xPos - s.x;
+			var dy:Number = yPos - s.y;
+			var angle:Number = Math.atan2(dy, dx);
+			s.rotation = angle * 180 / Math.PI;
 			
-			s2.x = s1.getPin().x;
-			s2.y = s1.getPin().y;
-			s2.rotation = s1.rotation + delta;
-			
-			s3.x = s2.getPin().x;
-			s3.y = s2.getPin().y;
-			s3.rotation = s2.rotation + delta;
-			
-			s4.x = s3.getPin().x;
-			s4.y = s3.getPin().y;
-			s4.rotation = s3.rotation + delta;
-			
-			s5.x = s4.getPin().x;
-			s5.y = s4.getPin().y;
-			s5.rotation = s4.rotation + delta;
+			//拖动
+			var w:Number = s.getPin().x - s.x;
+			var h:Number = s.getPin().y - s.y;
+			//这里计算s的位置
+			s.x = xPos - w;
+			s.y = yPos - h;
 		}
+		
 	}
 }
 
@@ -150,8 +131,8 @@ class Segment extends Sprite
 		this.graphics.lineStyle(0);
 		this.graphics.beginFill(mColor);
 		this.graphics.drawRoundRect(-mSegmentHeight/ 2, -mSegmentHeight / 2, 
-									mSegmentWidth + mSegmentHeight, mSegmentHeight, 
-									mSegmentHeight, mSegmentHeight);
+			mSegmentWidth + mSegmentHeight, mSegmentHeight, 
+			mSegmentHeight, mSegmentHeight);
 		this.graphics.endFill();
 		
 		this.graphics.drawCircle(0, 0, 2);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties analytics="false" mainApplicationPath="Test16ForwardKinematics.as" projectUUID="53c9fb5c-53d6-455f-9d00-0058d4a481b3" version="11">
+<actionScriptProperties analytics="false" mainApplicationPath="Test22SnakeGameFinal.as" projectUUID="53c9fb5c-53d6-455f-9d00-0058d4a481b3" version="11">
   <compiler additionalCompilerArguments="-locale en_US" advancedTelemetry="false" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" useFlashSDK="true" verifyDigests="true" warn="true">
     <compilerSourcePath/>
     <libraryPath defaultLinkType="0">
@@ -33,6 +33,12 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
+    <application path="Test22SnakeGameFinal.as"/>
+    <application path="Test21SnakeGame2.as"/>
+    <application path="Test20SnakeGame.as"/>
+    <application path="Test19InverseKinematics3.as"/>
+    <application path="Test18InverseKinematics2.as"/>
+    <application path="Test17InverseKinematics.as"/>
     <application path="Test16ForwardKinematics.as"/>
     <application path="Test15Raven.as"/>
     <application path="Test7OffsetPursuit.as"/>
