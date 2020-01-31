@@ -66,17 +66,17 @@ package
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 			
-//			centerTest();
+			centerTest();
 		}
 		
 		public function onEnterFrame(e:Event):void
 		{
-//			updateHead();
-//			updateBody();
+			updateHead();
+			updateBody();
 			
-			updateHeadV();
-			
-			checkWarp();
+//			updateHeadV();
+//			
+//			checkWarp();
 		}
 		
 		public function checkWarp():void

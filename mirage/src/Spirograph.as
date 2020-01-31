@@ -34,7 +34,7 @@ package
 				if(this.contains(s))
 				{
 					s.alpha *= 0.9999;
-					if(s.alpha < 0.01)
+					if(s.alpha < 0.001)
 					{
 						this.removeChild(s);
 					}
@@ -53,9 +53,9 @@ package
 				s.graphics.lineStyle(0);
 				s.graphics.moveTo(300, 300);
 				s.graphics.curveTo(cx, cy, 500, 300);
-				cx = 400 + 200 * Math.cos(angle);
-				cy = 300 + 200 * Math.sin(angle);
-				angle += 0.05;
+				cx = 400 + 300 * Math.cos(angle);
+				cy = 300 + 300 * Math.sin(angle);
+				angle += 0.02;
 				clist.push(s);
 				count = 0;
 			}
