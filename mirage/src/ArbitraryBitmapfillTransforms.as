@@ -1,4 +1,9 @@
 /**
+ * 注: 仿射变换会改变原图的纹理即（u,v）图，改变之后，会计算三个点新的(U, V)坐标， 
+ * 根据这三个新的（u,v）坐标及新的纹理图就可以通过插值计算被填充的三角形、
+ * 通过逆矩阵是不是也可以求出点在原坐标的纹理的点？？？
+ * 
+ * 
  * http://www.innerdrivestudios.com/blog/actionscript-2/as2-3d-principles-and-experiments/part-ii-arbitrary-bitmapfill-transforms
  * 任意三角形填充
  * if we map other points than the 

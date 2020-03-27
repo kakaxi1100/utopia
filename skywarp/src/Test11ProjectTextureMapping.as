@@ -221,8 +221,8 @@ package
 			this.fillTriangle();
 			
 			
-//			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+//			stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 //--------------------------单片面测试------------------------------------
 			
 //			stage.scaleMode = StageScaleMode.NO_SCALE;
