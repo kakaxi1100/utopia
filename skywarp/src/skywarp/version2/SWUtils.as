@@ -38,12 +38,18 @@ package skywarp.version2
 
 			//2.判断p2在p1p3的那一侧, 只比较x值是不够的
 			//可以用直线的一般方程来判断, <0 在左侧, >0在右侧. 可用 y-x=0  y-2x=0  y-0.5x=0 这三条直线来检测
-			//已知两点可求得直线的一般方程式, AX + BY + C = 0, (x1, y1), (x2, y2) 先用斜截式考虑飞0情况展开, 再考虑0的情况, 可求得
-			// A = Y2 - Y1,  B = X1 - X2, C = X2*Y1 - X1*Y2
+			//已知两点可求得直线的一般方程式, AX + BY + C = 0, (x1, y1), (x3, y3) 先用斜截式考虑飞0情况展开, 再考虑0的情况, 可求得
+			// y = kx + b => k = (y3 - y1) / (x3 - x1) => 带入展开为一般式可得 => (y3-y1)X + (x1-x3)Y + (x3-x1)*b = 0
+			// 将P1 点带入, 可求得b => (y1*x3 - y3*x1)/(x3 - x1)
+			// 将b带入展开式可得:
+			// (y3-y1)X + (x1-x3)Y + (y1*x3 - y3*x1) = 0
+			// 所以可得 A, B, C 分别如下:
+			// A = Y3 - Y1,  B = X1 - X3, C = X3*Y1 - X1*Y3
 			// p1 => (x1, y1) , p3 => (x2, y2) 因为斜率是按照 p1计算的
 			var a:Number = p3.y - p1.y;
 			var b:Number = p1.x - p3.x;
 			var c:Number = p3.x*p1.y - p1.x*p3.y;
+			//将p2带入看是在左侧还是右侧, 如果相等就是在直线上
 			var result:Number = p2.x*a + p2.y*b + c;
 			var y:int;
 			if(result > 0)
@@ -85,6 +91,8 @@ package skywarp.version2
 			var gradient1:Number = pa.y != pb.y ? (y - pa.y) / (pb.y - pa.y) : 1;
 			var gradient2:Number = pc.y != pd.y ? (y - pc.y) / (pd.y - pc.y) : 1;
 			
+			//这里用到X, Y 的同比的, 当Yg = 0 时, Xg = 0 当 Yg = 1 时 Xg = 1
+			//可以画个以Pa, Pb为对角线的矩形试试
 			var sx:int = interpolate(pa.x, pb.x, gradient1) >> 0;
 			var ex:int = interpolate(pc.x, pd.x, gradient2) >> 0;
 			

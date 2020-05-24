@@ -5,14 +5,16 @@ package skywarp.version2
 		private var mX:Number;
 		private var mY:Number;
 		private var mZ:Number;
+		private var mW:Number;
 		
 		private static const Degree:Number = 180 / Math.PI;
 		private static const Radian:Number = Math.PI / 180;
-		public function SWPoint3D(x:Number = 0, y:Number = 0, z:Number = 0)
+		public function SWPoint3D(x:Number = 0, y:Number = 0, z:Number = 0, w:Number = 1)
 		{
 			mX = x;
 			mY = y;
 			mZ = z;
+			mW = w;
 		}
 		
 		public function dot(v:SWPoint3D):Number
@@ -188,9 +190,19 @@ package skywarp.version2
 			mZ = value;
 		}
 		
+		public function get w():Number
+		{
+			return mW;
+		}
+		
+		public function set w(value:Number):void
+		{
+			mW = value;
+		}
+		
 		public function toString():String
 		{
-			return "( " + mX + ", " + mY + ", " + mZ + " )";
+			return "( " + mX + ", " + mY + ", " + mZ + ", " + mW + " )";
 		}
 	}
 }

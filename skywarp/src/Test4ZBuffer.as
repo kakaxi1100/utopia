@@ -194,7 +194,8 @@ package
 		private function convertToScreen(p3D:SWPoint3D):SWPoint3D
 		{
 			var p:SWPoint3D = new SWPoint3D();
-			p.x = (p3D.x / (p3D.z + centerZ)) * centerX + centerX;;
+			//*centerX + cencterX 是因为做了屏幕坐标转换
+			p.x = (p3D.x / (p3D.z + centerZ)) * centerX + centerX;
 			p.y = (-p3D.y / (p3D.z + centerZ)) * centerY + centerY;
 			p.z = p3D.z;
 			
