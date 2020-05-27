@@ -1,10 +1,15 @@
 #include <SFML\Graphics.hpp>
-#include <time.h>
+#include <ctime>
 #include <iostream>
 
 using namespace sf;
-int main() 
+using std::cout;
+using std::endl;
+
+int main1() 
 {
+	cout << __func__ << endl;
+
 	RenderWindow window(VideoMode(320, 480), "Tetris!");
 
 	Texture t1, t2, t3;
@@ -19,7 +24,6 @@ int main()
 	while (window.isOpen())
 	{
 		float time = clock.getElapsedTime().asSeconds();
-
 
 		Event event;
 		while(window.pollEvent(event))
