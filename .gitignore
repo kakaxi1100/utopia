@@ -75,6 +75,13 @@ SFML/practice/Framework/Debug/
 SFML/practice/Framework/Framework/Debug/
 SFML/practice/Framework/.vs/
 
+SFML/practice/Init/
+
+SFML/games/Debug/
+SFML/games/games/Debug/
+SFML/games/.vs/
+
+
 framework/.settings/
 framework/bin-debug/
 framework/bin-release/
